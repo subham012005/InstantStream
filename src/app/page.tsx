@@ -292,7 +292,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
             {[
               { icon: 'bolt', color: 'primary', title: 'Instant Browser Streaming', desc: 'Stream any video URL directly in your browser. No plugins, no installs, no waiting.', tags: ['MP4', 'WEBM', 'HLS', 'Drive'] },
-              { icon: 'download_off', color: 'secondary', title: 'No Download Needed', desc: 'Save your storage. Watch directly online without ever saving a file to your device.', tags: [] },
+              { icon: 'cloud_off', color: 'secondary', title: 'No Download Needed', desc: 'Save your storage. Watch directly online without ever saving a file to your device.', tags: [] },
               { icon: 'speed', color: 'tertiary', title: 'Fast Buffering', desc: 'Efficient streaming with minimal buffering. Adaptive playback adjusts to your connection speed.', tags: [] },
               { icon: 'smartphone', color: 'primary', title: 'Mobile Friendly', desc: 'Fully responsive player that works great on phones, tablets, and desktops.', tags: [] },
               { icon: 'play_circle', color: 'secondary', title: 'Smooth Playback', desc: 'Clean video controls with fullscreen, theater mode, and keyboard shortcuts.', tags: [] },
@@ -344,23 +344,89 @@ export default function Home() {
           </div>
         </section>
 
+
+        {/* Blog Preview Section */}
+        <section id="blog" className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-12">
+            <div>
+              <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2 block">Guides &amp; Tutorials</span>
+              <h2 className="font-headline-lg text-on-surface">Learn how streaming works</h2>
+            </div>
+            <a href="/blog" className="text-primary hover:underline font-medium text-sm whitespace-nowrap">View all articles →</a>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { slug: 'how-to-stream-videos-without-downloading', tag: 'Beginner Guide', title: 'How to Stream Videos Without Downloading', excerpt: 'A step-by-step guide to watching any video online instantly in your browser — no storage used, no app needed.', date: 'May 2026', readTime: '4 min read' },
+              { slug: 'mp4-vs-webm-streaming', tag: 'Technical', title: 'MP4 vs WEBM: Which Format Streams Better?', excerpt: 'Understanding the difference between MP4 and WEBM formats and which one gives you smoother browser playback.', date: 'May 2026', readTime: '5 min read' },
+              { slug: 'how-browser-video-streaming-works', tag: 'Explained', title: 'How Browser Video Streaming Works', excerpt: 'A simple explanation of how modern browsers stream video content without downloading the entire file first.', date: 'May 2026', readTime: '6 min read' },
+            ].map((post) => (
+              <a key={post.slug} href={`/blog/${post.slug}`} className="group glass-panel rounded-2xl border border-black/5 hover:border-primary/20 overflow-hidden transition-all duration-300 flex flex-col">
+                <div className="h-40 bg-gradient-to-br from-primary/10 via-surface-container to-secondary/5 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary/40 text-6xl">article</span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">{post.tag}</span>
+                  <h3 className="font-semibold text-on-surface text-base leading-snug mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed flex-1">{post.excerpt}</p>
+                  <div className="flex items-center gap-2 mt-4 text-xs text-on-surface-variant/60">
+                    <span>{post.date}</span>
+                    <span>·</span>
+                    <span>{post.readTime}</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
         {/* FAQ Section */}
-        <section className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-3xl mx-auto">
-          <div className="text-center mb-10">
+        <section id="faq" className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-3xl mx-auto">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                { "@type": "Question", "name": "What is fluxplays.live?", "acceptedAnswer": { "@type": "Answer", "text": "fluxplays.live is a free browser-based video streaming tool. Paste any supported video link — MP4, Google Drive, Telegram, HLS — and watch it instantly online without downloading anything." } },
+                { "@type": "Question", "name": "Can I stream videos without downloading them?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. That's the core purpose of fluxplays.live. Paste a video URL and stream it directly in your browser — no file is saved to your device." } },
+                { "@type": "Question", "name": "What video formats are supported?", "acceptedAnswer": { "@type": "Answer", "text": "fluxplays.live supports MP4, WEBM, HLS (m3u8), direct video URLs, Google Drive shared links, and Telegram file links. Torrent streaming is planned." } },
+                { "@type": "Question", "name": "Is fluxplays.live free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. No subscription or payment required to stream videos online." } },
+                { "@type": "Question", "name": "Do I need to create an account?", "acceptedAnswer": { "@type": "Answer", "text": "No account is needed for basic streaming. Just paste your link and start watching instantly." } },
+              ]
+            })}}
+          />
+          <div className="text-center mb-12">
+            <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2 block">FAQ</span>
             <h2 className="font-headline-lg text-on-surface mb-3">Frequently Asked Questions</h2>
-            <p className="text-on-surface-variant">Quick answers about how fluxplays.live works.</p>
+            <p className="text-on-surface-variant max-w-md mx-auto">Everything you need to know about streaming videos online with fluxplays.live.</p>
           </div>
           <div className="space-y-3">
             {[
-              { q: 'What video links are supported?', a: 'fluxplays.live supports direct video files (MP4, WEBM, MKV), HLS streams (m3u8), Google Drive shared links, Telegram file links, and any public video URL.' },
-              { q: 'Is my viewing history stored?', a: 'No. Your recent streams are stored only in your browser\'s local storage — nothing is sent to our servers.' },
-              { q: 'Do I need an account to use it?', a: 'No account needed. Just paste a link and stream. An optional account may be introduced later for sync features.' },
-              { q: 'Is it free?', a: 'Yes, completely free to use. We may introduce optional premium features in the future, but the core streaming tool will always be free.' },
+              { q: 'What is fluxplays.live?', a: 'fluxplays.live is a free, browser-based tool for instant video streaming. You paste a supported video link — such as an MP4 URL, Google Drive share, or Telegram file — and watch it directly in your browser. No downloads, no account, no app required.' },
+              { q: 'How does instant video streaming work?', a: 'When you paste a video link, fluxplays.live fetches and buffers the video progressively in your browser. You can start watching within seconds while the rest loads in the background. It works the same way YouTube and Netflix stream — just with your own links.' },
+              { q: 'Can I stream videos without downloading them?', a: 'Yes, absolutely. That\'s the whole point. Paste any supported video URL and watch it online without saving a single byte to your device. Your storage stays untouched.' },
+              { q: 'What video formats are supported?', a: 'fluxplays.live supports MP4, WEBM, HLS (m3u8 live and VOD streams), direct CDN video URLs, Google Drive shared links, and Telegram file links. MKV support depends on your browser\'s native codec support. Torrent streaming is coming in a future update.' },
+              { q: 'Can I stream Google Drive videos online?', a: 'Yes. If you have a Google Drive video link with sharing enabled ("anyone with the link can view"), paste it into fluxplays.live and it will play directly in the browser player. Make sure the sharing permissions are set to public or unlisted.' },
+              { q: 'Can I stream Telegram video links?', a: 'Yes, Telegram direct file links are supported. If the link points to a video file hosted on Telegram\'s CDN and is publicly accessible, fluxplays.live can stream it in your browser without downloading.' },
+              { q: 'Does fluxplays.live support torrent streaming?', a: 'Not yet, but it\'s actively planned. Torrent-to-stream support — where you paste a magnet link and stream without downloading — is on our public roadmap and will be available in a future release.' },
+              { q: 'Is fluxplays.live free to use?', a: 'Yes, it\'s completely free. There\'s no subscription, no paywall, and no hidden fees. The core streaming tool will always be free. Optional premium features may be introduced later, but basic streaming stays free.' },
+              { q: 'Do I need to create an account?', a: 'No account is needed for basic streaming. Just open the site, paste a video URL, and start watching instantly. Recent streams are saved to your browser\'s local storage for convenience.' },
+              { q: 'Can I watch videos on mobile devices?', a: 'Yes. fluxplays.live is fully mobile-responsive. The video player and all controls work smoothly on smartphones and tablets. Android Chrome and iOS Safari are both supported.' },
+              { q: 'Does the platform support subtitles?', a: 'Currently, the player works with video streams that have embedded subtitles. AI-powered auto-subtitle generation and manual SRT/VTT upload support are planned features on the roadmap.' },
+              { q: 'Why is my video buffering a lot?', a: 'Buffering is usually caused by a slow internet connection, a slow or distant video server, or a very large file. Try pausing for a few seconds to let the buffer build up. If it persists, the video source server may be rate-limiting connections or the URL may not be a direct video stream.' },
+              { q: 'Is streaming faster than downloading?', a: 'For watching purposes, yes. Streaming lets you start watching within seconds rather than waiting for a full download. You only load the parts you actually watch, saving both time and data. Downloading makes sense only if you want offline access.' },
+              { q: 'Can I stream private videos?', a: 'Only if the video URL is publicly accessible. fluxplays.live cannot bypass authentication or access private content. Google Drive links must have sharing enabled, and Telegram links must be publicly accessible CDN URLs.' },
+              { q: 'Is my viewing history stored?', a: 'No server-side history is stored. Your recent streams are saved only in your browser\'s local storage on your own device. We don\'t collect, track, or log what you watch.' },
+              { q: 'Does fluxplays.live work on Smart TVs?', a: 'If your Smart TV has a modern browser like Chrome or Edge, you can use fluxplays.live directly. Alternatively, you can open it on your phone or laptop and cast to your TV using the built-in Cast button.' },
+              { q: 'Which browsers are supported?', a: 'fluxplays.live works best on Google Chrome, Microsoft Edge, Mozilla Firefox, and Apple Safari (desktop and mobile). For the best experience, keep your browser updated to the latest version.' },
+              { q: 'Can I use fluxplays.live on a slow internet connection?', a: 'Yes. The player uses adaptive streaming where possible, adjusting playback quality based on your connection speed. On slower connections, the video may take a few extra seconds to buffer before it plays smoothly.' },
+              { q: 'Why is my video link not working?', a: 'Common reasons include: the link has expired, the URL doesn\'t point to a direct video file, the source server requires authentication, or the format isn\'t supported by your browser. Make sure the link is a direct video URL (ending in .mp4, .webm, etc.) or a supported platform link.' },
+              { q: 'Is fluxplays.live secure to use?', a: 'Yes. Video links are requested directly from your browser — no content passes through our servers unnecessarily. Your recent streams are stored only locally. We don\'t download or re-host any video files.' },
             ].map((faq, i) => (
-              <details key={i} className="group border border-black/5 dark:border-white/5 rounded-xl bg-black/[0.02]">
-                <summary className="flex justify-between items-center p-5 cursor-pointer">
-                  <span className="font-semibold text-on-surface text-sm md:text-base">{faq.q}</span>
-                  <span className="material-symbols-outlined group-open:rotate-180 transition-transform text-on-surface-variant">expand_more</span>
+              <details key={i} className="group border border-black/5 dark:border-white/5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02]">
+                <summary className="flex justify-between items-center p-5 cursor-pointer list-none">
+                  <span className="font-semibold text-on-surface text-sm md:text-base pr-4">{faq.q}</span>
+                  <span className="material-symbols-outlined group-open:rotate-180 transition-transform text-on-surface-variant shrink-0">expand_more</span>
                 </summary>
                 <div className="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed">{faq.a}</div>
               </details>
