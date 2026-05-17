@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomPlayer from "@/components/CustomPlayer";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -44,7 +45,7 @@ export default function Home() {
 
       {/* TopNavBar */}
       <header className="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-[32px] border-t border-black/5 shadow-none">
-        <div className="flex justify-between items-center px-container-padding-desktop max-w-[1920px] mx-auto h-20">
+        <div className="flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop max-w-[1920px] mx-auto h-20">
           <div className="flex items-center gap-stack-lg">
             <span className="font-display-lg text-headline-md tracking-tighter text-on-surface">InstantStream</span>
             <nav className="hidden md:flex gap-stack-md">
@@ -63,13 +64,17 @@ export default function Home() {
               <a className="text-on-surface-variant font-medium font-body-md text-body-md hover:scale-105 hover:text-primary transition-all duration-300" href="#">My List</a>
             </nav>
           </div>
-          <div className="flex items-center gap-stack-md">
-            <div className="hidden md:flex gap-stack-sm mr-4">
+          <div className="flex items-center gap-3 md:gap-stack-md">
+            <div className="hidden md:flex gap-stack-sm mr-4 items-center">
               <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">search</span>
-              <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+              <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors mr-2">notifications</span>
+              <ThemeToggle />
             </div>
-            <button className="text-on-surface-variant font-medium hover:text-primary px-4 py-2 transition-all duration-300">Sign In</button>
-            <button className="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-bold hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(0,122,255,0.2)]">Join Pro</button>
+            <div className="md:hidden">
+              <ThemeToggle />
+            </div>
+            <button className="hidden sm:block text-on-surface-variant font-medium hover:text-primary px-4 py-2 transition-all duration-300">Sign In</button>
+            <button className="bg-primary-container text-on-primary-container px-4 md:px-6 py-1.5 md:py-2 rounded-lg font-bold hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(0,122,255,0.2)] text-sm md:text-base whitespace-nowrap">Join Pro</button>
           </div>
         </div>
       </header>
@@ -138,21 +143,7 @@ export default function Home() {
                 </div>
               )}
               
-              {/* Secondary Upload Area */}
-              <div className="w-full">
-                <div className="flex items-center gap-4 mb-4 text-on-surface-variant/40">
-                  <div className="h-px flex-grow bg-black/5"></div>
-                  <span className="text-xs font-label-sm uppercase tracking-widest">OR</span>
-                  <div className="h-px flex-grow bg-black/5"></div>
-                </div>
-                <div className="border-2 border-dashed border-black/10 rounded-xl p-8 bg-black/[0.02] hover:bg-black/[0.05] transition-colors cursor-pointer group">
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="material-symbols-outlined text-3xl text-on-surface-variant group-hover:text-primary transition-colors">upload_file</span>
-                    <p className="text-on-surface-variant font-body-md"><span className="text-primary font-bold">Drop torrent file here</span> or click to browse</p>
-                    <span className="text-[10px] text-on-surface-variant/40 uppercase tracking-tighter">No size limit</span>
-                  </div>
-                </div>
-              </div>
+
             </div>
           </div>
           
@@ -532,7 +523,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="w-full pt-stack-lg pb-12 border-t border-outline-variant/10 bg-surface-container-lowest">
-        <div className="px-container-padding-desktop max-w-[1920px] mx-auto">
+        <div className="px-container-padding-mobile md:px-container-padding-desktop max-w-[1920px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-gutter mb-stack-lg">
             <div className="col-span-2">
               <span className="font-display-lg text-headline-md tracking-tighter text-on-surface mb-6 block">InstantStream</span>
