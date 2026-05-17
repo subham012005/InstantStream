@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // @ts-ignore - Next.js 16 feature for local network development
+  allowedDevOrigins: ["192.168.203.55", "192.168.213.25"],
   async headers() {
     return [
       {
