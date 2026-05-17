@@ -288,12 +288,12 @@ export default function Home() {
                 <span className="material-symbols-outlined text-primary">bolt</span>
               </div>
               <h3 className="font-headline-md text-on-surface mb-4">Instant Streaming</h3>
-              <p className="text-on-surface-variant font-body-md mb-6">Watch video and listen to audio directly in the browser without waiting for the full download.</p>
+              <p className="text-on-surface-variant font-body-md mb-6">Watch video natively in the browser. Fully supports HLS live streams and common media types.</p>
               <div className="flex flex-wrap gap-2">
-                <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">MKV</span>
                 <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">MP4</span>
                 <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">WEBM</span>
-                <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">AVI</span>
+                <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">HLS (m3u8)</span>
+                <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">DRIVE LINKS</span>
               </div>
             </div>
             <div className="feature-card p-stack-md rounded-2xl border border-black/5 bg-black/[0.01] transition-all duration-300">

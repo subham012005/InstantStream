@@ -2,8 +2,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import * as Slider from '@radix-ui/react-slider';
+import Hls from 'hls.js';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Play, Pause, Volume2, VolumeX, FastForward, Rewind, Maximize, Minimize, Volume1, Zap } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, FastForward, Rewind, Maximize, Minimize, Volume1, Settings, Info } from 'lucide-react';
 
 interface CustomPlayerProps {
   src: string;
@@ -20,48 +21,27 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
   const [isMuted, setIsMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isBoosted, setIsBoosted] = useState(false);
   const [showControls, setShowControls] = useState(true);
-
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
+  const [isBuffering, setIsBuffering] = useState(true);
+  const [availableQualities, setAvailableQualities] = useState<{height: number, level: number}[]>([]);
+  const [currentQuality, setCurrentQuality] = useState<number>(-1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const hlsRef = useRef<Hls | null>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const initAudio = () => {
-    try {
-      if (!audioCtxRef.current && videoRef.current) {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-        if (!AudioContextClass) return false;
-        
-        audioCtxRef.current = new AudioContextClass();
-        const source = audioCtxRef.current.createMediaElementSource(videoRef.current);
-        gainNodeRef.current = audioCtxRef.current.createGain();
-        source.connect(gainNodeRef.current);
-        gainNodeRef.current.connect(audioCtxRef.current.destination);
-      }
-      // If audio context is suspended (browser policy), resume it
-      if (audioCtxRef.current?.state === 'suspended') {
-        audioCtxRef.current.resume();
-      }
-      return true;
-    } catch (e) {
-      console.warn("Audio Context initialization failed.", e);
-      return false;
-    }
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToastMessage(null), 3000);
   };
 
-  useEffect(() => {
-    if (isBoosted) {
-      const success = initAudio();
-      if (success && gainNodeRef.current) {
-        gainNodeRef.current.gain.value = 2.0; // Boost to 200%
-      } else {
-        setIsBoosted(false);
-      }
-    } else if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = 1.0;
+  const changeQuality = (level: number) => {
+    if (hlsRef.current) {
+      hlsRef.current.currentLevel = level;
+      setCurrentQuality(level);
     }
-  }, [isBoosted]);
+  };
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -147,11 +127,44 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
   };
 
   useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    let hls: Hls;
+    setAvailableQualities([]);
+    setCurrentQuality(-1);
+
+    // Support for HLS streams
+    if (Hls.isSupported() && (src.includes('.m3u8') || src.includes('.ts'))) {
+      hls = new Hls();
+      hlsRef.current = hls;
+      hls.loadSource(src);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        const levels = data.levels.map((l: any, index: number) => ({ height: l.height, level: index })).reverse();
+        setAvailableQualities(levels);
+        video.play().catch(e => console.log("Autoplay prevented", e));
+        setIsPlaying(true);
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Native Safari HLS support
+      video.src = src;
+    } else {
+      // Standard formats (MP4, WebM, Ogg, Google Drive)
+      video.src = src;
+    }
+
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
+  }, [src]);
+
+  useEffect(() => {
     return () => {
       if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
-        audioCtxRef.current.close();
-      }
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
   }, []);
 
@@ -165,26 +178,42 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
   return (
     <div 
       ref={containerRef} 
-      className="relative w-full h-full bg-black group/container flex items-center justify-center overflow-hidden font-body-md"
+      className="absolute inset-0 w-full h-full bg-black group/container flex items-center justify-center overflow-hidden font-body-md"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
       <video
         ref={videoRef}
-        src={src}
-        crossOrigin="anonymous"
         className="w-full h-full object-contain absolute inset-0"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onWaiting={() => setIsBuffering(true)}
+        onPlaying={() => { setIsPlaying(true); setIsBuffering(false); }}
+        onCanPlay={() => setIsBuffering(false)}
+        onLoadStart={() => setIsBuffering(true)}
         onClick={togglePlay}
         autoPlay
       />
 
+      {/* Buffering Animation */}
+      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-500 z-10 ${isBuffering ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="relative flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-white/10 rounded-full"></div>
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0 drop-shadow-[0_0_15px_rgba(255,182,142,0.6)]"></div>
+        </div>
+      </div>
+
+      {/* In-Platform Toast Notification */}
+      <div className={`absolute top-6 left-1/2 -translate-x-1/2 bg-surface-container-highest/90 backdrop-blur-xl border border-white/10 text-white px-5 py-3 rounded-2xl text-xs font-bold pointer-events-none transition-all duration-300 z-50 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex items-center gap-3 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <Info size={16} className="text-primary" />
+        {toastMessage}
+      </div>
+
       {/* Play/Pause Center Animation (optional, adds to seamless feel) */}
-      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${!isPlaying && showControls ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${!isPlaying && showControls && !isBuffering ? 'opacity-100' : 'opacity-0'}`}>
         <div className="w-20 h-20 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white">
           <Play fill="currentColor" size={40} className="ml-2" />
         </div>
@@ -255,19 +284,54 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
                   </Slider.Root>
                 </div>
               </div>
-
-              {/* Volume Boost Toggle */}
-              <button 
-                onClick={() => setIsBoosted(!isBoosted)} 
-                className={`flex items-center gap-1 text-[11px] font-bold px-2 py-1.5 rounded transition-colors drop-shadow-md ${isBoosted ? 'bg-primary text-white border border-primary/50 shadow-[0_0_10px_rgba(255,182,142,0.5)]' : 'bg-white/10 text-white/90 hover:bg-white/20 hover:text-white border border-white/10'}`}
-                title="Boost Volume to 200%"
-              >
-                <Zap size={14} fill={isBoosted ? "currentColor" : "none"} />
-                200% BOOST
-              </button>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-5">
+              {/* Video Quality Settings */}
+              {availableQualities.length > 0 ? (
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <button className="text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md flex items-center gap-1 text-xs font-bold bg-white/10 px-2 py-1.5 rounded-lg border border-white/10">
+                      <Settings size={16} />
+                      {currentQuality === -1 ? 'Auto' : `${availableQualities.find(q => q.level === currentQuality)?.height}p`}
+                    </button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content 
+                      className="min-w-[120px] bg-surface-container-lowest/95 backdrop-blur-xl rounded-xl p-1 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-black/10 animate-in fade-in zoom-in-95 font-body-md z-50 mb-2"
+                      side="top"
+                      align="end"
+                      sideOffset={15}
+                    >
+                      <DropdownMenu.Item 
+                        onClick={() => changeQuality(-1)}
+                        className={`text-sm px-4 py-2 outline-none cursor-pointer rounded-lg transition-colors ${currentQuality === -1 ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface hover:bg-black/5'}`}
+                      >
+                        Auto Quality
+                      </DropdownMenu.Item>
+                      {availableQualities.map((q) => (
+                        <DropdownMenu.Item 
+                          key={q.level}
+                          onClick={() => changeQuality(q.level)}
+                          className={`text-sm px-4 py-2 outline-none cursor-pointer rounded-lg transition-colors ${currentQuality === q.level ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface hover:bg-black/5'}`}
+                        >
+                          {q.height}p
+                        </DropdownMenu.Item>
+                      ))}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+              ) : (
+                <button 
+                  onClick={() => showToast("Quality switching is fixed by the source for this format.")}
+                  className="text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md flex items-center gap-1 text-xs font-bold bg-white/5 px-2 py-1.5 rounded-lg border border-white/5 opacity-80"
+                  title="Settings (Quality fixed)"
+                >
+                  <Settings size={16} />
+                  Auto
+                </button>
+              )}
+
               {/* Playback Speed */}
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
