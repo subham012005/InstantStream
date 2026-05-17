@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
         method: "HEAD",
         signal: controller.signal,
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; InstantStream/1.0)",
+          "User-Agent": "Mozilla/5.0 (compatible; fluxplays.live/1.0)",
           "Range": "bytes=0-0",
         },
       });

@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import * as Slider from '@radix-ui/react-slider';
 import Hls from 'hls.js';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Play, Pause, Volume2, VolumeX, FastForward, Rewind, Maximize, Minimize, Volume1, Settings, Info } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, FastForward, Rewind, Maximize, Minimize, Volume1, Settings, Info, PictureInPicture } from 'lucide-react';
 
 interface CustomPlayerProps {
   src: string;
@@ -97,6 +97,18 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
     if (videoRef.current) {
       videoRef.current.playbackRate = rate;
       setPlaybackRate(rate);
+    }
+  };
+
+  const togglePip = async () => {
+    try {
+      if (videoRef.current !== document.pictureInPictureElement) {
+        await videoRef.current?.requestPictureInPicture();
+      } else {
+        await document.exitPictureInPicture();
+      }
+    } catch (err) {
+      showToast("Picture-in-Picture is not supported or was blocked.");
     }
   };
 
@@ -359,7 +371,11 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
 
-              <button onClick={toggleFullscreen} className="text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md">
+              <button onClick={togglePip} className="text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Picture in Picture">
+                <PictureInPicture size={20} />
+              </button>
+
+              <button onClick={toggleFullscreen} className="text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Fullscreen">
                 {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
               </button>
             </div>
