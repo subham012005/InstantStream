@@ -13,6 +13,7 @@ export default function Home() {
   const [recentStreams, setRecentStreams] = useState<{url: string, title: string, type: string, date: number}[]>([]);
   const [shake, setShake] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
+  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
   const isValidUrl = url.length > 5 && (url.startsWith('http') || url.startsWith('magnet:'));
 
@@ -423,13 +424,34 @@ export default function Home() {
               { q: 'Why is my video link not working?', a: 'Common reasons include: the link has expired, the URL doesn\'t point to a direct video file, the source server requires authentication, or the format isn\'t supported by your browser. Make sure the link is a direct video URL (ending in .mp4, .webm, etc.) or a supported platform link.' },
               { q: 'Is fluxplays.live secure to use?', a: 'Yes. Video links are requested directly from your browser — no content passes through our servers unnecessarily. Your recent streams are stored only locally. We don\'t download or re-host any video files.' },
             ].map((faq, i) => (
-              <details key={i} className="group border border-black/5 dark:border-white/5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02]">
-                <summary className="flex justify-between items-center p-5 cursor-pointer list-none">
+              <div key={i} className="border border-black/5 dark:border-white/5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] overflow-hidden">
+                <button
+                  onClick={() => setActiveFaqIndex(activeFaqIndex === i ? null : i)}
+                  className="w-full flex justify-between items-center p-5 text-left transition-colors duration-200 hover:bg-black/[0.01] dark:hover:bg-white/[0.01]"
+                >
                   <span className="font-semibold text-on-surface text-sm md:text-base pr-4">{faq.q}</span>
-                  <span className="material-symbols-outlined group-open:rotate-180 transition-transform text-on-surface-variant shrink-0">expand_more</span>
-                </summary>
-                <div className="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed">{faq.a}</div>
-              </details>
+                  <motion.span 
+                    animate={{ rotate: activeFaqIndex === i ? 180 : 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="material-symbols-outlined text-on-surface-variant shrink-0"
+                  >
+                    expand_more
+                  </motion.span>
+                </button>
+                <motion.div
+                  initial={false}
+                  animate={{ 
+                    height: activeFaqIndex === i ? "auto" : 0,
+                    opacity: activeFaqIndex === i ? 1 : 0 
+                  }}
+                  transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed border-t border-black/[0.03] dark:border-white/[0.03] pt-4">
+                    {faq.a}
+                  </div>
+                </motion.div>
+              </div>
             ))}
           </div>
         </section>
