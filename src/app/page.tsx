@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CustomPlayer from "@/components/CustomPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
+import { FeedbackModal } from "@/components/FeedbackModal";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -15,6 +16,7 @@ export default function Home() {
   const [shake, setShake] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const isValidUrl = url.length > 5 && (url.startsWith('http') || url.startsWith('magnet:'));
 
@@ -85,6 +87,7 @@ export default function Home() {
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#how-it-works">How it works</a>
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#formats">Supported Formats</a>
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#coming-soon">Roadmap</a>
+            <button onClick={() => setIsFeedbackOpen(true)} className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0 outline-none">Feedback & Bugs</button>
           </nav>
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -616,6 +619,7 @@ export default function Home() {
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="#how-it-works">How it works</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="#formats">Supported formats</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="#coming-soon">Roadmap</a>
+                  <button onClick={() => setIsFeedbackOpen(true)} className="text-on-surface-variant hover:text-primary transition-colors text-left bg-transparent border-none p-0 outline-none cursor-pointer">Report Bug / Suggestion</button>
                 </nav>
               </div>
               <div>
@@ -641,6 +645,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      
+      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
     </>
   );
 }
