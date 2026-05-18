@@ -18,11 +18,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: article.metaTitle,
     description: article.metaDescription,
-    alternates: { canonical: `https://fluxplays.live/blog/${slug}` },
+    alternates: { canonical: `https://fluxplays.vercel.app/blog/${slug}` },
     openGraph: {
       title: article.metaTitle,
       description: article.metaDescription,
-      url: `https://fluxplays.live/blog/${slug}`,
+      url: `https://fluxplays.vercel.app/blog/${slug}`,
       type: "article",
     },
   };
@@ -43,9 +43,9 @@ export default async function ArticlePage({ params }: Props) {
     headline: article.title,
     description: article.metaDescription,
     author: { "@type": "Organization", name: "fluxplays.live" },
-    publisher: { "@type": "Organization", name: "fluxplays.live", url: "https://fluxplays.live" },
+    publisher: { "@type": "Organization", name: "fluxplays.live", url: "https://fluxplays.vercel.app" },
     datePublished: "2026-05-18",
-    url: `https://fluxplays.live/blog/${slug}`,
+    url: `https://fluxplays.vercel.app/blog/${slug}`,
   };
 
   return (

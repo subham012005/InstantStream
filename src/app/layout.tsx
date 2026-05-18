@@ -3,7 +3,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fluxplays.live"),
+  metadataBase: new URL("https://fluxplays.vercel.app"),
   title: {
     default: "fluxplays.live — Paste Any Video Link. Stream Instantly.",
     template: "%s | fluxplays.live",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://fluxplays.live",
+    url: "https://fluxplays.vercel.app",
     siteName: "fluxplays.live",
     title: "fluxplays.live — Paste Any Video Link. Stream Instantly.",
     description:
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     creator: "@fluxplays",
   },
   alternates: {
-    canonical: "https://fluxplays.live",
+    canonical: "https://fluxplays.vercel.app",
   },
 };
 
@@ -91,7 +91,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebApplication",
               name: "fluxplays.live",
-              url: "https://fluxplays.live",
+              url: "https://fluxplays.vercel.app",
               description:
                 "Paste any video link and stream it instantly in your browser. No downloads needed.",
               applicationCategory: "MultimediaApplication",

@@ -6,11 +6,11 @@ export const metadata: Metadata = {
   title: "Blog — Streaming Guides & Tutorials | fluxplays.live",
   description:
     "Learn how to stream videos online, understand video formats, and get the most out of browser-based video streaming. Free guides from fluxplays.live.",
-  alternates: { canonical: "https://fluxplays.live/blog" },
+  alternates: { canonical: "https://fluxplays.vercel.app/blog" },
   openGraph: {
     title: "Blog — Streaming Guides & Tutorials | fluxplays.live",
     description: "Browser streaming guides, video format comparisons, and tutorials.",
-    url: "https://fluxplays.live/blog",
+    url: "https://fluxplays.vercel.app/blog",
   },
 };
 
