@@ -83,6 +83,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WD5DJHHT');`,
           }}
         />
+        {/* Bing Webmaster Verification */}
+        <meta name="msvalidate.01" content="34F600811BDD9E429D675B2E52369FA0" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
