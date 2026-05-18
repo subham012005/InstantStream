@@ -221,6 +221,38 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          (activeEl as HTMLElement).isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        skip(5);
+        showToast("Skipped 5s");
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        skip(-5);
+        showToast("Rewound 5s");
+      } else if (e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        togglePlay();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const formatTime = (time: number) => {
     if (isNaN(time)) return "00:00";
     const min = Math.floor(time / 60);
@@ -277,11 +309,37 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
         {toastMessage}
       </div>
 
-      {/* Play/Pause Center Animation (optional, adds to seamless feel) */}
-      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${!isPlaying && showControls && !isBuffering ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="w-20 h-20 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white">
-          <Play fill="currentColor" size={40} className="ml-2" />
-        </div>
+      {/* Center Interactive Overlay Controls (Skip & Play/Pause for Mobile & Desktop) */}
+      <div 
+        className={`absolute inset-0 flex items-center justify-center gap-8 pointer-events-none transition-opacity duration-300 z-20 ${showControls && !isBuffering ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <button 
+          onClick={(e) => { e.stopPropagation(); skip(-5); showToast("Rewound 5s"); }} 
+          className="pointer-events-auto w-12 h-12 md:w-14 md:h-14 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-primary/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-primary transition-all active:scale-90 hover:scale-105 shadow-lg"
+          title="Rewind 5s"
+        >
+          <Rewind fill="currentColor" size={20} className="md:w-6 md:h-6" />
+        </button>
+
+        <button 
+          onClick={(e) => { e.stopPropagation(); togglePlay(); }} 
+          className="pointer-events-auto w-16 h-16 md:w-20 md:h-20 bg-black/50 hover:bg-black/70 border border-white/20 hover:border-primary/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-primary transition-all active:scale-90 hover:scale-105 shadow-xl"
+          title={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? (
+            <Pause fill="currentColor" size={28} className="md:w-9 md:h-9" />
+          ) : (
+            <Play fill="currentColor" size={28} className="ml-1 md:w-9 md:h-9 md:ml-2" />
+          )}
+        </button>
+
+        <button 
+          onClick={(e) => { e.stopPropagation(); skip(5); showToast("Skipped 5s"); }} 
+          className="pointer-events-auto w-12 h-12 md:w-14 md:h-14 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-primary/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-primary transition-all active:scale-90 hover:scale-105 shadow-lg"
+          title="Skip 5s"
+        >
+          <FastForward fill="currentColor" size={20} className="md:w-6 md:h-6" />
+        </button>
       </div>
 
       {/* Overlay controls */}
