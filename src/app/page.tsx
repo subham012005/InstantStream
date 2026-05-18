@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomPlayer from "@/components/CustomPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
+import Logo from "@/components/Logo";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -76,7 +77,10 @@ export default function Home() {
       {/* TopNavBar */}
       <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-[32px] border-b border-black/5 dark:border-white/5">
         <div className="flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto h-16">
-          <a href="/" className="font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">fluxplays.live</a>
+          <a href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
+            <Logo className="w-8 h-8" />
+            <span>fluxplays.live</span>
+          </a>
           <nav className="hidden md:flex items-center gap-6">
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#how-it-works">How it works</a>
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#formats">Supported Formats</a>
@@ -522,7 +526,10 @@ export default function Home() {
         <div className="px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-8 mb-10">
             <div className="max-w-xs">
-              <span className="font-display-lg text-headline-md tracking-tighter text-on-surface mb-3 block">fluxplays.live</span>
+              <span className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface mb-3 block">
+                <Logo className="w-8 h-8" />
+                <span>fluxplays.live</span>
+              </span>
               <p className="text-on-surface-variant text-sm leading-relaxed">A modern utility for instantly streaming videos online. Paste a link, watch instantly.</p>
             </div>
             <div className="grid grid-cols-2 gap-8 text-sm">

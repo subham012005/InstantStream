@@ -1,6 +1,7 @@
 import { getArticle, articles } from "../articles";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Logo from "@/components/Logo";
 import type { Metadata } from "next";
 
 interface Props {
@@ -56,8 +57,9 @@ export default async function ArticlePage({ params }: Props) {
       {/* Header */}
       <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
         <div className="max-w-[1200px] mx-auto flex justify-between items-center">
-          <Link href="/" className="font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
-            fluxplays.live
+          <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
+            <Logo className="w-8 h-8" />
+            <span>fluxplays.live</span>
           </Link>
           <Link href="/blog" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
             <span className="material-symbols-outlined text-base">arrow_back</span>
@@ -152,7 +154,10 @@ export default async function ArticlePage({ params }: Props) {
 
       <footer className="border-t border-black/5 dark:border-white/5 py-8 px-6 md:px-16 mt-10">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-on-surface-variant">
-          <span>© 2026 fluxplays.live</span>
+          <span className="flex items-center gap-2">
+            <Logo className="w-6 h-6" />
+            <span>© 2026 fluxplays.live</span>
+          </span>
           <div className="flex gap-5">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
