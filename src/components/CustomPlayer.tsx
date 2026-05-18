@@ -183,11 +183,15 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
       hls = new Hls({
         enableWorker: true,
         lowLatencyMode: true,
-        maxBufferLength: 10,
-        maxMaxBufferLength: 20,
-        backBufferLength: 10,
-        maxStarvationDelay: 2,
-        appendErrorMaxRetry: 5,
+        progressive: true,             // Decodes segments on-the-fly while downloading
+        maxBufferLength: 4,            // Keeps buffer short (4s) to resume playback instantly
+        maxMaxBufferLength: 8,         // Limits pre-buffering overhead to save network speed
+        backBufferLength: 5,           // Discards played video data rapidly to free up memory
+        maxStarvationDelay: 1,         // Reduces buffer starvation freeze times
+        appendErrorMaxRetry: 8,
+        liveSyncDurationCount: 2,      // syncs close to edge for live streams
+        fragLoadingMaxRetry: 5,        // Rapidly retries segment packets on failure
+        levelLoadingMaxRetry: 5,
       });
       hlsRef.current = hls;
       hls.loadSource(src);
@@ -288,6 +292,8 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
         onStalled={() => setIsBuffering(true)}
         onClick={togglePlay}
         autoPlay
+        crossOrigin="anonymous"
+        preload="metadata"
       />
 
       {/* Buffering Animation */}
