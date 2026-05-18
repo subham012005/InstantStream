@@ -110,8 +110,8 @@ export default function Home() {
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
               <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest">Free · No Signup · Works Instantly</span>
             </div>
-            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg mb-5 leading-tight">Paste Any Video Link.<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Stream Instantly.</span></h1>
-            <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant mb-10 max-w-xl mx-auto">Watch videos online without downloading. Works with MP4, Google Drive, Telegram, HLS streams, and direct video URLs.</p>
+            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg mb-5 leading-tight">Paste Any Video Link.<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Stream Instantly Online.</span></h1>
+            <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto">Watch videos online instantly without downloading. The ultimate free web player to stream direct video links, Google Drive shared videos, Telegram CDN video links, live HLS (m3u8) streams, and progressive MP4/WebM files with maximum speed.</p>
             
             {/* Futuristic Action Area */}
             <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
@@ -498,10 +498,6 @@ export default function Home() {
                     >
                       <span className="material-symbols-outlined">{isTheaterMode ? 'fullscreen_exit' : 'fullscreen'}</span>
                       <span>{isTheaterMode ? 'Exit Theater' : 'Theater Mode'}</span>
-                    </button>
-                    <button className="flex items-center gap-2 px-6 py-3 bg-surface-container border border-black/10 rounded-xl hover:bg-surface-dim transition-colors font-bold text-on-surface">
-                      <span className="material-symbols-outlined">cast</span>
-                      <span className="hidden sm:inline">Cast</span>
                     </button>
                     <a
                       href={streamData.streamUrl}
