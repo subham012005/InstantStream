@@ -499,10 +499,16 @@ export default function Home() {
                       <span className="material-symbols-outlined">cast</span>
                       <span className="hidden sm:inline">Cast</span>
                     </button>
-                    <button className="flex items-center gap-2 px-6 py-3 premium-button-gradient text-on-primary-container shadow-lg rounded-xl hover:scale-105 active:scale-95 transition-all font-bold">
+                    <a
+                      href={streamData.streamUrl}
+                      download={streamData.title || "video"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-6 py-3 premium-button-gradient text-on-primary-container shadow-lg rounded-xl hover:scale-105 active:scale-95 transition-all font-bold"
+                    >
                       <span className="material-symbols-outlined">download</span>
                       <span className="hidden sm:inline">Download</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
