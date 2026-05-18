@@ -106,6 +106,8 @@ export async function POST(req: NextRequest) {
         contentType.includes("webm") ||
         contentType.includes("mkv") ||
         contentType.includes("mpeg") ||
+        contentType.includes("mpegurl") ||
+        contentType.includes("apple.mpegurl") ||
         // Also allow if extension is a known video type even if content-type is wrong
         ["MP4", "MKV", "WEBM", "AVI", "MOV", "M3U8", "OGG", "TS", "FLV"].includes(
           parsedUrl.pathname.split(".").pop()?.toUpperCase() || ""
@@ -114,6 +116,13 @@ export async function POST(req: NextRequest) {
       if (!headRes.ok && headRes.status !== 206 && headRes.status !== 416) {
         return NextResponse.json(
           { error: `Link returned HTTP ${headRes.status}. It may be private or expired.` },
+          { status: 400 }
+        );
+      }
+
+      if (!isVideo) {
+        return NextResponse.json(
+          { error: "The provided link is not a direct video stream or supported video file." },
           { status: 400 }
         );
       }
