@@ -15,9 +15,47 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   const [description, setDescription] = useState("");
   const [email, setEmail] = useState("");
   
+  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    const file = files[0];
+    
+    // Safety check: Limit to 5MB max
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Screenshot file is too large. Max size is 5MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    setError("");
+
+    const body = new FormData();
+    body.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body
+      });
+
+      if (!res.ok) {
+        throw new Error("Upload failed on server proxy");
+      }
+
+      const data = await res.json();
+      setPhotoProof(data.url);
+    } catch (err) {
+      setError("Failed to upload screenshot. Please try again or provide an external image link.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,15 +218,47 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
-                      Screenshot Link (Optional)
+                      Screenshot / Image proof (Optional)
                     </label>
-                    <input
-                      type="text"
-                      value={photoProof}
-                      onChange={(e) => setPhotoProof(e.target.value)}
-                      placeholder="Imgur or postimg link"
-                      className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/40"
-                    />
+                    
+                    {isUploading ? (
+                      <div className="w-full bg-surface-container-high border border-dashed border-primary/30 rounded-xl px-4 py-3 text-sm text-on-surface-variant flex items-center justify-center gap-2 h-[46px]">
+                        <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                        <span className="text-xs font-medium">Uploading image...</span>
+                      </div>
+                    ) : photoProof ? (
+                      <div className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 rounded-xl px-3 py-2 text-sm text-on-surface flex items-center justify-between gap-2 h-[46px]">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <img src={photoProof} alt="proof preview" className="w-6 h-6 object-cover rounded-md border border-black/10 dark:border-white/10 shrink-0" />
+                          <span className="text-xs text-primary font-bold truncate">Uploaded successfully!</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setPhotoProof("")}
+                          className="text-error hover:text-error/80 text-xs font-bold shrink-0 flex items-center gap-0.5 bg-transparent border-none outline-none cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          id="feedback-image-upload"
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="feedback-image-upload"
+                          className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm text-on-surface-variant hover:text-on-surface cursor-pointer flex items-center justify-center gap-2 h-[46px] transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+                          <span className="text-xs font-semibold">Choose screenshot file</span>
+                        </label>
+                      </div>
+                    )}
                   </div>
                 </div>
 
