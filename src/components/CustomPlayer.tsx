@@ -23,17 +23,49 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isBuffering, setIsBuffering] = useState(true);
+  const [isScrubbing, setIsScrubbing] = useState(false);
   const [availableQualities, setAvailableQualities] = useState<{height: number, level: number}[]>([]);
   const [currentQuality, setCurrentQuality] = useState<number>(-1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const hlsRef = useRef<Hls | null>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSeekTimeRef = useRef<number>(0);
+  const seekTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showToast = (message: string) => {
     setToastMessage(message);
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     toastTimeoutRef.current = setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const throttleSeek = (time: number) => {
+    const now = Date.now();
+    const timeSinceLastSeek = now - lastSeekTimeRef.current;
+
+    // Clear any pending debounced seek
+    if (seekTimeoutRef.current) {
+      clearTimeout(seekTimeoutRef.current);
+      seekTimeoutRef.current = null;
+    }
+
+    if (timeSinceLastSeek >= 250) {
+      // Seek instantly for minimum possible latency on clicks and initial drag touches
+      if (videoRef.current) {
+        videoRef.current.currentTime = time;
+        videoRef.current.play().catch(() => {});
+      }
+      lastSeekTimeRef.current = now;
+    } else {
+      // Debounce during rapid dragging to prevent network request saturation
+      seekTimeoutRef.current = setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.currentTime = time;
+          videoRef.current.play().catch(() => {});
+        }
+        lastSeekTimeRef.current = Date.now();
+      }, 150);
+    }
   };
 
   const changeQuality = (level: number) => {
@@ -56,7 +88,7 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
   };
 
   const handleTimeUpdate = () => {
-    if (videoRef.current) {
+    if (videoRef.current && !isScrubbing && !videoRef.current.seeking) {
       setProgress(videoRef.current.currentTime);
     }
   };
@@ -148,7 +180,15 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
 
     // Support for HLS streams
     if (Hls.isSupported() && (src.includes('.m3u8') || src.includes('.ts'))) {
-      hls = new Hls();
+      hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+        maxBufferLength: 10,
+        maxMaxBufferLength: 20,
+        backBufferLength: 10,
+        maxStarvationDelay: 2,
+        appendErrorMaxRetry: 5,
+      });
       hlsRef.current = hls;
       hls.loadSource(src);
       hls.attachMedia(video);
@@ -177,6 +217,7 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
     return () => {
       if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
       if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current);
     };
   }, []);
 
@@ -196,7 +237,9 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
     >
       <video
         ref={videoRef}
-        className="w-full h-full object-contain absolute inset-0"
+        className={`w-full h-full object-contain absolute inset-0 transition-all duration-500 ${
+          isBuffering ? 'blur-md scale-[0.99] opacity-70' : 'blur-0 scale-100 opacity-100'
+        }`}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
@@ -205,16 +248,26 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
         onWaiting={() => setIsBuffering(true)}
         onPlaying={() => { setIsPlaying(true); setIsBuffering(false); }}
         onCanPlay={() => setIsBuffering(false)}
+        onCanPlayThrough={() => setIsBuffering(false)}
+        onSeeking={() => setIsBuffering(true)}
+        onSeeked={() => setIsBuffering(false)}
         onLoadStart={() => setIsBuffering(true)}
+        onLoadedData={() => setIsBuffering(false)}
+        onStalled={() => setIsBuffering(true)}
         onClick={togglePlay}
         autoPlay
       />
 
       {/* Buffering Animation */}
-      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-500 z-10 ${isBuffering ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="relative flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-white/10 rounded-full"></div>
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0 drop-shadow-[0_0_15px_rgba(255,182,142,0.6)]"></div>
+      <div className={`absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 z-10 ${isBuffering ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative flex items-center justify-center">
+            <div className="w-16 h-16 border-4 border-white/10 rounded-full animate-pulse"></div>
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0 drop-shadow-[0_0_15px_rgba(255,182,142,0.6)]"></div>
+          </div>
+          <span className="text-white/90 font-bold tracking-widest text-xs uppercase animate-pulse select-none bg-black/60 px-4 py-1.5 rounded-full border border-white/10 backdrop-blur-md shadow-lg">
+            Buffering
+          </span>
         </div>
       </div>
 
@@ -248,9 +301,19 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
               max={duration || 100}
               step={0.1}
               onValueChange={(val) => {
+                setIsScrubbing(true);
+                setProgress(val[0]);
+                throttleSeek(val[0]);
+              }}
+              onValueCommit={(val) => {
                 if (videoRef.current) {
                   videoRef.current.currentTime = val[0];
                   setProgress(val[0]);
+                  videoRef.current.play().catch(() => {});
+                }
+                setIsScrubbing(false);
+                if (seekTimeoutRef.current) {
+                  clearTimeout(seekTimeoutRef.current);
                 }
               }}
             >
