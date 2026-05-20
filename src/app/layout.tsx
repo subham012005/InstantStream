@@ -108,6 +108,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WD5DJHHT');`,
           }}
         />
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-H7J24Y6QDM"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-H7J24Y6QDM');
+            `,
+          }}
+        />
+
         {/* Bing Webmaster Verification */}
         <meta name="msvalidate.01" content="34F600811BDD9E429D675B2E52369FA0" />
 
