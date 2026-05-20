@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Logo from "@/components/Logo";
 import type { Metadata } from "next";
+import { ArrowLeft, Calendar, Clock, Play } from "lucide-react";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -62,7 +63,7 @@ export default async function ArticlePage({ params }: Props) {
             <span>fluxplays.live</span>
           </Link>
           <Link href="/blog" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-base">arrow_back</span>
+            <ArrowLeft className="w-4 h-4" />
             All articles
           </Link>
         </div>
@@ -70,7 +71,7 @@ export default async function ArticlePage({ params }: Props) {
 
       <main className="max-w-[720px] mx-auto px-6 md:px-8 py-14">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-on-surface-variant/60 mb-8">
+        <nav className="flex items-center gap-2 text-xs text-on-surface-variant mb-8">
           <Link href="/" className="hover:text-primary transition-colors">Home</Link>
           <span>/</span>
           <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
@@ -90,10 +91,10 @@ export default async function ArticlePage({ params }: Props) {
 
         {/* Date + read time */}
         <div className="flex items-center gap-3 text-sm text-on-surface-variant mb-8 pb-8 border-b border-black/5 dark:border-white/5">
-          <span className="material-symbols-outlined text-base">calendar_today</span>
+          <Calendar className="w-4 h-4" />
           <span>{article.date}</span>
           <span>·</span>
-          <span className="material-symbols-outlined text-base">schedule</span>
+          <Clock className="w-4 h-4" />
           <span>{article.readTime}</span>
         </div>
 
@@ -126,7 +127,7 @@ export default async function ArticlePage({ params }: Props) {
             href="/"
             className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all text-sm"
           >
-            <span className="material-symbols-outlined text-base">play_circle</span>
+            <Play className="w-4 h-4 fill-current" />
             Stream a Video Free
           </Link>
         </div>

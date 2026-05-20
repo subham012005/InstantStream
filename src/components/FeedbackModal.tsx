@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { MessageSquare, X, CheckCircle2, AlertTriangle, ChevronsUpDown, Trash2, ImagePlus, Send } from "lucide-react";
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -135,14 +136,14 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             {/* Header */}
             <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-4 mb-6">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-2xl">rate_review</span>
+                <MessageSquare className="text-primary w-6 h-6" />
                 <h3 className="font-headline-md text-on-surface text-xl">Feedback & Reports</h3>
               </div>
               <button
                 onClick={onClose}
                 className="w-8 h-8 rounded-full flex items-center justify-center bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                <span className="material-symbols-outlined text-[20px]">close</span>
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -154,7 +155,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                 className="text-center py-8"
               >
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="material-symbols-outlined text-primary text-4xl animate-bounce">check_circle</span>
+                  <CheckCircle2 className="text-primary w-10 h-10 animate-bounce" />
                 </div>
                 <h4 className="font-headline-md text-on-surface text-lg mb-2">Thank you so much!</h4>
                 <p className="text-on-surface-variant font-body-md text-sm max-w-sm mx-auto mb-8">
@@ -175,7 +176,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               <form onSubmit={handleSubmit} className="space-y-4 text-left">
                 {error && (
                   <div className="p-3 bg-error/10 border border-error/20 rounded-xl text-error text-xs flex gap-2 items-center">
-                    <span className="material-symbols-outlined text-sm">error</span>
+                    <AlertTriangle className="w-4 h-4" />
                     <span>{error}</span>
                   </div>
                 )}
@@ -196,9 +197,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                       <option value="⚡ Stream Performance Issue">⚡ Stream Performance Issue</option>
                       <option value="❓ Other / General Feedback">❓ Other / General Feedback</option>
                     </select>
-                    <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">
-                      unfold_more
-                    </span>
+                    <ChevronsUpDown className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none w-5 h-5" />
                   </div>
                 </div>
 
@@ -237,7 +236,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                           onClick={() => setPhotoProof("")}
                           className="text-error hover:text-error/80 text-xs font-bold shrink-0 flex items-center gap-0.5 bg-transparent border-none outline-none cursor-pointer"
                         >
-                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                          <Trash2 className="w-4 h-4" />
                           <span>Delete</span>
                         </button>
                       </div>
@@ -254,7 +253,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                           htmlFor="feedback-image-upload"
                           className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm text-on-surface-variant hover:text-on-surface cursor-pointer flex items-center justify-center gap-2 h-[46px] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+                          <ImagePlus className="w-5 h-5" />
                           <span className="text-xs font-semibold">Choose screenshot file</span>
                         </label>
                       </div>
@@ -312,7 +311,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                       </>
                     ) : (
                       <>
-                        <span className="material-symbols-outlined text-[18px]">send</span>
+                        <Send className="w-4 h-4" />
                         <span>Submit</span>
                       </>
                     )}

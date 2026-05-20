@@ -2,6 +2,7 @@ import { articles } from "./articles";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Logo from "@/components/Logo";
+import { ArrowLeft, FileText, Play } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Blog — Streaming Guides & Tutorials | fluxplays.live",
@@ -26,7 +27,7 @@ export default function BlogPage() {
             <span>fluxplays.live</span>
           </Link>
           <Link href="/" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-base">arrow_back</span>
+            <ArrowLeft className="w-4 h-4" />
             Back to player
           </Link>
         </div>
@@ -53,7 +54,7 @@ export default function BlogPage() {
               className="group glass-panel rounded-2xl border border-black/5 dark:border-white/5 hover:border-primary/20 overflow-hidden transition-all duration-300 flex flex-col"
             >
               <div className="h-44 bg-gradient-to-br from-primary/10 via-surface-container to-secondary/5 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary/30 text-7xl">article</span>
+                <FileText className="w-16 h-16 text-primary/30" />
               </div>
               <div className="p-6 flex flex-col flex-1">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">
@@ -64,7 +65,7 @@ export default function BlogPage() {
                 </h2>
                 <p className="text-on-surface-variant text-sm leading-relaxed flex-1">{post.intro.slice(0, 120)}…</p>
                 <div className="flex items-center justify-between mt-5">
-                  <div className="flex items-center gap-2 text-xs text-on-surface-variant/60">
+                  <div className="flex items-center gap-2 text-xs text-on-surface-variant">
                     <span>{post.date}</span>
                     <span>·</span>
                     <span>{post.readTime}</span>
@@ -86,7 +87,7 @@ export default function BlogPage() {
             href="/"
             className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all"
           >
-            <span className="material-symbols-outlined text-base">play_circle</span>
+            <Play className="w-4 h-4 fill-current" />
             Start Streaming Free
           </Link>
         </div>

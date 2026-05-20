@@ -63,17 +63,17 @@
   --spacing-stack-md: 24px;
   --spacing-stack-lg: 48px;
 
-  --font-body-lg: "Geist", sans-serif;
-  --font-headline-lg: "Geist", sans-serif;
-  --font-headline-md: "Geist", sans-serif;
-  --font-body-md: "Geist", sans-serif;
-  --font-headline-lg-mobile: "Geist", sans-serif;
-  --font-display-lg: "Geist", sans-serif;
-  --font-label-sm: "JetBrains Mono", monospace;
-  --font-headline: "EB Garamond", serif;
-  --font-display: "EB Garamond", serif;
-  --font-body: "Manrope", sans-serif;
-  --font-label: "Manrope", sans-serif;
+  --font-body-lg: var(--font-geist-sans), sans-serif;
+  --font-headline-lg: var(--font-geist-sans), sans-serif;
+  --font-headline-md: var(--font-geist-sans), sans-serif;
+  --font-body-md: var(--font-geist-sans), sans-serif;
+  --font-headline-lg-mobile: var(--font-geist-sans), sans-serif;
+  --font-display-lg: var(--font-geist-sans), sans-serif;
+  --font-label-sm: var(--font-jetbrains-mono), monospace;
+  --font-headline: var(--font-geist-sans), sans-serif;
+  --font-display: var(--font-geist-sans), sans-serif;
+  --font-body: var(--font-geist-sans), sans-serif;
+  --font-label: var(--font-geist-sans), sans-serif;
 
   --text-body-lg: 18px;
   --text-body-lg--line-height: 1.6;
@@ -167,9 +167,7 @@
 }
 
 @layer utilities {
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  }
+
 
   .glass-panel {
     background: rgba(26, 26, 26, 0.02);

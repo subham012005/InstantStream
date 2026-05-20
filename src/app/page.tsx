@@ -6,6 +6,13 @@ import CustomPlayer from "@/components/CustomPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 import { FeedbackModal } from "@/components/FeedbackModal";
+import Image from "next/image";
+import { 
+  ArrowLeft, CheckCircle2, Link2, X, History, Play, Video, Tv, HardDrive, Send, 
+  Download, Subtitles, Rocket, Zap, CloudOff, Gauge, Smartphone, Server, 
+  Activity, Languages, Users, Bookmark, Compass, Sparkles, FileText, 
+  ChevronDown, Minimize2, Maximize2, AlertTriangle, List
+} from "lucide-react";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -126,9 +133,11 @@ export default function Home() {
                 <div className="relative w-full group">
                   <div className={`absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-tertiary rounded-xl opacity-20 group-focus-within:opacity-60 transition duration-500 blur ${isValidUrl ? 'opacity-40 animate-pulse' : ''}`}></div>
                   <div className="relative flex items-center bg-surface-container-low border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 transition-colors group-focus-within:border-primary/30">
-                    <span className={`material-symbols-outlined mr-2 transition-colors ${isValidUrl ? 'text-primary' : 'text-on-surface-variant'}`}>
-                      {isValidUrl ? 'check_circle' : 'link'}
-                    </span>
+                    {isValidUrl ? (
+                      <CheckCircle2 className="mr-2 transition-colors text-primary w-5 h-5 shrink-0" />
+                    ) : (
+                      <Link2 className="mr-2 transition-colors text-on-surface-variant w-5 h-5 shrink-0" />
+                    )}
                     <input 
                       className="bg-transparent border-none text-on-surface focus:ring-0 w-full placeholder:text-on-surface-variant/40 font-body-md outline-none pr-8" 
                       placeholder="Paste MP4, Drive, Telegram, or video URL…" 
@@ -146,7 +155,7 @@ export default function Home() {
                           onClick={() => { setUrl(""); setError(""); }}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 hover:text-on-surface transition-colors flex items-center justify-center"
                         >
-                          <span className="material-symbols-outlined text-[18px]">close</span>
+                          <X className="w-[18px] h-[18px]" />
                         </motion.button>
                       )}
                     </AnimatePresence>
@@ -178,7 +187,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   className="w-full -mt-2 p-3 bg-error/10 border border-error/20 rounded-lg text-error text-sm text-left flex items-start gap-2"
                 >
-                  <span className="material-symbols-outlined text-error text-lg">error</span>
+                  <AlertTriangle className="text-error w-5 h-5 shrink-0" />
                   <span>{error}</span>
                 </motion.div>
               )}
@@ -191,8 +200,8 @@ export default function Home() {
                   className="w-full mt-2 flex flex-col items-center"
                 >
                   <div className="flex flex-wrap justify-center gap-2 items-center">
-                    <span className="text-xs font-label-sm uppercase tracking-wider text-on-surface-variant/60 flex items-center gap-1 mr-2">
-                      <span className="material-symbols-outlined text-[14px]">history</span>
+                    <span className="text-xs font-label-sm uppercase tracking-wider text-on-surface-variant flex items-center gap-1 mr-2">
+                      <History className="w-[14px] h-[14px]" />
                       Recent
                     </span>
                     {recentStreams.map((stream, idx) => (
@@ -202,9 +211,11 @@ export default function Home() {
                         className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-surface-container-lowest hover:bg-surface-container-low hover:border-primary/30 transition-all group cursor-pointer max-w-[200px]"
                         title={stream.title}
                       >
-                        <span className="material-symbols-outlined text-primary text-[14px]">
-                          {stream.type === 'Google Drive' ? 'drive' : 'play_circle'}
-                        </span>
+                        {stream.type === 'Google Drive' ? (
+                          <HardDrive className="text-primary w-[14px] h-[14px] shrink-0" />
+                        ) : (
+                          <Play className="text-primary w-[14px] h-[14px] fill-current shrink-0" />
+                        )}
                         <span className="text-xs font-medium text-on-surface truncate">{stream.title}</span>
                       </button>
                     ))}
@@ -219,7 +230,14 @@ export default function Home() {
           <div className="mt-20 w-full max-w-5xl relative">
             <div className="absolute -inset-4 bg-primary/20 blur-[100px] opacity-20 -z-10"></div>
             <div className="glass-panel p-2 rounded-2xl shadow-2xl">
-              <img alt="Premium Screening Interface" className="w-full h-auto rounded-xl object-cover aspect-video" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdgYtmPpTfpWQ-Z3NPWDAuyPKygh_iDYotSlPkkvaLyMTcbiV9utrK7YG5YUGDsh_Izt9TuKLW8SQes8B04DsenONQNu5n_CVzcFHgG8Ng_z8MsS7UbRn9-pvuBNj7Fl28EHAKHzikZRCUBHdRr7rygBnZvPiu9Ulf6ctVQMt800eyFXsCyhRzGyTSTfVueB_WeWdI1ttheECzRTjku4-x2VAKi2t5HZEw1N-ygZ3b4ly_7W3-S9SsEeqed_AIZKECF982S0GUm5M" />
+              <Image 
+                alt="Premium Screening Interface" 
+                className="w-full h-auto rounded-xl object-cover aspect-video" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdgYtmPpTfpWQ-Z3NPWDAuyPKygh_iDYotSlPkkvaLyMTcbiV9utrK7YG5YUGDsh_Izt9TuKLW8SQes8B04DsenONQNu5n_CVzcFHgG8Ng_z8MsS7UbRn9-pvuBNj7Fl28EHAKHzikZRCUBHdRr7rygBnZvPiu9Ulf6ctVQMt800eyFXsCyhRzGyTSTfVueB_WeWdI1ttheECzRTjku4-x2VAKi2t5HZEw1N-ygZ3b4ly_7W3-S9SsEeqed_AIZKECF982S0GUm5M" 
+                width={1000} 
+                height={563} 
+                priority 
+              />
             </div>
           </div>
         </section>
@@ -235,22 +253,25 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {[
-                { icon: 'video_file', label: 'MP4 / WEBM', desc: 'Direct video files' },
-                { icon: 'stream', label: 'HLS (m3u8)', desc: 'Live & adaptive streams' },
-                { icon: 'add_to_drive', label: 'Google Drive', desc: 'Shared drive links' },
-                { icon: 'send', label: 'Telegram', desc: 'Telegram file links' },
-                { icon: 'link', label: 'Direct URLs', desc: 'Any hosted video URL' },
-                { icon: 'cloud_download', label: 'CDN Links', desc: 'CDN-hosted video' },
-                { icon: 'subtitles', label: 'Subtitles', desc: 'SRT / VTT support' },
-                { icon: 'rocket_launch', label: 'Torrent', desc: 'Coming soon', soon: true },
-              ].map((fmt, i) => (
-                <div key={i} className={`group glass-panel p-5 rounded-2xl border border-black/5 hover:border-primary/30 transition-all duration-300 cursor-default ${fmt.soon ? 'opacity-60' : ''}`}>
-                  <span className="material-symbols-outlined text-primary text-3xl mb-3 block">{fmt.icon}</span>
-                  <p className="font-semibold text-on-surface text-sm">{fmt.label}</p>
-                  <p className="text-on-surface-variant text-xs mt-1">{fmt.desc}</p>
-                  {fmt.soon && <span className="inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider">Soon</span>}
-                </div>
-              ))}
+                { icon: Video, label: 'MP4 / WEBM', desc: 'Direct video files' },
+                { icon: Tv, label: 'HLS (m3u8)', desc: 'Live & adaptive streams' },
+                { icon: HardDrive, label: 'Google Drive', desc: 'Shared drive links' },
+                { icon: Send, label: 'Telegram', desc: 'Telegram file links' },
+                { icon: Link2, label: 'Direct URLs', desc: 'Any hosted video URL' },
+                { icon: Download, label: 'CDN Links', desc: 'CDN-hosted video' },
+                { icon: Subtitles, label: 'Subtitles', desc: 'SRT / VTT support' },
+                { icon: Rocket, label: 'Torrent', desc: 'Coming soon', soon: true },
+              ].map((fmt, i) => {
+                const IconComponent = fmt.icon;
+                return (
+                  <div key={i} className={`group glass-panel p-5 rounded-2xl border border-black/5 hover:border-primary/30 transition-all duration-300 cursor-default ${fmt.soon ? 'opacity-60' : ''}`}>
+                    <IconComponent className="text-primary w-8 h-8 mb-3 block" />
+                    <p className="font-semibold text-on-surface text-sm">{fmt.label}</p>
+                    <p className="text-on-surface-variant text-xs mt-1">{fmt.desc}</p>
+                    {fmt.soon && <span className="inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider">Soon</span>}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -267,7 +288,7 @@ export default function Home() {
             <div className="glass-panel p-8 rounded-2xl relative overflow-hidden group hover:border-primary/30 transition-all">
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center font-display-lg text-6xl text-primary/10 select-none">1</div>
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-primary">link</span>
+                <Link2 className="text-primary w-6 h-6" />
               </div>
               <h3 className="font-headline-md text-on-surface mb-4">Paste or Upload</h3>
               <p className="text-on-surface-variant font-body-md">Enter a magnet link, video URL, or drag-and-drop a torrent file into the browser.</p>
@@ -275,7 +296,7 @@ export default function Home() {
             <div className="glass-panel p-8 rounded-2xl relative overflow-hidden group hover:border-secondary/30 transition-all">
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-secondary/5 rounded-full flex items-center justify-center font-display-lg text-6xl text-secondary/10 select-none">2</div>
               <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-secondary">list_alt</span>
+                <List className="text-secondary w-6 h-6" />
               </div>
               <h3 className="font-headline-md text-on-surface mb-4">Pick your file</h3>
               <p className="text-on-surface-variant font-body-md">Browse the content bundle and select the specific file you want to stream or download.</p>
@@ -283,7 +304,7 @@ export default function Home() {
             <div className="glass-panel p-8 rounded-2xl relative overflow-hidden group hover:border-tertiary/30 transition-all">
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-tertiary/5 rounded-full flex items-center justify-center font-display-lg text-6xl text-tertiary/10 select-none">3</div>
               <div className="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-tertiary">play_circle</span>
+                <Play className="text-tertiary w-6 h-6 fill-current" />
               </div>
               <h3 className="font-headline-md text-on-surface mb-4">Stream or download</h3>
               <p className="text-on-surface-variant font-body-md">Watch video instantly in the built-in player, or grab a direct high-speed download link.</p>
@@ -299,26 +320,29 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
             {[
-              { icon: 'bolt', color: 'primary', title: 'Instant Browser Streaming', desc: 'Stream any video URL directly in your browser. No plugins, no installs, no waiting.', tags: ['MP4', 'WEBM', 'HLS', 'Drive'] },
-              { icon: 'cloud_off', color: 'secondary', title: 'No Download Needed', desc: 'Save your storage. Watch directly online without ever saving a file to your device.', tags: [] },
-              { icon: 'speed', color: 'tertiary', title: 'FluxEngine™ Instant Seeking', desc: 'Ultra-low latency seeker powered by progressive fragment decoding. Clicking any timeline point plays instantly within 150ms with 4s micro-buffers.', tags: ['150ms Seek', 'HTTP Range', 'CORS-Bypassed'] },
-              { icon: 'smartphone', color: 'primary', title: 'Mobile Friendly', desc: 'Fully responsive player that works great on phones, tablets, and desktops.', tags: [] },
-              { icon: 'play_circle', color: 'secondary', title: 'Smooth Playback', desc: 'Clean video controls with fullscreen, theater mode, and keyboard shortcuts.', tags: [] },
-              { icon: 'history', color: 'tertiary', title: 'Recent Streams', desc: 'Quickly re-open your previously streamed links from your local browser history.', tags: [] },
-            ].map((f, i) => (
-              <div key={i} className="feature-card p-stack-md rounded-2xl border border-black/5 bg-black/[0.01] transition-all duration-300">
-                <div className={`w-12 h-12 rounded-xl bg-${f.color}/10 flex items-center justify-center mb-5`}>
-                  <span className={`material-symbols-outlined text-${f.color}`}>{f.icon}</span>
-                </div>
-                <h3 className="font-headline-md text-on-surface mb-3">{f.title}</h3>
-                <p className="text-on-surface-variant font-body-md mb-4">{f.desc}</p>
-                {f.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {f.tags.map(t => <span key={t} className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">{t}</span>)}
+              { icon: Zap, color: 'primary', title: 'Instant Browser Streaming', desc: 'Stream any video URL directly in your browser. No plugins, no installs, no waiting.', tags: ['MP4', 'WEBM', 'HLS', 'Drive'] },
+              { icon: CloudOff, color: 'secondary', title: 'No Download Needed', desc: 'Save your storage. Watch directly online without ever saving a file to your device.', tags: [] },
+              { icon: Gauge, color: 'tertiary', title: 'FluxEngine™ Instant Seeking', desc: 'Ultra-low latency seeker powered by progressive fragment decoding. Clicking any timeline point plays instantly within 150ms with 4s micro-buffers.', tags: ['150ms Seek', 'HTTP Range', 'CORS-Bypassed'] },
+              { icon: Smartphone, color: 'primary', title: 'Mobile Friendly', desc: 'Fully responsive player that works great on phones, tablets, and desktops.', tags: [] },
+              { icon: Play, color: 'secondary', title: 'Smooth Playback', desc: 'Clean video controls with fullscreen, theater mode, and keyboard shortcuts.', tags: [] },
+              { icon: History, color: 'tertiary', title: 'Recent Streams', desc: 'Quickly re-open your previously streamed links from your local browser history.', tags: [] },
+            ].map((f, i) => {
+              const IconComponent = f.icon;
+              return (
+                <div key={i} className="feature-card p-stack-md rounded-2xl border border-black/5 bg-black/[0.01] transition-all duration-300">
+                  <div className={`w-12 h-12 rounded-xl bg-${f.color}/10 flex items-center justify-center mb-5`}>
+                    <IconComponent className={`text-${f.color} w-6 h-6 ${f.icon === Play ? 'fill-current' : ''}`} />
                   </div>
-                )}
-              </div>
-            ))}
+                  <h3 className="font-headline-md text-on-surface mb-3">{f.title}</h3>
+                  <p className="text-on-surface-variant font-body-md mb-4">{f.desc}</p>
+                  {f.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {f.tags.map(t => <span key={t} className="text-[10px] font-bold px-2 py-1 rounded bg-black/5 border border-black/10 text-on-surface-variant">{t}</span>)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -339,23 +363,23 @@ export default function Home() {
               
               <div className="space-y-4">
                 <div className="flex gap-3 items-start">
-                  <span className="material-symbols-outlined text-primary text-xl mt-1">bolt</span>
+                  <Zap className="text-primary w-5 h-5 shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-semibold text-on-surface text-sm">Ultra-Low 150ms Seek Latency</h4>
+                    <h3 className="font-semibold text-on-surface text-sm">Ultra-Low 150ms Seek Latency</h3>
                     <p className="text-on-surface-variant text-xs mt-1">Uses Hls.js low-latency profiles and progressive segment decoding to play chunks the millisecond they download.</p>
                   </div>
                 </div>
                 <div className="flex gap-3 items-start">
-                  <span className="material-symbols-outlined text-secondary text-xl mt-1">dns</span>
+                  <Server className="text-secondary w-5 h-5 shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-semibold text-on-surface text-sm">HTTP Byte-Range Slicing</h4>
+                    <h3 className="font-semibold text-on-surface text-sm">HTTP Byte-Range Slicing</h3>
                     <p className="text-on-surface-variant text-xs mt-1">Leverages direct network slicing (HTTP 206 Partial Content) to stream only the requested part of public hosts like Google Drive or CDNs.</p>
                   </div>
                 </div>
                 <div className="flex gap-3 items-start">
-                  <span className="material-symbols-outlined text-tertiary text-xl mt-1">network_ping</span>
+                  <Activity className="text-tertiary w-5 h-5 shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-semibold text-on-surface text-sm">CORS-Bypassed Network Pipeline</h4>
+                    <h3 className="font-semibold text-on-surface text-sm">CORS-Bypassed Network Pipeline</h3>
                     <p className="text-on-surface-variant text-xs mt-1">Eliminates HTTP pre-flight handshake overheads, saving up to 300ms on every timeline seek command.</p>
                   </div>
                 </div>
@@ -414,22 +438,25 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: 'translate', title: 'AI Subtitles & Translation', desc: 'Auto-generate subtitles and translate them into any language using AI.' },
-              { icon: 'groups', title: 'Watch Together', desc: 'Watch videos in sync with friends. Share a room link and stream together in real-time.' },
-              { icon: 'bookmark_added', title: 'Resume Playback', desc: 'Pick up exactly where you left off across all your devices.' },
-              { icon: 'rocket_launch', title: 'Torrent-to-Stream', desc: 'Paste a magnet link and start streaming the torrent without downloading it.' },
-              { icon: 'diversity_3', title: 'Anime & Movie Community', desc: 'A community space for sharing and discovering great video links.' },
-              { icon: 'auto_awesome', title: 'Smart Link Detection', desc: 'Automatically detect and extract video URLs from any web page or social post.' },
-            ].map((item, i) => (
-              <div key={i} className="glass-panel p-6 rounded-2xl border border-black/5 group hover:border-primary/20 transition-all duration-300 relative overflow-hidden">
-                <div className="absolute top-3 right-3">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider">Soon</span>
+              { icon: Languages, title: 'AI Subtitles & Translation', desc: 'Auto-generate subtitles and translate them into any language using AI.' },
+              { icon: Users, title: 'Watch Together', desc: 'Watch videos in sync with friends. Share a room link and stream together in real-time.' },
+              { icon: Bookmark, title: 'Resume Playback', desc: 'Pick up exactly where you left off across all your devices.' },
+              { icon: Rocket, title: 'Torrent-to-Stream', desc: 'Paste a magnet link and start streaming the torrent without downloading it.' },
+              { icon: Compass, title: 'Anime & Movie Community', desc: 'A community space for sharing and discovering great video links.' },
+              { icon: Sparkles, title: 'Smart Link Detection', desc: 'Automatically detect and extract video URLs from any web page or social post.' },
+            ].map((item, i) => {
+              const IconComponent = item.icon;
+              return (
+                <div key={i} className="glass-panel p-6 rounded-2xl border border-black/5 group hover:border-primary/20 transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute top-3 right-3">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider">Soon</span>
+                  </div>
+                  <IconComponent className="text-primary w-6 h-6 mb-4 block" />
+                  <h3 className="font-headline-md text-on-surface mb-2 text-base">{item.title}</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed">{item.desc}</p>
                 </div>
-                <span className="material-symbols-outlined text-primary text-2xl mb-4 block">{item.icon}</span>
-                <h3 className="font-headline-md text-on-surface mb-2 text-base">{item.title}</h3>
-                <p className="text-on-surface-variant text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -451,13 +478,13 @@ export default function Home() {
             ].map((post) => (
               <a key={post.slug} href={`/blog/${post.slug}`} className="group glass-panel rounded-2xl border border-black/5 hover:border-primary/20 overflow-hidden transition-all duration-300 flex flex-col">
                 <div className="h-40 bg-gradient-to-br from-primary/10 via-surface-container to-secondary/5 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary/40 text-6xl">article</span>
+                  <FileText className="text-primary/30 w-12 h-12" />
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">{post.tag}</span>
                   <h3 className="font-semibold text-on-surface text-base leading-snug mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
                   <p className="text-on-surface-variant text-sm leading-relaxed flex-1">{post.excerpt}</p>
-                  <div className="flex items-center gap-2 mt-4 text-xs text-on-surface-variant/60">
+                  <div className="flex items-center gap-2 mt-4 text-xs text-on-surface-variant">
                     <span>{post.date}</span>
                     <span>·</span>
                     <span>{post.readTime}</span>
@@ -521,9 +548,9 @@ export default function Home() {
                   <motion.span 
                     animate={{ rotate: activeFaqIndex === i ? 180 : 0 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="material-symbols-outlined text-on-surface-variant shrink-0"
+                    className="text-on-surface-variant shrink-0"
                   >
-                    expand_more
+                    <ChevronDown className="w-5 h-5" />
                   </motion.span>
                 </button>
                 <motion.div
@@ -559,7 +586,7 @@ export default function Home() {
                   onClick={() => { setStreamData(null); setIsTheaterMode(false); }}
                   className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors self-start mb-6 group bg-surface-container-lowest/50 px-4 py-2 rounded-lg border border-black/5 backdrop-blur-md shadow-sm"
                 >
-                  <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                  <ArrowLeft className="group-hover:-translate-x-1 transition-transform w-5 h-5" />
                   <span className="font-bold">Back to Home</span>
                 </button>
                 
@@ -572,7 +599,7 @@ export default function Home() {
                     <h2 className="font-headline-lg text-on-surface text-3xl md:text-4xl">{streamData.title}</h2>
                     <div className="flex items-center gap-3 mt-3">
                       <span className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-sm uppercase tracking-widest text-xs">{streamData.type}</span>
-                      <span className="text-on-surface-variant font-body-md text-sm flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">verified</span> Validated Source</span>
+                      <span className="text-on-surface-variant font-body-md text-sm flex items-center gap-1"><CheckCircle2 className="text-primary w-4 h-4" /> Validated Source</span>
                     </div>
                   </div>
                   <div className="flex gap-3 flex-wrap">
@@ -580,7 +607,11 @@ export default function Home() {
                       onClick={() => setIsTheaterMode(!isTheaterMode)}
                       className="flex items-center gap-2 px-6 py-3 bg-surface-container border border-black/10 rounded-xl hover:bg-surface-dim transition-colors font-bold text-on-surface hidden md:flex"
                     >
-                      <span className="material-symbols-outlined">{isTheaterMode ? 'fullscreen_exit' : 'fullscreen'}</span>
+                      {isTheaterMode ? (
+                        <Minimize2 className="w-5 h-5" />
+                      ) : (
+                        <Maximize2 className="w-5 h-5" />
+                      )}
                       <span>{isTheaterMode ? 'Exit Theater' : 'Theater Mode'}</span>
                     </button>
                     <a
@@ -590,7 +621,7 @@ export default function Home() {
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-6 py-3 premium-button-gradient text-on-primary-container shadow-lg rounded-xl hover:scale-105 active:scale-95 transition-all font-bold"
                     >
-                      <span className="material-symbols-outlined">download</span>
+                      <Download className="w-5 h-5" />
                       <span className="hidden sm:inline">Download</span>
                     </a>
                   </div>
