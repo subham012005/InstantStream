@@ -78,9 +78,17 @@ export default function Home() {
     <>
       {/* Background Decoration */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="orb w-[500px] h-[500px] bg-primary/10 top-[-100px] left-[-100px]"></div>
-        <div className="orb w-[400px] h-[400px] bg-tertiary/5 bottom-[-50px] right-[-50px]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.02)_1px,transparent_1px)] [background-size:32px_32px]"></div>
+        <motion.div 
+          animate={{ x: [0, 80, 0], y: [0, 40, 0], scale: [1, 1.1, 1] }} 
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="orb w-[600px] h-[600px] bg-primary/20 top-[-100px] left-[-100px]"
+        ></motion.div>
+        <motion.div 
+          animate={{ x: [0, -60, 0], y: [0, -80, 0], scale: [1, 1.2, 1] }} 
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="orb w-[500px] h-[500px] bg-secondary/15 bottom-[-50px] right-[-50px]"
+        ></motion.div>
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:32px_32px]"></div>
       </div>
 
       {/* TopNavBar */}
@@ -120,8 +128,8 @@ export default function Home() {
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
               <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest">Free · No Signup · Works Instantly</span>
             </div>
-            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg mb-5 leading-tight">Paste Any Video Link.<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Stream Instantly Online.</span></h1>
-            <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto">Watch videos online instantly without downloading. The ultimate free web player to stream direct video links, Google Drive shared videos, Telegram CDN video links, live HLS (m3u8) streams, and progressive MP4/WebM files with maximum speed.</p>
+            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg mb-5 leading-tight tracking-tighter">Paste Any Video Link.<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Stream Instantly Online.</span></h1>
+            <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto tracking-tight">Watch videos online instantly without downloading. The ultimate free web player to stream direct video links, Google Drive shared videos, Telegram CDN video links, live HLS (m3u8) streams, and progressive MP4/WebM files with maximum speed.</p>
             
             {/* Futuristic Action Area */}
             <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
@@ -131,8 +139,8 @@ export default function Home() {
                 transition={{ duration: 0.4 }}
               >
                 <div className="relative w-full group">
-                  <div className={`absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-tertiary rounded-xl opacity-20 group-focus-within:opacity-60 transition duration-500 blur ${isValidUrl ? 'opacity-40 animate-pulse' : ''}`}></div>
-                  <div className="relative flex items-center bg-surface-container-low border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 transition-colors group-focus-within:border-primary/30">
+                  <div className={`absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-tertiary rounded-xl opacity-20 group-focus-within:opacity-60 transition duration-500 blur-md ${isValidUrl ? 'opacity-50 animate-pulse' : ''}`}></div>
+                  <div className="relative flex items-center bg-surface border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 transition-all duration-300 group-focus-within:border-primary/50 group-focus-within:shadow-[0_0_20px_rgba(0,112,243,0.15)] group-hover:border-primary/30 z-10">
                     {isValidUrl ? (
                       <CheckCircle2 className="mr-2 transition-colors text-primary w-5 h-5 shrink-0" />
                     ) : (
@@ -164,8 +172,10 @@ export default function Home() {
                 <button 
                   onClick={() => handleStream()}
                   disabled={loading}
-                  className="w-full md:w-auto px-8 py-4 premium-button-gradient rounded-xl font-bold text-on-primary-container shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 whitespace-nowrap disabled:opacity-90 disabled:scale-100 cursor-pointer disabled:cursor-not-allowed min-w-[180px] flex justify-center items-center"
+                  className="w-full md:w-auto px-8 py-4 premium-button-gradient button-glow-ring rounded-xl font-bold text-on-primary shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 whitespace-nowrap disabled:opacity-90 disabled:scale-100 cursor-pointer disabled:cursor-not-allowed min-w-[180px] flex justify-center items-center relative overflow-hidden group"
                 >
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                  <div className="relative z-10 flex items-center justify-center">
                   {loading ? (
                     <motion.div 
                       initial={{ opacity: 0 }} 
@@ -178,6 +188,7 @@ export default function Home() {
                   ) : (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Stream Now</motion.span>
                   )}
+                  </div>
                 </button>
               </motion.div>
               
@@ -228,8 +239,13 @@ export default function Home() {
           
           {/* Visual Anchor */}
           <div className="mt-20 w-full max-w-5xl relative">
-            <div className="absolute -inset-4 bg-primary/20 blur-[100px] opacity-20 -z-10"></div>
-            <div className="glass-panel p-2 rounded-2xl shadow-2xl">
+            <div className="absolute -inset-4 bg-primary/30 blur-[100px] opacity-30 -z-10 hero-glow"></div>
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="glass-panel p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+            >
               <Image 
                 alt="Premium Screening Interface" 
                 className="w-full h-auto rounded-xl object-cover aspect-video" 
@@ -238,7 +254,7 @@ export default function Home() {
                 height={563} 
                 priority 
               />
-            </div>
+            </motion.div>
           </div>
         </section>
 

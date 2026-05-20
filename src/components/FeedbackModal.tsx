@@ -130,8 +130,16 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             className="relative w-full max-w-lg glass-panel p-6 md:p-8 rounded-3xl border border-black/10 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-low/95 z-10 overflow-hidden"
           >
             {/* Ambient gradients */}
-            <div className="absolute top-[-50px] right-[-50px] w-24 h-24 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
-            <div className="absolute bottom-[-50px] left-[-50px] w-24 h-24 bg-secondary/10 rounded-full blur-xl pointer-events-none"></div>
+            <motion.div 
+              animate={{ x: [0, 20, 0], y: [0, -20, 0], scale: [1, 1.2, 1] }} 
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-primary/20 rounded-full blur-2xl pointer-events-none"
+            ></motion.div>
+            <motion.div 
+              animate={{ x: [0, -20, 0], y: [0, 20, 0], scale: [1, 1.1, 1] }} 
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              className="absolute bottom-[-50px] left-[-50px] w-32 h-32 bg-secondary/20 rounded-full blur-2xl pointer-events-none"
+            ></motion.div>
 
             {/* Header */}
             <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-4 mb-6">
@@ -190,7 +198,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                     <select
                       value={feedbackType}
                       onChange={(e) => setFeedbackType(e.target.value)}
-                      className="w-full appearance-none bg-surface-container-high border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20"
+                      className="w-full appearance-none bg-surface border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none transition-all duration-300 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,112,243,0.15)] focus:ring-0"
                     >
                       <option value="🐛 Bug / Error">🐛 Bug / Error</option>
                       <option value="💡 Suggestion / Feature Request">💡 Suggestion / Feature Request</option>
@@ -212,7 +220,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                       value={videoUrl}
                       onChange={(e) => setVideoUrl(e.target.value)}
                       placeholder="Paste the streaming link"
-                      className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/40"
+                      className="w-full bg-surface border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none transition-all duration-300 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,112,243,0.15)] focus:ring-0 placeholder:text-on-surface-variant/40"
                     />
                   </div>
                   <div>
@@ -271,7 +279,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
                     placeholder="Provide details about what happened, steps to reproduce the bug, or your awesome suggestion..."
-                    className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/40 resize-none"
+                    className="w-full bg-surface border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none transition-all duration-300 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,112,243,0.15)] focus:ring-0 placeholder:text-on-surface-variant/40 resize-none"
                     required
                   />
                 </div>
@@ -286,7 +294,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter email to get updates"
-                    className="w-full bg-surface-container-high border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/40"
+                    className="w-full bg-surface border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-on-surface outline-none transition-all duration-300 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,112,243,0.15)] focus:ring-0 placeholder:text-on-surface-variant/40"
                   />
                 </div>
 
