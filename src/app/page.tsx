@@ -237,25 +237,7 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Visual Anchor */}
-          <div className="mt-20 w-full max-w-5xl relative">
-            <div className="absolute -inset-4 bg-primary/30 blur-[100px] opacity-30 -z-10 hero-glow"></div>
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="glass-panel p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-            >
-              <Image 
-                alt="Premium Screening Interface" 
-                className="w-full h-auto rounded-xl object-cover aspect-video" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdgYtmPpTfpWQ-Z3NPWDAuyPKygh_iDYotSlPkkvaLyMTcbiV9utrK7YG5YUGDsh_Izt9TuKLW8SQes8B04DsenONQNu5n_CVzcFHgG8Ng_z8MsS7UbRn9-pvuBNj7Fl28EHAKHzikZRCUBHdRr7rygBnZvPiu9Ulf6ctVQMt800eyFXsCyhRzGyTSTfVueB_WeWdI1ttheECzRTjku4-x2VAKi2t5HZEw1N-ygZ3b4ly_7W3-S9SsEeqed_AIZKECF982S0GUm5M" 
-                width={1000} 
-                height={563} 
-                priority 
-              />
-            </motion.div>
-          </div>
+
         </section>
 
 
