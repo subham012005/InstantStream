@@ -358,7 +358,7 @@ export default function Home() {
                 High-Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Streaming Core</span>
               </h2>
               <p className="text-on-surface-variant font-body-md leading-relaxed mb-6">
-                Our proprietary browser player architecture is fine-tuned to remove buffering bottlenecks entirely. When you click or drag the timeline, fluxplays delivers fluid, real-time playback by coordinating raw browser hardware with modern adaptive protocols.
+                Our modern browser player architecture is fine-tuned to remove buffering bottlenecks entirely. When you click or drag the timeline, fluxplays delivers fluid, real-time playback by coordinating raw browser hardware with modern adaptive protocols.
               </p>
               
               <div className="space-y-4">
@@ -380,7 +380,7 @@ export default function Home() {
                   <Activity className="text-tertiary w-5 h-5 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-on-surface text-sm">CORS-Optimized Network Pipeline</h3>
-                    <p className="text-on-surface-variant text-xs mt-1">Eliminates HTTP pre-flight handshake overheads, saving up to 300ms on every timeline seek command.</p>
+                    <p className="text-on-surface-variant text-xs mt-1">Eliminates unnecessary HTTP pre-flight handshake overheads, vastly improving seek responsiveness.</p>
                   </div>
                 </div>
               </div>
