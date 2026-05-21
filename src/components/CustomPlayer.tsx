@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import * as Slider from '@radix-ui/react-slider';
-import Hls from 'hls.js';
+import type HlsType from 'hls.js';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Play, Pause, Volume2, VolumeX, FastForward, Rewind, Maximize, Minimize, Volume1, Settings, Info, PictureInPicture } from 'lucide-react';
 
@@ -27,7 +27,7 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
   const [availableQualities, setAvailableQualities] = useState<{height: number, level: number}[]>([]);
   const [currentQuality, setCurrentQuality] = useState<number>(-1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const hlsRef = useRef<Hls | null>(null);
+  const hlsRef = useRef<HlsType | null>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSeekTimeRef = useRef<number>(0);
@@ -174,45 +174,62 @@ export default function CustomPlayer({ src }: CustomPlayerProps) {
     const video = videoRef.current;
     if (!video) return;
 
-    let hls: Hls;
+    let hls: HlsType | undefined;
+    let cancelled = false;
     setAvailableQualities([]);
     setCurrentQuality(-1);
 
-    // Support for HLS streams
-    if (Hls.isSupported() && (src.includes('.m3u8') || src.includes('.ts'))) {
-      hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true,
-        progressive: true,             // Decodes segments on-the-fly while downloading
-        maxBufferLength: 4,            // Keeps buffer short (4s) to resume playback instantly
-        maxMaxBufferLength: 8,         // Limits pre-buffering overhead to save network speed
-        backBufferLength: 5,           // Discards played video data rapidly to free up memory
-        maxStarvationDelay: 1,         // Reduces buffer starvation freeze times
-        appendErrorMaxRetry: 8,
-        liveSyncDurationCount: 2,      // syncs close to edge for live streams
-        fragLoadingMaxRetry: 5,        // Rapidly retries segment packets on failure
-        levelLoadingMaxRetry: 5,
-      });
-      hlsRef.current = hls;
-      hls.loadSource(src);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        const levels = data.levels.map((l: any, index: number) => ({ height: l.height, level: index })).reverse();
-        setAvailableQualities(levels);
-        video.play().catch(e => console.log("Autoplay prevented", e));
-        setIsPlaying(true);
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native Safari HLS support
+    const setupPlayback = async () => {
+      const isHlsSource = src.includes('.m3u8') || src.includes('.ts');
+
+      if (isHlsSource) {
+        const { default: Hls } = await import('hls.js');
+        if (cancelled) return;
+
+        if (Hls.isSupported()) {
+          hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: true,
+            progressive: true,
+            maxBufferLength: 4,
+            maxMaxBufferLength: 8,
+            backBufferLength: 5,
+            maxStarvationDelay: 1,
+            appendErrorMaxRetry: 8,
+            liveSyncDurationCount: 2,
+            fragLoadingMaxRetry: 5,
+            levelLoadingMaxRetry: 5,
+          });
+          hlsRef.current = hls;
+          hls.loadSource(src);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
+            const levels = data.levels
+              .map((l: { height: number }, index: number) => ({ height: l.height, level: index }))
+              .reverse();
+            setAvailableQualities(levels);
+            video.play().catch(() => {});
+            setIsPlaying(true);
+          });
+          return;
+        }
+
+        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = src;
+          return;
+        }
+      }
+
       video.src = src;
-    } else {
-      // Standard formats (MP4, WebM, Ogg, Google Drive)
-      video.src = src;
-    }
+    };
+
+    void setupPlayback();
 
     return () => {
+      cancelled = true;
       if (hls) {
         hls.destroy();
+        hlsRef.current = null;
       }
     };
   }, [src]);

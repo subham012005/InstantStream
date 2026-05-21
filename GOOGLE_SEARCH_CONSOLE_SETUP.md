@@ -7,7 +7,7 @@ Google Search Console (GSC) is mandatory to track impressions, indexing status, 
 2. Click **Add Property**.
 3. Choose **URL Prefix** and enter `https://fluxplays.vercel.app/`.
 4. Choose the **HTML Tag** method. 
-5. Add the provided `<meta name="google-site-verification" content="..." />` to your `src/app/layout.tsx` inside the `<head>` section.
+5. The verification meta tag is already in `src/app/layout.tsx` (`google-site-verification`: `KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI`).
 6. Deploy changes to Vercel.
 7. Click **Verify** in GSC.
 

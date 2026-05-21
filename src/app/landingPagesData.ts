@@ -1,4 +1,4 @@
-import type { FAQItem } from "@/components/FAQSection";
+import type { FAQItem } from "@/types/faq";
 
 export interface LandingFeature {
   icon: string;

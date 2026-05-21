@@ -1,4 +1,4 @@
-import { FAQItem } from "@/components/FAQSection";
+import type { FAQItem } from "@/types/faq";
 
 export interface TrendingPage {
   slug: string;

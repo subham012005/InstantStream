@@ -236,10 +236,29 @@
     filter: blur(100px);
     z-index: -1;
     opacity: 0.6;
+    will-change: transform;
   }
   
   .dark .orb {
     opacity: 0.4;
+  }
+
+  @keyframes orb-float-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(80px, 40px) scale(1.1); }
+  }
+
+  @keyframes orb-float-2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, -80px) scale(1.2); }
+  }
+
+  .orb-animate-1 {
+    animation: orb-float-1 15s linear infinite;
+  }
+
+  .orb-animate-2 {
+    animation: orb-float-2 20s linear infinite;
   }
 
   .feature-card {
@@ -264,6 +283,19 @@
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb-animate-1,
+  .orb-animate-2,
+  .premium-button-gradient,
+  .button-glow-ring {
+    animation: none !important;
+  }
+
+  .faq-accordion-panel {
+    transition: none !important;
   }
 }
 

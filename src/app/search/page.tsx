@@ -1,44 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { Search, ArrowRight, TrendingUp, BookOpen, GitCompare } from "lucide-react";
-import { allArticles } from "@/app/blog/articles";
-import { trendingData } from "@/app/trending/trendingData";
-import { comparisonData } from "@/app/compare/comparisonData";
-
-// noindex is set in the metadata export below — but since this is "use client",
-// we handle it via a server wrapper. We put the Head meta noindex via next/head.
-// In App Router, a separate metadata.ts in the same folder handles this.
-
-interface SearchResult {
-  title: string;
-  description: string;
-  href: string;
-  badge: string;
-}
-
-const ALL_CONTENT: SearchResult[] = [
-  ...allArticles.map((a) => ({
-    title: a.title,
-    description: a.intro.slice(0, 120) + "…",
-    href: `/blog/${a.slug}`,
-    badge: a.tag,
-  })),
-  ...trendingData.map((t) => ({
-    title: t.title,
-    description: t.intro.slice(0, 120) + "…",
-    href: `/trending/${t.slug}`,
-    badge: "Trending",
-  })),
-  ...comparisonData.map((c) => ({
-    title: c.title,
-    description: c.intro.slice(0, 120) + "…",
-    href: `/compare/${c.slug}`,
-    badge: "Comparison",
-  })),
-];
+import type { SearchResult } from "./searchData";
 
 const POPULAR_SEARCHES = [
   { label: "HLS Streaming", href: "/blog/best-hls-streaming-tools" },
@@ -51,17 +17,40 @@ const POPULAR_SEARCHES = [
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
+  const [searchIndex, setSearchIndex] = useState<SearchResult[] | null>(null);
+  const [indexLoading, setIndexLoading] = useState(false);
+
+  useEffect(() => {
+    if (!query.trim() || searchIndex) return;
+
+    let cancelled = false;
+    setIndexLoading(true);
+
+    import("./searchData")
+      .then((mod) => {
+        if (!cancelled) setSearchIndex(mod.ALL_CONTENT);
+      })
+      .finally(() => {
+        if (!cancelled) setIndexLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query, searchIndex]);
 
   const results = useMemo(() => {
-    if (!query.trim()) return [];
+    if (!query.trim() || !searchIndex) return [];
     const q = query.toLowerCase();
-    return ALL_CONTENT.filter(
-      (item) =>
-        item.title.toLowerCase().includes(q) ||
-        item.description.toLowerCase().includes(q) ||
-        item.badge.toLowerCase().includes(q)
-    ).slice(0, 12);
-  }, [query]);
+    return searchIndex
+      .filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q) ||
+          item.badge.toLowerCase().includes(q)
+      )
+      .slice(0, 12);
+  }, [query, searchIndex]);
 
   return (
     <>
@@ -101,9 +90,15 @@ export default function SearchPage() {
         {query.trim() && (
           <section className="mb-12">
             <h2 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
-              {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
+              {indexLoading
+                ? "Searching…"
+                : `${results.length} result${results.length !== 1 ? "s" : ""} for “${query}”`}
             </h2>
-            {results.length === 0 ? (
+            {indexLoading ? (
+              <p className="text-on-surface-variant glass-panel p-6 rounded-xl border border-black/5">
+                Loading search index…
+              </p>
+            ) : results.length === 0 ? (
               <p className="text-on-surface-variant glass-panel p-6 rounded-xl border border-black/5">
                 No results found. Try a different search term or browse the categories below.
               </p>

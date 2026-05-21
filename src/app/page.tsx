@@ -1,13 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import CustomPlayer from "@/components/CustomPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
-import FAQSection from "@/components/FAQSection";
-import { FeedbackModal } from "@/components/FeedbackModal";
-import Image from "next/image";
+
+const CustomPlayer = dynamic(() => import("@/components/CustomPlayer"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[40vh] flex items-center justify-center text-white/60">
+      Loading player…
+    </div>
+  ),
+});
+
+const FAQSection = dynamic(() => import("@/components/FAQSection"), {
+  ssr: false,
+});
+
+const FeedbackModal = dynamic(
+  () => import("@/components/FeedbackModal").then((m) => ({ default: m.FeedbackModal })),
+  { ssr: false }
+);
 import { 
   ArrowLeft, CheckCircle2, Link2, X, History, Play, Video, Tv, HardDrive, Send, 
   Download, Subtitles, Rocket, Zap, CloudOff, Gauge, Smartphone, Server, 
@@ -78,16 +93,8 @@ export default function Home() {
     <>
       {/* Background Decoration */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <motion.div 
-          animate={{ x: [0, 80, 0], y: [0, 40, 0], scale: [1, 1.1, 1] }} 
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="orb w-[600px] h-[600px] bg-primary/20 top-[-100px] left-[-100px]"
-        ></motion.div>
-        <motion.div 
-          animate={{ x: [0, -60, 0], y: [0, -80, 0], scale: [1, 1.2, 1] }} 
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="orb w-[500px] h-[500px] bg-secondary/15 bottom-[-50px] right-[-50px]"
-        ></motion.div>
+        <div className="orb orb-animate-1 w-[600px] h-[600px] bg-primary/20 top-[-100px] left-[-100px]" />
+        <div className="orb orb-animate-2 w-[500px] h-[500px] bg-secondary/15 bottom-[-50px] right-[-50px]" />
         <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:32px_32px]"></div>
       </div>
 
