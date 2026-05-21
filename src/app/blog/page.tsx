@@ -5,12 +5,12 @@ import Logo from "@/components/Logo";
 import { ArrowLeft, FileText, Play } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Blog — Streaming Guides & Tutorials | fluxplays.live",
+  title: "Blog — Streaming Guides & Tutorials | FluxPlays",
   description:
-    "Learn how to stream videos online, understand video formats, and get the most out of browser-based video streaming. Free guides from fluxplays.live.",
+    "Learn how to stream videos online, understand video formats, and get the most out of browser-based video streaming. Free guides from FluxPlays.",
   alternates: { canonical: "https://fluxplays.vercel.app/blog" },
   openGraph: {
-    title: "Blog — Streaming Guides & Tutorials | fluxplays.live",
+    title: "Blog — Streaming Guides & Tutorials | FluxPlays",
     description: "Browser streaming guides, video format comparisons, and tutorials.",
     url: "https://fluxplays.vercel.app/blog",
   },
@@ -24,7 +24,7 @@ export default function BlogPage() {
         <div className="max-w-[1200px] mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
             <Logo className="w-8 h-8" />
-            <span>fluxplays.live</span>
+            <span>FluxPlays</span>
           </Link>
           <Link href="/" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function BlogPage() {
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-on-surface-variant">
           <span className="flex items-center gap-2">
             <Logo className="w-6 h-6" />
-            <span>© 2026 fluxplays.live</span>
+            <span>© 2026 FluxPlays</span>
           </span>
           <div className="flex gap-5">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>

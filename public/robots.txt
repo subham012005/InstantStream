@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /search
 
-Sitemap: https://fluxplays.live/sitemap.xml
+Sitemap: https://fluxplays.vercel.app/sitemap.xml
