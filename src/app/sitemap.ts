@@ -8,6 +8,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://fluxplays.vercel.app";
   const now = new Date();
 
+  // Landing pages — core SEO targets
+  const landingPageUrls: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/watch-mp4-online-player`, lastModified: now, changeFrequency: "monthly", priority: 0.92 },
+    { url: `${baseUrl}/mp4-stream-player`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${baseUrl}/hls-m3u8-stream-player`, lastModified: now, changeFrequency: "monthly", priority: 0.92 },
+    { url: `${baseUrl}/m3u8-player-online`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${baseUrl}/google-drive-video-player`, lastModified: now, changeFrequency: "monthly", priority: 0.92 },
+    { url: `${baseUrl}/telegram-video-player`, lastModified: now, changeFrequency: "monthly", priority: 0.92 },
+    { url: `${baseUrl}/subtitle-video-player`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${baseUrl}/stream-videos-without-downloading`, lastModified: now, changeFrequency: "monthly", priority: 0.92 },
+    { url: `${baseUrl}/no-download-video-streaming`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${baseUrl}/play-direct-video-links`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+  ];
+
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: now, changeFrequency: "daily", priority: 1.0 },
     { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
@@ -50,6 +64,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   return [
+    ...landingPageUrls,
     ...staticPages,
     ...blogPages,
     ...guidePages,
