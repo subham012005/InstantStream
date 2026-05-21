@@ -1,16 +1,16 @@
-import { getArticle, articles } from "../articles";
+import { getArticle, articles, allArticles } from "../articles";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Logo from "@/components/Logo";
 import type { Metadata } from "next";
-import { ArrowLeft, Calendar, Clock, Play } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Play, ArrowRight } from "lucide-react";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return articles.map((a) => ({ slug: a.slug }));
+  return allArticles.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -44,8 +44,8 @@ export default async function ArticlePage({ params }: Props) {
     "@type": "Article",
     headline: article.title,
     description: article.metaDescription,
-    author: { "@type": "Organization", name: "fluxplays.live" },
-    publisher: { "@type": "Organization", name: "fluxplays.live", url: "https://fluxplays.vercel.app" },
+    author: { "@type": "Person", name: article.author.name, url: article.author.url },
+    publisher: { "@type": "Organization", name: "FluxPlays", url: "https://fluxplays.vercel.app" },
     datePublished: "2026-05-18",
     url: `https://fluxplays.vercel.app/blog/${slug}`,
   };
@@ -54,13 +54,22 @@ export default async function ArticlePage({ params }: Props) {
     <div className="min-h-screen bg-surface">
       {/* Structured data */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fluxplays.vercel.app" },
+          { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fluxplays.vercel.app/blog" },
+          { "@type": "ListItem", "position": 3, "name": article.title, "item": `https://fluxplays.vercel.app/blog/${slug}` }
+        ]
+      }) }} />
 
       {/* Header */}
       <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
         <div className="max-w-[1200px] mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
             <Logo className="w-8 h-8" />
-            <span>fluxplays.live</span>
+            <span>FluxPlays</span>
           </Link>
           <Link href="/blog" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" />
@@ -157,7 +166,7 @@ export default async function ArticlePage({ params }: Props) {
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-on-surface-variant">
           <span className="flex items-center gap-2">
             <Logo className="w-6 h-6" />
-            <span>© 2026 fluxplays.live</span>
+            <span>© 2026 FluxPlays</span>
           </span>
           <div className="flex gap-5">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>

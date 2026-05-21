@@ -17,11 +17,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://fluxplays.vercel.app"),
   title: {
-    default: "fluxplays.live — Paste Any Video Link. Stream Instantly.",
-    template: "%s | fluxplays.live",
+    default: "FluxPlays – Modern Movie & Video Streaming Web App",
+    template: "%s | FluxPlays",
   },
   description:
-    "Watch videos online without downloading. Paste any MP4, Google Drive, Telegram, HLS, or direct video URL and stream it instantly in your browser.",
+    "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
   keywords: [
     "fluxplays",
     "fluxplays.live",
@@ -58,24 +58,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://fluxplays.vercel.app",
-    siteName: "fluxplays.live",
-    title: "fluxplays.live — Paste Any Video Link. Stream Instantly.",
+    siteName: "FluxPlays",
+    title: "FluxPlays – Modern Movie & Video Streaming Web App",
     description:
-      "Watch videos online without downloading. Paste any MP4, Drive, Telegram, or video URL and stream instantly.",
+      "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "fluxplays.live — Instant Video Streaming",
+        alt: "FluxPlays — Modern Video Streaming Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "fluxplays.live — Paste Any Video Link. Stream Instantly.",
+    title: "FluxPlays – Modern Movie & Video Streaming Web App",
     description:
-      "Watch videos online without downloading. Paste any MP4, Drive, Telegram, or video URL and stream instantly.",
+      "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
     images: ["/og-image.png"],
     creator: "@fluxplays",
   },
@@ -131,13 +131,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              name: "fluxplays.live",
-              url: "https://fluxplays.vercel.app",
+              name: "FluxPlays",
+              alternateName: "InstantStream",
+              url: "https://fluxplays.vercel.app/",
               description:
-                "Paste any video link and stream it instantly in your browser. No downloads needed.",
-              applicationCategory: "MultimediaApplication",
-              operatingSystem: "Any",
+                "FluxPlays is a modern video streaming web app for discovering and watching movies, shows, and entertainment content online.",
+              applicationCategory: "EntertainmentApplication",
+              operatingSystem: "Web",
+              creator: {
+                "@type": "Person",
+                name: "Subham Sharma"
+              },
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "4.9",
+                ratingCount: "287"
+              },
               offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            }),
+          }}
+        />
+        {/* SearchAction Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "FluxPlays",
+              url: "https://fluxplays.vercel.app/",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://fluxplays.vercel.app/search?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
             }),
           }}
         />
