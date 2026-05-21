@@ -27,10 +27,6 @@ export const seoClusterArticles: Article[] = [
       { 
         heading: "4. Niche and Independent VOD Platforms", 
         body: "Services like Criterion Channel and MUBI continue to thrive by rejecting the algorithm-driven approach of larger competitors. Instead of infinite scrolling, these platforms offer human-curated programming blocks. From a technical perspective, they are notable for utilizing high-bitrate encoding that prioritizes film grain preservation and SDR accuracy over heavy compression, making them the platforms of choice for home theater enthusiasts." 
-      },
-      {
-        heading: "[Note: Marked for future expansion]",
-        body: "This article is actively being expanded to cover decentralized Web3 streaming platforms, peer-to-peer WebTorrent networks, and institutional library streaming services like Kanopy in deeper technical detail."
       }
     ],
     conclusion: "In 2026, the best streaming platform is highly dependent on your technical capability and budget threshold. If you have your own media links, utility players like FluxPlays offer unparalleled speed. If you want curated cinema, niche platforms deliver. The era of a single dominant platform is over; the future is multi-platform streaming.",
@@ -58,10 +54,6 @@ export const seoClusterArticles: Article[] = [
       { 
         heading: "3. Context API for Global Player State", 
         body: "A common feature in the best React streaming apps (like Spotify or Netflix's web client) is the persistent mini-player. As a user navigates from the homepage to a settings route in Next.js, the video should continue playing seamlessly. This is achieved by lifting the video player instance into a global React Context provider placed high up in the `_app.tsx` or Root Layout tree, utilizing CSS `transform` or React Portals to adjust the player's physical DOM location without unmounting the underlying `<video>` tag." 
-      },
-      {
-        heading: "[Note: Marked for future expansion]",
-        body: "Future revisions of this guide will provide deep-dive code examples for implementing DRM (Widevine/PlayReady) into React streaming components, as well as handling WebRTC sub-second latency inside a Next.js App Router context."
       }
     ],
     conclusion: "The best React streaming apps succeed by keeping the DOM lightweight and accurately managing the bridge between imperative media APIs and declarative React state. Utilizing headless libraries and proper Next.js routing patterns allows developers to rival the performance of native desktop applications.",
@@ -89,10 +81,6 @@ export const seoClusterArticles: Article[] = [
       { 
         heading: "3. Spatial Navigation and the 10-Foot UI", 
         body: "For apps targeting Smart TVs, standard mouse/touch design fails. The UI must support 'spatial navigation'—using the D-pad arrows to traverse focus states. The best UIs implement high-contrast focus rings and subtle scale animations via CSS `transform: scale(1.05)` when a movie poster is selected, providing immediate visual feedback to the remote user across the living room." 
-      },
-      {
-        heading: "[Note: Marked for future expansion]",
-        body: "Expanded sections will cover the psychology of infinite scrolling vs paginated discovery, and how metadata typography (Inter vs Roboto) influences perceived application speed."
       }
     ],
     conclusion: "The best movie streaming UIs are those that disappear completely when the movie starts, but provide frictionless, visually stunning guidance during the discovery phase.",
@@ -120,10 +108,6 @@ export const seoClusterArticles: Article[] = [
       { 
         heading: "3. Open Source Utility Players", 
         body: "Not all open-source streaming tools require complex server setups. Projects that provide stateless utility playback—similar to the architecture of FluxPlays—allow users to simply plug in direct HLS or MP4 URLs and stream securely in the browser. These lightweight React or Vue-based open-source projects are highly favored by developers for testing streams and bypassing restrictive CORS environments during development." 
-      },
-      {
-        heading: "[Note: Marked for future expansion]",
-        body: "Future updates will include in-depth setup guides for reverse proxying Open Source servers behind Nginx and configuring let's encrypt SSL certificates for secure remote access."
       }
     ],
     conclusion: "The best open source streaming platforms provide liberation from the subscription economy. Whether you are hosting a massive personal library on Jellyfin or publishing decentralized content on PeerTube, FOSS tools have never been more powerful.",

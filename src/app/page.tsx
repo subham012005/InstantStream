@@ -101,6 +101,8 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6">
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#how-it-works">How it works</a>
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#formats">Supported Formats</a>
+            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/newsletter">Newsletter</a>
+            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/search">Search</a>
             <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#coming-soon">Roadmap</a>
             <button onClick={() => setIsFeedbackOpen(true)} className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0 outline-none">Feedback & Bugs</button>
           </nav>
@@ -311,7 +313,7 @@ export default function Home() {
         </section>
 
         {/* Feature Grid */}
-        <section className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto bg-surface-container-low/50 border-y border-black/5">
+        <section id="features" className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto bg-surface-container-low/50 border-y border-black/5">
           <div className="text-center mb-12">
             <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2 block">Features</span>
             <h2 className="font-headline-lg text-on-surface">Everything you need, nothing you don&#39;t</h2>
@@ -320,7 +322,7 @@ export default function Home() {
             {[
               { icon: Zap, color: 'primary', title: 'Instant Browser Streaming', desc: 'Stream any video URL directly in your browser. No plugins, no installs, no waiting.', tags: ['MP4', 'WEBM', 'HLS', 'Drive'] },
               { icon: CloudOff, color: 'secondary', title: 'No Download Needed', desc: 'Save your storage. Watch directly online without ever saving a file to your device.', tags: [] },
-              { icon: Gauge, color: 'tertiary', title: 'FluxEngine™ Instant Seeking', desc: 'Ultra-low latency seeker powered by progressive fragment decoding. Clicking any timeline point plays instantly within 150ms with 4s micro-buffers.', tags: ['150ms Seek', 'HTTP Range', 'CORS-Bypassed'] },
+              { icon: Gauge, color: 'tertiary', title: 'Fast Instant Seeking', desc: 'Low latency seeker powered by progressive fragment decoding. Clicking any timeline point plays smoothly with adaptive micro-buffers.', tags: ['Fast Seek', 'HTTP Range', 'CORS-Optimized'] },
               { icon: Smartphone, color: 'primary', title: 'Mobile Friendly', desc: 'Fully responsive player that works great on phones, tablets, and desktops.', tags: [] },
               { icon: Play, color: 'secondary', title: 'Smooth Playback', desc: 'Clean video controls with fullscreen, theater mode, and keyboard shortcuts.', tags: [] },
               { icon: History, color: 'tertiary', title: 'Recent Streams', desc: 'Quickly re-open your previously streamed links from your local browser history.', tags: [] },
@@ -353,7 +355,7 @@ export default function Home() {
             <div className="max-w-xl text-left">
               <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-3 block">High-Performance Core</span>
               <h2 className="font-headline-lg text-on-surface mb-5 leading-tight">
-                FluxEngine™ <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Low-Latency Streaming</span>
+                High-Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Streaming Core</span>
               </h2>
               <p className="text-on-surface-variant font-body-md leading-relaxed mb-6">
                 Our proprietary browser player architecture is fine-tuned to remove buffering bottlenecks entirely. When you click or drag the timeline, fluxplays delivers fluid, real-time playback by coordinating raw browser hardware with modern adaptive protocols.
@@ -363,8 +365,8 @@ export default function Home() {
                 <div className="flex gap-3 items-start">
                   <Zap className="text-primary w-5 h-5 shrink-0 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-on-surface text-sm">Ultra-Low 150ms Seek Latency</h3>
-                    <p className="text-on-surface-variant text-xs mt-1">Uses Hls.js low-latency profiles and progressive segment decoding to play chunks the millisecond they download.</p>
+                    <h3 className="font-semibold text-on-surface text-sm">Low-Latency Seeking</h3>
+                    <p className="text-on-surface-variant text-xs mt-1">Uses progressive segment decoding to play chunks quickly as they download.</p>
                   </div>
                 </div>
                 <div className="flex gap-3 items-start">
@@ -377,7 +379,7 @@ export default function Home() {
                 <div className="flex gap-3 items-start">
                   <Activity className="text-tertiary w-5 h-5 shrink-0 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-on-surface text-sm">CORS-Bypassed Network Pipeline</h3>
+                    <h3 className="font-semibold text-on-surface text-sm">CORS-Optimized Network Pipeline</h3>
                     <p className="text-on-surface-variant text-xs mt-1">Eliminates HTTP pre-flight handshake overheads, saving up to 300ms on every timeline seek command.</p>
                   </div>
                 </div>
@@ -388,13 +390,13 @@ export default function Home() {
             <div className="w-full lg:w-auto flex-1 flex justify-center">
               <div className="glass-panel p-6 rounded-2xl border border-black/10 dark:border-white/10 w-full max-w-[340px] bg-surface-container-highest/50 shadow-2xl relative">
                 <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-4 mb-4">
-                  <span className="font-bold text-xs uppercase tracking-widest text-on-surface-variant">FluxEngine™ Specs</span>
+                  <span className="font-bold text-xs uppercase tracking-widest text-on-surface-variant">Player Specs</span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary uppercase animate-pulse">V2.4 Active</span>
                 </div>
                 <div className="space-y-3 font-mono text-xs text-left">
                   <div className="flex justify-between">
                     <span className="text-on-surface-variant">Seek Latency:</span>
-                    <span className="text-primary font-bold">&lt; 150ms</span>
+                    <span className="text-primary font-bold">Optimized</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-on-surface-variant">Buffer Size:</span>
@@ -517,21 +519,21 @@ export default function Home() {
               "review": [
                 {
                   "@type": "Review",
-                  "author": { "@type": "Person", "name": "David M." },
+                  "author": { "@type": "Person", "name": "David M., Frontend Engineer" },
                   "datePublished": "2026-05-10",
                   "reviewBody": "The fastest Next.js streaming platform I've used. Seek times are incredible, zero buffering for large HLS streams.",
                   "reviewRating": { "@type": "Rating", "bestRating": "5", "ratingValue": "5", "worstRating": "1" }
                 },
                 {
                   "@type": "Review",
-                  "author": { "@type": "Person", "name": "Sarah K." },
+                  "author": { "@type": "Person", "name": "Sarah K., Content Creator" },
                   "datePublished": "2026-05-15",
                   "reviewBody": "Finally, a UI that feels modern and responsive. Using FluxPlays to stream Drive links is an absolute game changer.",
                   "reviewRating": { "@type": "Rating", "bestRating": "5", "ratingValue": "5", "worstRating": "1" }
                 },
                 {
                   "@type": "Review",
-                  "author": { "@type": "Person", "name": "Jason R." },
+                  "author": { "@type": "Person", "name": "Jason R., Daily User" },
                   "datePublished": "2026-05-18",
                   "reviewBody": "I use this as a robust video streaming app alternative. Free, fast, and does exactly what it promises without bloat.",
                   "reviewRating": { "@type": "Rating", "bestRating": "5", "ratingValue": "5", "worstRating": "1" }
@@ -603,6 +605,37 @@ export default function Home() {
               { q: 'Why is my video link not working?', a: 'Common reasons include: the link has expired, the URL doesn\'t point to a direct video file, the source server requires authentication, or the format isn\'t supported by your browser. Make sure the link is a direct video URL (ending in .mp4, .webm, etc.) or a supported platform link.' },
               { q: 'Is fluxplays.live secure to use?', a: 'Yes. Video links are requested directly from your browser — no content passes through our servers unnecessarily. Your recent streams are stored only locally. We don\'t download or re-host any video files.' },
             ]} 
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: [
+                  { q: 'What is fluxplays.live?', a: 'fluxplays.live is a free, browser-based tool for instant video streaming. You paste a supported video link — such as an MP4 URL, Google Drive share, or Telegram file — and watch it directly in your browser. No downloads, no account, no app required.' },
+                  { q: 'How does instant video streaming work?', a: 'When you paste a video link, fluxplays.live fetches and buffers the video progressively in your browser. You can start watching within seconds while the rest loads in the background. It works the same way YouTube and Netflix stream — just with your own links.' },
+                  { q: 'Can I stream videos without downloading them?', a: 'Yes, absolutely. That\'s the whole point. Paste any supported video URL and watch it online without saving a single byte to your device. Your storage stays untouched.' },
+                  { q: 'What video formats are supported?', a: 'fluxplays.live supports MP4, WEBM, HLS (m3u8 live and VOD streams), direct CDN video URLs, Google Drive shared links, and Telegram file links. MKV support depends on your browser\'s native codec support. Torrent streaming is coming in a future update.' },
+                  { q: 'Can I stream Google Drive videos online?', a: 'Yes. If you have a Google Drive video link with sharing enabled ("anyone with the link can view"), paste it into fluxplays.live and it will play directly in the browser player. Make sure the sharing permissions are set to public or unlisted.' },
+                  { q: 'Can I stream Telegram video links?', a: 'Yes, Telegram direct file links are supported. If the link points to a video file hosted on Telegram\'s CDN and is publicly accessible, fluxplays.live can stream it in your browser without downloading.' },
+                  { q: 'Does fluxplays.live support torrent streaming?', a: 'Not yet, but it\'s actively planned. Torrent-to-stream support — where you paste a magnet link and stream without downloading — is on our public roadmap and will be available in a future release.' },
+                  { q: 'Is fluxplays.live free to use?', a: 'Yes, it\'s completely free. There\'s no subscription, no paywall, and no hidden fees. The core streaming tool will always be free. Optional premium features may be introduced later, but basic streaming stays free.' },
+                  { q: 'Do I need to create an account?', a: 'No account is needed for basic streaming. Just open the site, paste a video URL, and start watching instantly. Recent streams are saved to your browser\'s local storage for convenience.' },
+                  { q: 'Can I watch videos on mobile devices?', a: 'Yes. fluxplays.live is fully mobile-responsive. The video player and all controls work smoothly on smartphones and tablets. Android Chrome and iOS Safari are both supported.' },
+                  { q: 'Does the platform support subtitles?', a: 'Currently, the player works with video streams that have embedded subtitles. AI-powered auto-subtitle generation and manual SRT/VTT upload support are planned features on the roadmap.' },
+                  { q: 'Why is my video buffering a lot?', a: 'Buffering is usually caused by a slow internet connection, a slow or distant video server, or a very large file. Try pausing for a few seconds to let the buffer build up. If it persists, the video source server may be rate-limiting connections or the URL may not be a direct video stream.' },
+                  { q: 'Is streaming faster than downloading?', a: 'For watching purposes, yes. Streaming lets you start watching within seconds rather than waiting for a full download. You only load the parts you actually watch, saving both time and data. Downloading makes sense only if you want offline access.' },
+                  { q: 'Can I stream private videos?', a: 'Only if the video URL is publicly accessible. fluxplays.live cannot bypass authentication or access private content. Google Drive links must have sharing enabled, and Telegram links must be publicly accessible CDN URLs.' },
+                  { q: 'Is my viewing history stored?', a: 'No server-side history is stored. Your recent streams are saved only in your browser\'s local storage on your own device. We don\'t collect, track, or log what you watch.' },
+                  { q: 'Does fluxplays.live work on Smart TVs?', a: 'If your Smart TV has a modern browser like Chrome or Edge, you can use fluxplays.live directly. Alternatively, you can open it on your phone or laptop and cast to your TV using the built-in Cast button.' },
+                  { q: 'Which browsers are supported?', a: 'fluxplays.live works best on Google Chrome, Microsoft Edge, Mozilla Firefox, and Apple Safari (desktop and mobile). For the best experience, keep your browser updated to the latest version.' },
+                  { q: 'Can I use fluxplays.live on a slow internet connection?', a: 'Yes. The player uses adaptive streaming where possible, adjusting playback quality based on your connection speed. On slower connections, the video may take a few extra seconds to buffer before it plays smoothly.' },
+                  { q: 'Why is my video link not working?', a: 'Common reasons include: the link has expired, the URL doesn\'t point to a direct video file, the source server requires authentication, or the format isn\'t supported by your browser. Make sure the link is a direct video URL (ending in .mp4, .webm, etc.) or a supported platform link.' },
+                  { q: 'Is fluxplays.live secure to use?', a: 'Yes. Video links are requested directly from your browser — no content passes through our servers unnecessarily. Your recent streams are stored only locally. We don\'t download or re-host any video files.' }
+                ].map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))
+              })
+            }}
           />
         </div>
 
@@ -682,16 +715,19 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold text-on-surface uppercase tracking-widest text-xs mb-4">Product</h4>
                 <nav className="flex flex-col gap-3">
-                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/features">Features</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="#features">Features</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="#how-it-works">How it works</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/about">About Us</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/blog">Blog & Guides</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/newsletter">Newsletter</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/trending/netflix-alternatives">Trending</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/compare/fluxplays-vs-netflix">Comparisons</a>
                 </nav>
               </div>
               <div>
                 <h4 className="font-semibold text-on-surface uppercase tracking-widest text-xs mb-4">Support</h4>
                 <nav className="flex flex-col gap-3">
-                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/faq">FAQ</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/#faq">FAQ</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/creators">Creators</a>
                   <button onClick={() => setIsFeedbackOpen(true)} className="text-on-surface-variant hover:text-primary transition-colors text-left bg-transparent border-none p-0 outline-none cursor-pointer">Report Bug</button>
                 </nav>

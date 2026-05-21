@@ -30,23 +30,6 @@ export default function FAQSection({
 
   return (
     <section className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-3xl mx-auto">
-      {injectSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: faqs.map((faq) => ({
-                "@type": "Question",
-                name: faq.q,
-                acceptedAnswer: { "@type": "Answer", text: faq.a },
-              })),
-            }),
-          }}
-        />
-      )}
-      
       {(title || subtitle || description) && (
         <div className="text-center mb-12">
           {subtitle && (

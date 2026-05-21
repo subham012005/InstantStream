@@ -8,7 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -18,7 +18,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const page = trendingData.find((p) => p.slug === params.slug);
+  const resolvedParams = await params;
+  const page = trendingData.find((p) => p.slug === resolvedParams.slug);
   if (!page) {
     return { title: "Page Not Found" };
   }
@@ -45,8 +46,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function TrendingPage({ params }: Props) {
-  const page = trendingData.find((p) => p.slug === params.slug);
+export default async function TrendingPage({ params }: Props) {
+  const resolvedParams = await params;
+  const page = trendingData.find((p) => p.slug === resolvedParams.slug);
 
   if (!page) {
     notFound();
@@ -86,6 +88,14 @@ export default function TrendingPage({ params }: Props) {
           "@type": "Organization",
           "name": "FluxPlays"
         }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": page.faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": { "@type": "Answer", "text": faq.a }
+        }))
       }
     ]
   };
