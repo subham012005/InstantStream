@@ -1,4 +1,17 @@
-User-agent: *
+User-Agent: *
 Allow: /
+Disallow: /api/
+Disallow: /search
 
-Sitemap: https://fluxplays.live/sitemap.xml
+User-Agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /search
+
+User-Agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /search
+
+Host: https://fluxplays.vercel.app
+Sitemap: https://fluxplays.vercel.app/sitemap.xml
