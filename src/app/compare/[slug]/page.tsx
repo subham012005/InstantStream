@@ -237,7 +237,7 @@ export default async function ComparePage({ params }: Props) {
               title="Comparison FAQs" 
               subtitle="Deep Dive" 
               faqs={page.faqs} 
-              injectSchema={true} 
+              
             />
           </div>
         </article>

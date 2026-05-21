@@ -165,7 +165,7 @@ export default async function TrendingPage({ params }: Props) {
               title="Topics and Questions" 
               subtitle="More Info" 
               faqs={page.faqs} 
-              injectSchema={true} 
+             
             />
           </div>
         </article>

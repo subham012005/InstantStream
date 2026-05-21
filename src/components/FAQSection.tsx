@@ -14,7 +14,6 @@ interface FAQSectionProps {
   subtitle?: string;
   description?: string;
   faqs: FAQItem[];
-  injectSchema?: boolean;
 }
 
 export default function FAQSection({
@@ -22,7 +21,6 @@ export default function FAQSection({
   subtitle = "FAQ",
   description,
   faqs,
-  injectSchema = true,
 }: FAQSectionProps) {
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 

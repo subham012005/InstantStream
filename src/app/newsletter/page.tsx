@@ -167,7 +167,7 @@ export default function NewsletterPage() {
           subtitle="Questions"
           description="Everything you need to know before subscribing."
           faqs={NEWSLETTER_FAQS}
-          injectSchema={true}
+          
         />
       </main>
 
