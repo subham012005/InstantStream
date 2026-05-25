@@ -106,7 +106,7 @@ export default async function ComparePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-[32px] border-b border-black/5 dark:border-white/5">
+      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-[32px] border-b border-white/5">
         <div className="flex justify-between items-center px-6 max-w-[1200px] mx-auto h-16">
           <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
             <Logo className="w-8 h-8" />

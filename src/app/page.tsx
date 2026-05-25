@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
+import { ValidationSteps } from "@/components/ValidationSteps";
+import type { ValidationResponse } from "@/types/validation";
 
 const CustomPlayer = dynamic(() => import("@/components/CustomPlayer"), {
   ssr: false,
@@ -23,6 +25,11 @@ const FeedbackModal = dynamic(
   () => import("@/components/FeedbackModal").then((m) => ({ default: m.FeedbackModal })),
   { ssr: false }
 );
+
+const InlineReportForm = dynamic(
+  () => import("@/components/InlineReportForm").then((m) => ({ default: m.InlineReportForm })),
+  { ssr: false }
+);
 import { 
   ArrowLeft, CheckCircle2, Link2, X, History, Play, Video, Tv, HardDrive, Send, 
   Download, Subtitles, Rocket, Zap, CloudOff, Gauge, Smartphone, Server, 
@@ -34,11 +41,15 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationResponse, setValidationResponse] = useState<ValidationResponse | null>(null);
   const [streamData, setStreamData] = useState<{streamUrl: string, title: string, type: string} | null>(null);
+  const [pendingStreamData, setPendingStreamData] = useState<{streamUrl: string, title: string, type: string} | null>(null);
   const [recentStreams, setRecentStreams] = useState<{url: string, title: string, type: string, date: number}[]>([]);
   const [shake, setShake] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [reportUrl, setReportUrl] = useState("");
 
   const isValidUrl = url.length > 5 && (url.startsWith('http') || url.startsWith('magnet:'));
 
@@ -67,26 +78,48 @@ export default function Home() {
     if (typeof urlToStream === 'string') setUrl(urlToStream);
     setLoading(true);
     setError("");
+    setValidationResponse(null);
+    setShowReportForm(false);
+    setReportUrl("");
     try {
       const res = await fetch("/api/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: targetUrl })
       });
-      const data = await res.json();
+      const data: ValidationResponse = await res.json();
+      setValidationResponse(data);
+      
       if (!res.ok) {
         setError(data.error || "Validation failed");
+        setReportUrl(targetUrl);
+        setShowReportForm(true);
         setShake(true);
         setTimeout(() => setShake(false), 500);
       } else {
-        setStreamData(data);
-        saveRecentStream({ streamUrl: targetUrl, title: data.title, type: data.type });
+        const resolved = { streamUrl: data.streamUrl || targetUrl, title: data.title || "", type: data.type || "" };
+        // Stage the stream data so the user sees validation steps complete (green) before transitioning
+        setPendingStreamData(resolved);
+        saveRecentStream(resolved);
+        // Delay the player transition by 1.4s — just enough to read the success state
+        setTimeout(() => {
+          setStreamData(resolved);
+          setPendingStreamData(null);
+        }, 1400);
       }
     } catch (err) {
       setError("An error occurred connecting to the server.");
+      setReportUrl(targetUrl);
+      setShowReportForm(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFatalError = (type: string, details: string) => {
+    setError(`Playback error: ${type} — ${details}`);
+    setReportUrl(url);
+    setShowReportForm(true);
   };
 
   return (
@@ -99,7 +132,7 @@ export default function Home() {
       </div>
 
       {/* TopNavBar */}
-      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-[32px] border-b border-black/5 dark:border-white/5">
+      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-[32px] border-b border-white/5">
         <div className="flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto h-16">
           <a href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
             <Logo className="w-8 h-8" />
@@ -160,7 +193,7 @@ export default function Home() {
                       placeholder="Paste MP4, Drive, Telegram, or video URL…" 
                       type="text" 
                       value={url}
-                      onChange={(e) => { setUrl(e.target.value); setError(""); }}
+                      onChange={(e) => { setUrl(e.target.value); setError(""); setShowReportForm(false); setReportUrl(""); }}
                       onKeyDown={(e) => e.key === 'Enter' && handleStream()}
                     />
                     <AnimatePresence>
@@ -169,7 +202,7 @@ export default function Home() {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
-                          onClick={() => { setUrl(""); setError(""); }}
+                          onClick={() => { setUrl(""); setError(""); setShowReportForm(false); setReportUrl(""); }}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 hover:text-on-surface transition-colors flex items-center justify-center"
                         >
                           <X className="w-[18px] h-[18px]" />
@@ -211,6 +244,41 @@ export default function Home() {
                   <span>{error}</span>
                 </motion.div>
               )}
+
+              {validationResponse && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full"
+                >
+                  <ValidationSteps
+                    isValidating={loading}
+                    validationResponse={validationResponse}
+                    isLaunching={!!pendingStreamData}
+                  />
+                </motion.div>
+              )}
+
+              <AnimatePresence>
+                {showReportForm && (
+                  <motion.div
+                    key={reportUrl}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full"
+                  >
+                    <InlineReportForm
+                      key={reportUrl}
+                      videoUrl={reportUrl}
+                      onDismiss={() => setShowReportForm(false)}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
               
               {/* Recently Watched - Horizontal Pills */}
               {recentStreams.length > 0 && (
@@ -666,7 +734,7 @@ export default function Home() {
                 </button>
                 
                 <div className={`w-full bg-black rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,122,255,0.15)] border border-white/10 relative flex-grow flex items-center justify-center transition-all duration-700 ${isTheaterMode ? 'min-h-[80vh]' : 'min-h-[65vh]'}`}>
-                  <CustomPlayer src={streamData.streamUrl} />
+                  <CustomPlayer src={streamData.streamUrl} onFatalError={handleFatalError} />
                 </div>
                 
                 <div className="mt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
