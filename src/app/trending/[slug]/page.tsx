@@ -106,18 +106,6 @@ export default async function TrendingPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-[32px] border-b border-white/5">
-        <div className="flex justify-between items-center px-6 max-w-[1200px] mx-auto h-16">
-          <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
-            <Logo className="w-8 h-8" />
-            <span>FluxPlays</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Link href="/" className="bg-primary text-on-primary px-4 py-2 rounded-lg font-semibold text-sm hover:opacity-90 transition-all duration-200">Start Streaming</Link>
-          </div>
-        </div>
-      </header>
 
       <main className="pt-24 pb-20 px-6 max-w-[900px] mx-auto">
         <div className="mb-10 block">

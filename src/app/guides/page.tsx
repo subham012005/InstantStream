@@ -19,20 +19,7 @@ export const metadata: Metadata = {
 export default function GuidesIndex() {
   return (
     <div className="min-h-screen bg-surface">
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <div className="max-w-[1200px] mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
-            <Logo className="w-8 h-8" />
-            <span>FluxPlays</span>
-          </Link>
-          <Link href="/" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
-            <ArrowLeft className="w-4 h-4" />
-            Back to player
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-[1200px] mx-auto px-6 md:px-16 py-16">
+      <main className="max-w-[1200px] mx-auto px-6 md:px-16 pt-24 pb-16">
         <div className="mb-14">
           <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-3 block">Programmatic SEO Hub</span>
           <h1 className="font-display-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4 leading-tight">

@@ -24,10 +24,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-surface">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <Link href="/" className="flex items-center gap-2 font-display-lg"><Logo className="w-8 h-8" /><span>FluxPlays</span></Link>
-      </header>
-      <main className="max-w-[720px] mx-auto px-6 py-16 prose dark:prose-invert">
+      <main className="max-w-[720px] mx-auto px-6 pt-24 pb-16 prose dark:prose-invert">
         <h1>About FluxPlays</h1>
         <p>FluxPlays (formerly InstantStream) was built out of a fundamental frustration with the modern web: watching a video you have the link to shouldn't require installing bulky applications or waiting for multi-gigabyte downloads to finish.</p>
         <h2>Our Mission</h2>

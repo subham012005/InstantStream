@@ -1,9 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
+import Script from "next/script";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 import { ValidationSteps } from "@/components/ValidationSteps";
 import type { ValidationResponse } from "@/types/validation";
@@ -131,29 +130,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:32px_32px]"></div>
       </div>
 
-      {/* TopNavBar */}
-      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-[32px] border-b border-white/5">
-        <div className="flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto h-16">
-          <a href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
-            <Logo className="w-8 h-8" />
-            <span>FluxPlays</span>
-          </a>
-          <nav className="hidden md:flex items-center gap-6">
-            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#how-it-works">How it works</a>
-            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#formats">Supported Formats</a>
-            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/newsletter">Newsletter</a>
-            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/search">Search</a>
-            <a className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="#coming-soon">Roadmap</a>
-            <button onClick={() => setIsFeedbackOpen(true)} className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0 outline-none">Feedback & Bugs</button>
-          </nav>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <a href="#stream" className="bg-primary text-on-primary px-4 py-2 rounded-lg font-semibold text-sm hover:opacity-90 transition-all duration-200">Start Streaming</a>
-          </div>
-        </div>
-      </header>
-
-      <main className="relative">
+      <main className="relative pt-16">
         <AnimatePresence mode="wait">
           {!streamData ? (
             <motion.div
@@ -572,7 +549,8 @@ export default function Home() {
 
         {/* Testimonials & Community Ratings */}
         <section id="reviews" className="py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-5xl mx-auto border-t border-black/5 dark:border-white/5">
-          <script
+          <Script
+            id="schema-product-reviews"
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify({
               "@context": "https://schema.org/",
@@ -681,7 +659,8 @@ export default function Home() {
               { q: 'Is fluxplays.live secure to use?', a: 'Yes. Video links are requested directly from your browser — no content passes through our servers unnecessarily. Your recent streams are stored only locally. We don\'t download or re-host any video files.' },
             ]} 
           />
-          <script
+          <Script
+             id="schema-faq"
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({

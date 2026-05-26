@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Navbar } from "@/components/Navbar";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -97,12 +98,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Inline theme init — runs before paint, eliminates FOUC */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
-          }}
-        />
         {/* Google Search Console Verification */}
         <meta
           name="google-site-verification"
@@ -110,10 +105,21 @@ export default function RootLayout({
         />
         {/* Bing Webmaster Verification */}
         <meta name="msvalidate.01" content="34F600811BDD9E429D675B2E52369FA0" />
-
-        {/* Structured Data */}
-        <script
+      </head>
+      <body suppressHydrationWarning className={`${geistSans.variable} ${jetbrainsMono.variable} bg-surface font-body-md text-on-surface antialiased transition-colors duration-300`}>
+        {/* Inline theme init — hoisted safely to head without hydration errors */}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
+        {/* Structured Data Scripts */}
+        <Script
+          id="schema-web-app"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -138,9 +144,10 @@ export default function RootLayout({
             }),
           }}
         />
-        {/* SearchAction Schema */}
-        <script
+        <Script
+          id="schema-search-action"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -158,18 +165,19 @@ export default function RootLayout({
             }),
           }}
         />
-      </head>
-      <body suppressHydrationWarning className={`${geistSans.variable} ${jetbrainsMono.variable} bg-surface font-body-md text-on-surface antialiased transition-colors duration-300`}>
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-WD5DJHHT"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
-        <ThemeProvider>{children}</ThemeProvider>
+
+        <ThemeProvider>
+          <Navbar />
+          {/* Google Tag Manager (noscript) */}
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-WD5DJHHT"
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+          {children}
         <Analytics />
         <Script
           id="gtm-init"
@@ -210,6 +218,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 })(window,document,"clarity","script","wup6qmdbx4");`,
           }}
         />
+        </ThemeProvider>
       </body>
     </html>
   );

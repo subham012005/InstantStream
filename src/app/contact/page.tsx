@@ -11,10 +11,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-surface">
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <Link href="/" className="flex items-center gap-2 font-display-lg"><Logo className="w-8 h-8" /><span>FluxPlays</span></Link>
-      </header>
-      <main className="max-w-[720px] mx-auto px-6 py-16 prose dark:prose-invert">
+      <main className="max-w-[720px] mx-auto px-6 pt-24 pb-16 prose dark:prose-invert">
         <h1>Contact Us</h1>
         <p>If you have any business propositions, technical feedback, or want to contribute to the open-source architecture, you can contact the team behind FluxPlays.</p>
         <h2>Technical Support</h2>

@@ -79,20 +79,7 @@ export default async function GuidePage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <div className="max-w-[1200px] mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
-            <Logo className="w-8 h-8" />
-            <span>FluxPlays</span>
-          </Link>
-          <Link href="/guides" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
-            <ArrowLeft className="w-4 h-4" />
-            All Guides
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-[720px] mx-auto px-6 md:px-8 py-14">
+      <main className="max-w-[720px] mx-auto px-6 md:px-8 pt-24 pb-14">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-on-surface-variant mb-8">
           <Link href="/" className="hover:text-primary transition-colors">Home</Link>

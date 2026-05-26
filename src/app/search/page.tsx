@@ -54,19 +54,7 @@ export default function SearchPage() {
 
   return (
     <>
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <div className="max-w-[1200px] mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 font-display-lg text-headline-md tracking-tighter text-on-surface hover:text-primary transition-colors">
-            <Logo className="w-8 h-8" />
-            <span>FluxPlays</span>
-          </Link>
-          <Link href="/" className="bg-primary text-on-primary px-4 py-2 rounded-lg font-semibold text-sm hover:opacity-90 transition-all">
-            Start Streaming
-          </Link>
-        </div>
-      </header>
-
-      <main className="px-6 py-16 max-w-[800px] mx-auto">
+      <main className="px-6 pt-24 pb-16 max-w-[800px] mx-auto">
         <h1 className="font-display-lg text-3xl md:text-4xl text-on-surface mb-3">
           Search FluxPlays Content
         </h1>

@@ -11,10 +11,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-surface">
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <Link href="/" className="flex items-center gap-2 font-display-lg"><Logo className="w-8 h-8" /><span>FluxPlays</span></Link>
-      </header>
-      <main className="max-w-[720px] mx-auto px-6 py-16 prose dark:prose-invert">
+      <main className="max-w-[720px] mx-auto px-6 pt-24 pb-16 prose dark:prose-invert">
         <h1>Privacy Policy</h1>
         <p>Last Updated: May 2026</p>
         <p>At FluxPlays, we take your privacy extremely seriously. Our architecture is fundamentally designed to limit data collection.</p>

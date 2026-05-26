@@ -11,10 +11,7 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-surface">
-      <header className="border-b border-black/5 dark:border-white/5 py-5 px-6 md:px-16">
-        <Link href="/" className="flex items-center gap-2 font-display-lg"><Logo className="w-8 h-8" /><span>FluxPlays</span></Link>
-      </header>
-      <main className="max-w-[720px] mx-auto px-6 py-16 prose dark:prose-invert">
+      <main className="max-w-[720px] mx-auto px-6 pt-24 pb-16 prose dark:prose-invert">
         <h1>Terms of Service</h1>
         <p>Last Updated: May 2026</p>
         <p>By accessing or using FluxPlays, you agree to comply with and be bound by these Terms of Service. If you do not agree, do not use the application.</p>
