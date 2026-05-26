@@ -11,6 +11,7 @@ export interface Article {
   sections: { heading: string; body: string }[];
   conclusion: string;
   relatedSlugs: string[];
+  keyTakeaways?: string[];
 }
 
 export const articles: Article[] = [
@@ -24,6 +25,11 @@ export const articles: Article[] = [
     readTime: "3 min read",
     author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
     intro: "Streaming a video without downloading it sounds simple, but there's a lot happening under the hood. When you paste a direct video URL into FluxPlays, the browser doesn't save a file — it requests the video in small chunks and plays them as they arrive. Understanding this process helps you get better performance and avoid common pitfalls.",
+    keyTakeaways: [
+      "Modern streaming relies on HTTP Range Requests to fetch small chunks of video.",
+      "The source server must explicitly support 'Accept-Ranges: bytes' for this to work natively.",
+      "Only direct video links (not webpages wrapping a video) can be streamed perfectly without downloading."
+    ],
     sections: [
       { heading: "How Chunked HTTP Delivery Works", body: "Browsers use HTTP Range Requests to fetch only the portion of a file they need right now. When you hit play, your browser sends a request like 'give me bytes 0–2MB of this file.' As you watch, it keeps requesting subsequent chunks. This is why you can seek to different parts of a video without downloading everything first — you're just requesting a different byte range." },
       { heading: "What Makes a URL Streamable", body: "Not every URL works. For streaming to work without a download, the server must support HTTP Range Requests (check for `Accept-Ranges: bytes` in the response headers). Direct file links from services like Google Drive, Dropbox public shares, or your own server all work this way. Redirect URLs, links that require cookie authentication, or URLs behind login walls typically won't stream cleanly." },
@@ -373,6 +379,29 @@ export const articles: Article[] = [
     ],
     conclusion: "Safari and Chrome agree on MP4 H.264 and little else at the edges of the spec. For a streaming app that works on both, test HLS support explicitly on Chrome, ensure your codec choices include H.264 as a fallback, and handle autoplay restrictions by always requiring explicit user interaction before sound begins. FluxPlays is tested on both browsers and handles format detection automatically.",
     relatedSlugs: ["how-to-stream-videos-without-downloading", "mp4-vs-webm-streaming", "how-browser-video-streaming-works"]
+  },
+  {
+    slug: "stream-torrent-without-downloading",
+    title: "How to Stream Torrents Without Downloading",
+    metaTitle: "How to Stream Torrent Files Directly in Your Browser",
+    metaDescription: "Learn the technical process behind streaming torrent files directly in your web browser using WebTorrent, bypassing the need for heavy desktop clients.",
+    tag: "Technical Guide",
+    date: "May 2026",
+    readTime: "6 min read",
+    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    intro: "Historically, the BitTorrent protocol functioned linearly: you downloaded an entire file, waited for 100% completion, and then watched the movie. But modern advancements in how browsers handle peer-to-peer (P2P) connections have entirely changed the paradigm. Today, it is possible to stream torrents sequentially directly inside your web browser.",
+    keyTakeaways: [
+      "WebTorrent enables torrent streaming in browsers utilizing WebRTC.",
+      "Players request sequential pieces of a video file for immediate playback.",
+      "No desktop installation or client software is required."
+    ],
+    sections: [
+      { heading: "WebTorrent vs BitTorrent", body: "Traditional torrent clients use UDP and TCP to talk to a swarm of peers. Browsers cannot make raw UDP or TCP connections due to security constraints. WebTorrent bridges this gap. It replaces raw sockets with WebRTC (the same technology powering Google Meet and Zoom), which allows browsers to establish direct P2P connections with other browsers in the swarm securely." },
+      { heading: "Sequential Downloading", body: "For streaming to work, the client has to change its download priority. Usually, torrent software requests the rarest pieces of a file first to optimize swarm health. When streaming, the algorithm is flipped to 'sequential' mode. The client prioritizes piece 1, then piece 2, then piece 3, ensuring that the video buffer fills up directly ahead of the playhead." },
+      { heading: "Converting a Magnet Link to a Stream", body: "When you paste a Magnet link into a WebTorrent-compatible player, the client fetches the metadata. It parses the video container (like MP4 or WebM) and connects it virtually to an HTML5 <video> element. The video element thinks it is playing a standard HTTP stream, while under the hood, the client intercepts the byte requests and fetches them from peer nodes in real-time." }
+    ],
+    conclusion: "Streaming a torrent without downloading the entire file first is a masterpiece of modern web engineering, fusing WebRTC and Media Source Extensions. While native support varies by platform, it represents the absolute peak of decentralized content delivery in the browser.",
+    relatedSlugs: ["how-to-stream-videos-without-downloading", "how-browser-video-streaming-works"]
   }
 ];
 

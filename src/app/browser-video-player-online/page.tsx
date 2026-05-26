@@ -1,14 +1,21 @@
-import { Metadata } from 'next';
-import Home from '../page';
+import { Metadata } from "next";
+import LandingPage from "@/components/LandingPage";
+import { landingPages } from "@/app/landingPagesData";
+
+const data = landingPages["browser-video-player-online"];
 
 export const metadata: Metadata = {
-  title: 'Browser Video Player Online | Zero Installation | fluxplays.live',
-  description: 'A powerful video player right in your browser. Supports MKV, WEBM, MP4, and more. Paste your link for a seamless playback experience.',
-  alternates: {
-    canonical: 'https://fluxplays.vercel.app/browser-video-player-online'
-  }
+  title: "Browser Video Player Online | Zero Installation | FluxPlays",
+  description: data.subheadline,
+  alternates: { canonical: data.canonicalUrl },
+  openGraph: {
+    title: "Browser Video Player Online | Zero Installation | FluxPlays",
+    description: data.subheadline,
+    url: data.canonicalUrl,
+    type: "website",
+  },
 };
 
 export default function BrowserVideoPlayerPage() {
-  return <Home />;
+  return <LandingPage data={data} />;
 }

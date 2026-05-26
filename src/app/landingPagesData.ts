@@ -217,7 +217,7 @@ export const landingPages: Record<string, LandingPageData> = {
     faqs: [
       { q: "Why can't I play private Google Drive videos?", a: "FluxPlays can only stream publicly shared Drive videos ('Anyone with the link'). Private files require Google authentication which FluxPlays does not support." },
       { q: "How do I share a Google Drive video with FluxPlays?", a: "Right-click the file in Drive → Share → Change access to 'Anyone with the link' → Copy link. Paste that URL into FluxPlays." },
-      { q: "Why do I get a 'quota exceeded' error for Drive videos?", a: "If a Google Drive file gets too many views, Google temporarily blocks streaming. The file owner needs to make a copy of the file to get a fresh download quota." },
+      { q: "How do I bypass the Google Drive 'Video cannot be played' or quota limit?", a: "If a file shows 'quota exceeded' or 'playback limit reached', standard Google Drive prevents streaming. You can bypass this by right-clicking the file in Drive, selecting 'Make a Copy', and streaming the copied file link in FluxPlays instead. Since the copy is new, it has zero views and full playback quota." },
       { q: "What video formats from Google Drive does FluxPlays support?", a: "FluxPlays can stream any format Google Drive converts to its internal streaming format — including MP4, MKV, AVI, MOV, and more." },
       { q: "Can I watch Google Drive lecture recordings in FluxPlays?", a: "Yes! Many students use FluxPlays to watch Drive lecture recordings at 2× speed with better seek controls than the native Drive player." },
     ],
@@ -419,4 +419,113 @@ export const landingPages: Record<string, LandingPageData> = {
       { label: "Browser Video Player", href: "/browser-video-player-online" },
     ],
   },
+
+  "browser-video-player-online": {
+    slug: "browser-video-player-online",
+    canonicalUrl: `${BASE}/browser-video-player-online`,
+    badge: "Universal Web Player",
+    headlinePart1: "Browser Video Player —",
+    headlinePart2: "Zero Installation",
+    subheadline:
+      "A powerful, seamless video player right in your browser. Supports MKV, WEBM, MP4, and direct stream links. Paste your link for an instant playback experience.",
+    ctaText: "Open Browser Player →",
+    accentColor: "#3b82f6",
+    secondaryColor: "#8b5cf6",
+    features: [
+      { icon: "🌐", title: "100% Web-Based", description: "No apps or extensions. Operates completely in your browser memory for total device freedom." },
+      { icon: "🎬", title: "Broad Format Support", description: "Native playback or polyfills for MP4, WEBM, HLS, and many M3U8 files seamlessly handled." },
+      { icon: "⚡", title: "Ultra Fast Load Pages", description: "Zero heavy background downloads. Video buffers asynchronously while you watch." },
+      { icon: "📱", title: "Mobile & Tablet Ready", description: "Fully responsive. Looks and functions identically on your phone as it does on desktop." },
+      { icon: "⌨️", title: "Keyboard Navigation", description: "Arrow keys, space bar, and letter shortcuts (F for fullscreen) natively integrated." },
+      { icon: "🔐", title: "Always Private", description: "Your playback does not contact a server beyond the video host itself. 100% private." },
+    ],
+    steps: [
+      { step: 1, title: "Locate Your Media URL", body: "Copy the direct link of the video file you wish to watch from any platform, cloud service, or CDN." },
+      { step: 2, title: "Paste the URL", body: "Insert the link into the FluxPlays input bar. The system will detect the format and load the correct decoder." },
+      { step: 3, title: "Watch the Video", body: "Hit play. You can manage playback speed, subtitles, and history locally." },
+    ],
+    faqs: [
+      { q: "Is this browser player entirely free?", a: "Yes, there is no payment wall or account required to use FluxPlays." },
+      { q: "Does the online browser player buffer often?", a: "The player uses progressive HTTP delivery. It will only buffer if the source server you provided is slow or your connection drops." },
+      { q: "What data does the player collect?", a: "None. Viewing happens linearly in your browser and your local history stays on your device." },
+    ],
+    relatedLinks: [
+      { label: "Watch MP4 Online", href: "/watch-mp4-online-player" },
+      { label: "HLS M3U8 Player", href: "/hls-m3u8-stream-player" },
+      { label: "Google Drive Player", href: "/google-drive-video-player" },
+    ],
+  },
+
+  "watch-mkv-online-player": {
+    slug: "watch-mkv-online-player",
+    canonicalUrl: `${BASE}/watch-mkv-online-player`,
+    badge: "MKV Stream Support",
+    headlinePart1: "Watch MKV Videos",
+    headlinePart2: "Directly Online",
+    subheadline:
+      "Play Matroska Video (MKV) files straight from your browser where supported. Seamlessly convert raw MKV URLs into a responsive, hardware-accelerated playback experience.",
+    ctaText: "Stream MKV Video →",
+    accentColor: "#ef4444",
+    secondaryColor: "#f59e0b",
+    features: [
+      { icon: "🎞️", title: "Matroska Support", description: "Attempts native playback or provides optimized fallback handling for the complex MKV container." },
+      { icon: "🔊", title: "Audio Syncing", description: "Maintains optimal sync for multi-channel MKV audio traces using native browser APIs." },
+      { icon: "📑", title: "External Subtitles Loader", description: "Overlay VTT and SRT files onto your MKV stream without needing them baked into the container." },
+      { icon: "🚀", title: "No Transcoding Delay", description: "Stream the raw link directly without waiting for a server to transcode the MKV into an MP4." },
+      { icon: "🎚️", title: "Progressive Seek", description: "Jump across the MKV timeline using range requests for fast, reliable seeking." },
+      { icon: "🌓", title: "Immersive View", description: "Theater mode specifically designed to provide a cinematic setting for high-definition MKV films." },
+    ],
+    steps: [
+      { step: 1, title: "Obtain the MKV File Link", body: "Generate a direct access link to your MKV file from your cloud host or media server." },
+      { step: 2, title: "Paste the Direct Link", body: "Copy the link into FluxPlays. We automatically inspect the headers to configure the playback environment." },
+      { step: 3, title: "Commence Playback", body: "Click play. If your browser supports the internal video codec, you can watch instantly without downloads." },
+    ],
+    faqs: [
+      { q: "Why might an MKV file not play?", a: "MKV is a container format. While browsers can increasingly parse MKV, if the video inside is encoded in an unsupported codec, it may fail to play visually." },
+      { q: "Do I need to download the whole MKV first?", a: "No, as long as the server allows partial byte requests, the MKV file will stream progressively." },
+      { q: "Does the MKV player work on mobile?", a: "Yes, relying on the native capabilities of modern iOS and Android browser rendering engines." },
+    ],
+    relatedLinks: [
+      { label: "Watch MP4 Online", href: "/watch-mp4-online-player" },
+      { label: "Subtitle Player", href: "/subtitle-video-player" },
+      { label: "Browser Video Player", href: "/browser-video-player-online" },
+    ],
+  },
+
+  "direct-video-link-tester": {
+    slug: "direct-video-link-tester",
+    canonicalUrl: `${BASE}/direct-video-link-tester`,
+    badge: "Developer Tool",
+    headlinePart1: "Direct Video Link",
+    headlinePart2: "Tester & Validator",
+    subheadline:
+      "A fast, precise tool for developers and streaming engineers to test direct video URLs, check CORS configurations, and validate HTTP range request support instantly.",
+    ctaText: "Test Video Link Now →",
+    accentColor: "#f43f5e",
+    secondaryColor: "#10b981",
+    features: [
+      { icon: "🛠️", title: "CORS Checking", description: "Validate if your media server has correct Cross-Origin Resource Sharing (CORS) headers configured for browser streaming." },
+      { icon: "📡", title: "HTTP Range Requests", description: "Test your CDN or bucket for 'Accept-Ranges: bytes' to ensure the video supports seekable progressive streaming." },
+      { icon: "🌐", title: "Format Auto-Detection", description: "Automatically inspects the Response Content-Type to verify if the file is an MP4, WEBM, or M3U8." },
+      { icon: "⚡", title: "Latency Testing", description: "Provides instant feedback on Time to First Byte (TTFB) and buffering performance from the browser's view." },
+      { icon: "🔍", title: "Presigned URL Verification", description: "Paste long AWS S3 or Google Cloud presigned URLs to confirm if token signatures restrict browser playback." },
+      { icon: "📊", title: "Error Diagnostics", description: "Catch HTTP 403 Forbidden or 404 Not Found errors before you deploy your video links to users." },
+    ],
+    steps: [
+      { step: 1, title: "Input the Raw Endpoint", body: "Copy the final direct URL of your video endpoint (e.g., from an S3 bucket or a cloud storage provider)." },
+      { step: 2, title: "Run the Validator", body: "Paste it into the tester. Our browser client will attempt an immediate fetch and partial content load." },
+      { step: 3, title: "Evaluate Results", body: "If playback succeeds with smooth seeking, your storage configurations and HTTP headers are production-ready." },
+    ],
+    faqs: [
+      { q: "Why is my valid video link failing the CORS test?", a: "Even if a video URL works directly in a browser tab or VLC, it will fail in a web player if the hosting server lacks `Access-Control-Allow-Origin: *` headers for your domain." },
+      { q: "What does an HTTP Range error mean?", a: "It means the hosting server cannot serve chunks of the file on-demand. Without range requests, the user must download the entire video linearly, which ruins browser streaming latency." },
+      { q: "Can I test protected M3U8 manifests?", a: "Yes. If the M3U8 manifest URLs carry the correct HMAC tokens natively in the URL path, the tester will load and play it seamlessly." },
+    ],
+    relatedLinks: [
+      { label: "Play Direct Video Links", href: "/play-direct-video-links" },
+      { label: "Browser Video Player", href: "/browser-video-player-online" },
+      { label: "M3U8 Web Player", href: "/m3u8-player-online" },
+    ],
+  },
 };
+

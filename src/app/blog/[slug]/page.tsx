@@ -98,6 +98,23 @@ export default async function ArticlePage({ params }: Props) {
           {article.intro}
         </p>
 
+        {/* Key Takeaways - Featured Snippet Target */}
+        {article.keyTakeaways && (
+          <div className="mb-10 p-6 rounded-2xl bg-surface-container-highest/30 border border-black/5 dark:border-white/5">
+            <h2 className="font-headline-sm text-on-surface mb-4 flex items-center gap-2">
+              <span className="text-primary">💡</span> Key Takeaways
+            </h2>
+            <ul className="space-y-3">
+              {article.keyTakeaways.map((takeaway, idx) => (
+                <li key={idx} className="flex items-start gap-3 text-on-surface-variant text-sm">
+                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-1.5"></span>
+                  <span>{takeaway}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Sections */}
         <article className="space-y-10">
           {article.sections.map((section, i) => (
