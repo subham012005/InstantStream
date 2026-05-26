@@ -16,10 +16,22 @@ interface CustomPlayerProps {
 // Match real HLS manifest/segment extensions only (not ".ts" inside URL tokens)
 function isHlsUrl(url: string): boolean {
   try {
-    const pathname = new URL(url).pathname.toLowerCase();
-    return pathname.endsWith('.m3u8') || pathname.endsWith('.ts');
+    const parsed = new URL(url, window.location.origin);
+    const pathname = parsed.pathname.toLowerCase();
+    const proxiedUrl = parsed.searchParams.get('url') || '';
+
+    return (
+      pathname.endsWith('.m3u8') ||
+      pathname.endsWith('.ts') ||
+      pathname === '/api/hls-proxy' ||
+      proxiedUrl.toLowerCase().includes('.m3u8')
+    );
   } catch {
-    return /\.m3u8(\?|#|$)/i.test(url) || /\/[^/?#]+\.ts(\?|#|$)/i.test(url);
+    return (
+      url.startsWith('/api/hls-proxy') ||
+      /\.m3u8(?:[?&#]|$)/i.test(url) ||
+      /\/[^/?#]+\.ts(?:[?&#]|$)/i.test(url)
+    );
   }
 }
 

@@ -1,44 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchVideoSource } from "@/lib/scraper";
 
-// ── Config ────────────────────────────────────────────────────────────────────
-const TMDB_API_KEY  = process.env.TMDB_API_KEY;
-const TMDB_BASE     = "https://api.themoviedb.org/3";
+interface StreamMeta {
+  title?: string;
+  backdrop?: string;
+  file_name?: string;
+}
 
-// The stremio-addon-streamimdb backend — runs on port 7000 alongside Next.js.
-// Override with STREAM_ENGINE_URL env var in production (e.g. your Render URL).
-const STREAM_ENGINE = (
-  process.env.STREAM_ENGINE_URL || "http://localhost:7000"
-).replace(/\/$/, "");
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 interface StreamResult {
   url: string;
   type: "hls" | "mp4";
   provider: string;
-  meta?: any;
+  meta?: StreamMeta;
 }
 
-// ── Primary: StreamIMDb engine (vaplayer.ru + HLS proxy) ─────────────────────
 async function tryStreamEngine(imdbId: string): Promise<StreamResult | null> {
   try {
-    const res = await fetch(`${STREAM_ENGINE}/resolve/${imdbId}?type=movie`, {
-      signal: AbortSignal.timeout(20000), // addon may take up to ~15s on cold start
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data?.url) return null;
+    const result = await fetchVideoSource(imdbId, "movie");
+    if (!result?.streams?.length) return null;
+
+    const stream = result.streams[0];
+    const isHls = stream.url.includes(".m3u8") || !stream.url.includes(".mp4");
+    const url =
+      isHls && stream.proxyable
+        ? `/api/hls-proxy?url=${encodeURIComponent(stream.url)}&imdbId=${encodeURIComponent(imdbId)}`
+        : stream.url;
+
     return {
-      url:      data.url,
-      type:     data.type === "mp4" ? "mp4" : "hls",
-      provider: data.provider ?? "StreamIMDb",
-      meta:     data.meta ?? null,
+      url,
+      type: isHls ? "hls" : "mp4",
+      provider: "StreamIMDb",
+      meta: stream.meta,
     };
   } catch {
     return null;
   }
 }
 
-// ── Fallback A: VidSrc.cc ─────────────────────────────────────────────────────
 async function tryVidsrcCC(imdbId: string): Promise<string | null> {
   try {
     const res = await fetch(`https://vidsrc.cc/v2/api/stream/movie/${imdbId}`, {
@@ -58,7 +56,6 @@ async function tryVidsrcCC(imdbId: string): Promise<string | null> {
   }
 }
 
-// ── Fallback B: VidSrc.me ─────────────────────────────────────────────────────
 async function tryVidsrcMe(imdbId: string): Promise<string | null> {
   try {
     const res = await fetch(`https://vidsrc.me/embed/movie?imdb=${imdbId}`, {
@@ -77,7 +74,6 @@ async function tryVidsrcMe(imdbId: string): Promise<string | null> {
   }
 }
 
-// ── Fallback C: VidSrc.xyz ────────────────────────────────────────────────────
 async function tryVidsrcXYZ(imdbId: string): Promise<string | null> {
   try {
     const res = await fetch(`https://vidsrc.xyz/embed/movie/${imdbId}`, {
@@ -96,13 +92,10 @@ async function tryVidsrcXYZ(imdbId: string): Promise<string | null> {
   }
 }
 
-// ── Master resolver ───────────────────────────────────────────────────────────
 async function resolveStream(imdbId: string): Promise<StreamResult | null> {
-  // 1. Try the StreamIMDb engine first (best quality, HLS proxy, caching)
   const engine = await tryStreamEngine(imdbId);
   if (engine) return engine;
 
-  // 2. Fallback to direct VidSrc providers
   const cc = await tryVidsrcCC(imdbId);
   if (cc) return { url: cc, type: cc.includes(".m3u8") ? "hls" : "mp4", provider: "VidSrc.cc" };
 
@@ -115,7 +108,21 @@ async function resolveStream(imdbId: string): Promise<StreamResult | null> {
   return null;
 }
 
-// ── Route handler ─────────────────────────────────────────────────────────────
+function buildMovieMeta(rawMeta: StreamMeta | undefined, imdbId: string) {
+  if (!rawMeta?.title) return null;
+
+  const yearMatch = rawMeta.title.match(/(\d{4})/);
+  const cleanTitle = rawMeta.title.replace(/\s*\(?\d{4}\)?.*$/, "").trim() || imdbId;
+
+  return {
+    title: cleanTitle,
+    year: yearMatch ? yearMatch[1] : "",
+    poster: rawMeta.backdrop || null,
+    rating: "",
+    overview: rawMeta.file_name || "",
+  };
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ imdbId: string }> | { imdbId: string } }
@@ -125,12 +132,11 @@ export async function GET(
 
   if (!imdbId || !/^tt\d{7,8}$/.test(imdbId)) {
     return NextResponse.json(
-      { error: "Invalid IMDb ID. Format: 'tt' followed by 7–8 digits (e.g. tt0111161)." },
+      { error: "Invalid IMDb ID. Format: 'tt' followed by 7-8 digits (e.g. tt0111161)." },
       { status: 400 }
     );
   }
 
-  // Fetch stream (metadata is now bundled from vaplayer.ru)
   const stream = await resolveStream(imdbId);
 
   if (!stream) {
@@ -140,27 +146,11 @@ export async function GET(
     );
   }
 
-  const rawMeta = stream.meta || {};
-  const yearMatch = typeof rawMeta.title === "string" ? rawMeta.title.match(/(\d{4})/) : null;
-  const cleanTitle = typeof rawMeta.title === "string" 
-    ? rawMeta.title.replace(/\s*\(?\d{4}\)?.*$/, "").trim() 
-    : imdbId;
-
-  const movieMeta = rawMeta.title 
-    ? {
-        title:    cleanTitle,
-        year:     yearMatch ? yearMatch[1] : "",
-        poster:   rawMeta.backdrop || null,
-        rating:   "",
-        overview: rawMeta.file_name || "",
-      }
-    : null;
-
   return NextResponse.json({
     imdbId,
-    url:      stream.url,
-    type:     stream.type,
+    url: stream.url,
+    type: stream.type,
     provider: stream.provider,
-    movie:    movieMeta,
+    movie: buildMovieMeta(stream.meta, imdbId),
   });
 }
