@@ -194,24 +194,26 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
       }
 
       // State machine: start playback when enough is buffered
-      if (currentState === "buffering") {
-        if (bufferedSeconds >= requiredBufferSeconds && readyState >= 2) {
-          transitionState("ready", "Starting playback…");
-          video.play().catch(() => {});
-          setIsPlaying(true);
+      if (currentState === "buffering" && !hasAutoPlayedRef.current) {
+        const shouldStart =
+          (bufferedSeconds >= requiredBufferSeconds && readyState >= 2) ||
+          (readyState >= 3 && bufferedSeconds >= 2) ||
+          readyState >= 4;
+
+        if (shouldStart) {
+          // Stop the monitor FIRST so no competing tick fires while play() is pending
+          stopBufferMonitor();
           hasAutoPlayedRef.current = true;
-        } else if (readyState >= 3 && bufferedSeconds >= 2) {
-          // Enough future data available — start quickly
           transitionState("ready", "Starting playback…");
-          video.play().catch(() => {});
-          setIsPlaying(true);
-          hasAutoPlayedRef.current = true;
-        } else if (readyState >= 4) {
-          // canPlayThrough — all data available, play immediately
-          transitionState("ready", "Starting playback…");
-          video.play().catch(() => {});
-          setIsPlaying(true);
-          hasAutoPlayedRef.current = true;
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => { setIsPlaying(true); })
+              .catch(() => { /* autoplay blocked or interrupted — user can tap play */ });
+          } else {
+            setIsPlaying(true);
+          }
+          return; // interval stopped above
         }
       }
 
@@ -282,14 +284,18 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
   };
 
   const togglePlay = () => {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
-        setIsPlaying(true);
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      const p = video.play();
+      if (p !== undefined) {
+        p.then(() => setIsPlaying(true)).catch(() => {});
       } else {
-        videoRef.current.pause();
-        setIsPlaying(false);
+        setIsPlaying(true);
       }
+    } else {
+      video.pause();
+      setIsPlaying(false);
     }
   };
 

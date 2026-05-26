@@ -527,5 +527,39 @@ export const landingPages: Record<string, LandingPageData> = {
       { label: "M3U8 Web Player", href: "/m3u8-player-online" },
     ],
   },
+  "imdb-movie-stream-player": {
+    slug: "imdb-movie-stream-player",
+    canonicalUrl: `${BASE}/imdb-movie-stream-player`,
+    badge: "IMDb ID Streaming",
+    headlinePart1: "Stream Movies via",
+    headlinePart2: "IMDb ID Instantly",
+    subheadline:
+      "Paste any valid IMDb ID to find and stream your favorite movies directly in your browser without downloads or sign-ups.",
+    ctaText: "Stream using IMDb ID →",
+    accentColor: "#f5c518",
+    secondaryColor: "#eab308",
+    features: [
+      { icon: "🎬", title: "Direct IMDb Integration", description: "Skip the link hunting. Just paste a title's IMDb ID (e.g., tt0111161) to begin streaming." },
+      { icon: "⚡", title: "Instant Stream Resolution", description: "Our backend resolves IMDb IDs to high-quality streaming links in milliseconds." },
+      { icon: "🔒", title: "Secure Data", description: "Streams provided are checked against our safe list to ensure quality and compliance." },
+      { icon: "🍿", title: "Full Player Controls", description: "Enjoy theater mode, subtitles, playback speed control, and seamless adaptive streaming." },
+      { icon: "📱", title: "Cross-Device Compatibility", description: "Streams perfectly on desktop, tablet, and mobile browsers with touch-friendly controls." },
+      { icon: "🛡️", title: "Privacy First", description: "No accounts, no history stored, zero tracking. Just streaming." }
+    ],
+    steps: [
+      { step: 1, title: "Find the IMDb ID", body: "Go to IMDb.com, search for your movie, and copy the 'tt' ID from the URL (e.g., tt1234567)." },
+      { step: 2, title: "Paste the ID", body: "Paste the IMDb ID into FluxPlays. We automatically detect it and find the stream." },
+      { step: 3, title: "Watch the Movie", body: "Grab some popcorn and enjoy the high-quality stream directly in your browser." }
+    ],
+    faqs: [
+      { q: "What is an IMDb ID?", a: "An IMDb ID is a unique identifier assigned to every movie and TV show on IMDb, starting with 'tt' followed by numbers." },
+      { q: "Where do I find the IMDb ID?", a: "When you are on a movie's page on IMDb, look at the URL in your browser. It looks like imdb.com/title/tt1234567/. The 'tt1234567' is the ID." },
+      { q: "Is this feature free?", a: "Yes, using the IMDb ID streaming player is completely free, with no account required." }
+    ],
+    relatedLinks: [
+      { label: "Browser Video Player", href: "/browser-video-player-online" },
+      { label: "Watch MP4 Online", href: "/watch-mp4-online-player" }
+    ]
+  }
 };
 

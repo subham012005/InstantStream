@@ -105,21 +105,19 @@ export default function RootLayout({
         />
         {/* Bing Webmaster Verification */}
         <meta name="msvalidate.01" content="34F600811BDD9E429D675B2E52369FA0" />
-      </head>
-      <body suppressHydrationWarning className={`${geistSans.variable} ${jetbrainsMono.variable} bg-surface font-body-md text-on-surface antialiased transition-colors duration-300`}>
-        {/* Inline theme init — hoisted safely to head without hydration errors */}
-        <Script
+
+        {/* Theme init — must run before paint to avoid flash */}
+        <script
           id="theme-init"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
           }}
         />
-        {/* Structured Data Scripts */}
-        <Script
+
+        {/* Structured Data — WebApplication */}
+        <script
           id="schema-web-app"
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -131,23 +129,21 @@ export default function RootLayout({
                 "FluxPlays is a modern video streaming web app for discovering and watching movies, shows, and entertainment content online.",
               applicationCategory: "EntertainmentApplication",
               operatingSystem: "Web",
-              creator: {
-                "@type": "Person",
-                name: "Subham Sharma"
-              },
+              creator: { "@type": "Person", name: "Subham Sharma" },
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: "4.9",
-                ratingCount: "287"
+                ratingCount: "287",
               },
               offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
             }),
           }}
         />
-        <Script
+
+        {/* Structured Data — WebSite SearchAction */}
+        <script
           id="schema-search-action"
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -158,14 +154,16 @@ export default function RootLayout({
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
-                  urlTemplate: "https://fluxplays.vercel.app/search?q={search_term_string}",
+                  urlTemplate:
+                    "https://fluxplays.vercel.app/search?q={search_term_string}",
                 },
                 "query-input": "required name=search_term_string",
               },
             }),
           }}
         />
-
+      </head>
+      <body suppressHydrationWarning className={`${geistSans.variable} ${jetbrainsMono.variable} bg-surface font-body-md text-on-surface antialiased transition-colors duration-300`}>
         <ThemeProvider>
           <Navbar />
           {/* Google Tag Manager (noscript) */}

@@ -33,7 +33,7 @@ import {
   ArrowLeft, ArrowRight, CheckCircle2, Link2, X, History, Play, Video, Tv, HardDrive, Send, 
   Download, Subtitles, Rocket, Zap, CloudOff, Gauge, Smartphone, Server, 
   Activity, Languages, Users, Bookmark, Compass, Sparkles, FileText, 
-  Minimize2, Maximize2, AlertTriangle, List
+  Minimize2, Maximize2, AlertTriangle, List, Search
 } from "lucide-react";
 
 export default function Home() {
@@ -50,7 +50,7 @@ export default function Home() {
   const [showReportForm, setShowReportForm] = useState(false);
   const [reportUrl, setReportUrl] = useState("");
 
-  const isValidUrl = url.length > 5 && (url.startsWith('http') || url.startsWith('magnet:'));
+  const isValidUrl = (url.length > 5 && (url.startsWith('http') || url.startsWith('magnet:'))) || url.startsWith('tt');
 
   useEffect(() => {
     const saved = localStorage.getItem("instantStream_recent");
@@ -80,6 +80,48 @@ export default function Home() {
     setValidationResponse(null);
     setShowReportForm(false);
     setReportUrl("");
+
+    if (targetUrl.startsWith('tt')) {
+      try {
+        setValidationResponse({
+          valid: true,
+          steps: [{ step: "connection", status: "checking", label: "Finding stream..." }]
+        } as unknown as ValidationResponse);
+        
+        const res = await fetch(`/api/stream/${targetUrl}`);
+        const data = await res.json();
+        
+        if (!res.ok) {
+          setError(data.error || "No demo stream available for this title");
+          setValidationResponse({
+            valid: false,
+            steps: [{ step: "connection", status: "error", label: "Finding stream...", message: data.error || "No demo stream available for this title" }]
+          } as unknown as ValidationResponse);
+          setShake(true);
+          setTimeout(() => setShake(false), 500);
+        } else {
+          setValidationResponse({
+            valid: true,
+            steps: [{ step: "connection", status: "success", label: "Finding stream..." }]
+          } as unknown as ValidationResponse);
+          const resolved = { streamUrl: data.url, title: `IMDb Stream: ${data.imdbId}`, type: data.type };
+          setPendingStreamData(resolved);
+          saveRecentStream(resolved);
+          setTimeout(() => {
+            setStreamData(resolved);
+            setPendingStreamData(null);
+          }, 1400);
+        }
+      } catch (err) {
+        setError("An error occurred connecting to the server.");
+        setShake(true);
+        setTimeout(() => setShake(false), 500);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     try {
       const res = await fetch("/api/validate", {
         method: "POST",
@@ -306,7 +348,7 @@ export default function Home() {
                 <Users className="w-4 h-4 text-primary" />
                 <span className="font-label-sm text-xs font-bold text-primary uppercase tracking-widest">Community Directory</span>
               </span>
-              <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Need a movie to watch?<br className="hidden lg:block"/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Find it here.</span></h2>
+              <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Need website links for movies?<br className="hidden lg:block"/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Find them here.</span></h2>
               <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
                 Don&#39;t have a direct video link? No problem. Browse our community-curated collection of the absolute best streaming websites on the internet.
               </p>
@@ -398,7 +440,61 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Supported Formats Section */}
+        {/* IMDb Stream Player CTA Section */}
+        <section id="imdb-player-cta" className="py-12 md:py-10 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
+          <div className="glass-panel p-8 md:p-14 rounded-3xl border border-yellow-500/20 relative overflow-hidden flex flex-col lg:flex-row-reverse items-center gap-12 bg-gradient-to-bl from-surface to-[#f5c518]/[0.05] dark:from-surface-container dark:to-[#f5c518]/[0.03]">
+            {/* Background Orbs */}
+            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#f5c518]/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
+            
+            <div className="flex-1 relative z-10 w-full text-center lg:text-left">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#f5c518]/30 bg-[#f5c518]/10 mb-6">
+                <Play className="w-4 h-4 text-[#f5c518] fill-current" />
+                <span className="font-label-sm text-xs font-bold text-[#b58f0b] dark:text-[#f5c518] uppercase tracking-widest">New Feature</span>
+              </span>
+              <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Stream movies instantly <br className="hidden lg:block"/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5c518] to-yellow-200">by IMDb ID.</span></h2>
+              <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
+                Know exactly what movie you want to watch? Skip the search engines and shady sites. Just paste the IMDb ID and watch it right here in Cinema Mode, fully loaded with metadata.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <a 
+                  href="/imdb-movie-stream-player" 
+                  className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-[#f5c518] hover:bg-[#e4b713] text-black shadow-xl rounded-xl hover:scale-[1.02] active:scale-95 transition-all font-bold text-base group"
+                >
+                  <Search className="w-5 h-5 text-black" />
+                  <span>Try IMDb Player</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform text-black" />
+                </a>
+              </div>
+            </div>
+
+            {/* Visual Graphic Representation */}
+            <div className="relative z-10 hidden md:flex shrink-0 w-full max-w-[380px] justify-center">
+              <div className="relative w-full">
+                <div className="absolute inset-0 bg-[#f5c518]/10 blur-2xl rounded-full"></div>
+                <div className="glass-panel p-6 rounded-2xl border border-black/5 dark:border-white/10 bg-surface-container-lowest/90 backdrop-blur-xl shadow-2xl relative -rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
+                  <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-surface-container-highest/50 border border-black/5 dark:border-white/5">
+                      <div className="w-12 h-10 rounded-lg flex items-center justify-center bg-[#f5c518] shrink-0">
+                        <span className="font-black text-black text-xs tracking-tighter">IMDb</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-xs text-on-surface-variant">IMDb ID Context</div>
+                        <div className="text-sm font-bold text-on-surface tracking-widest font-mono">tt0111161</div>
+                      </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-center w-full aspect-video bg-[#04040a] rounded-lg border border-white/10 overflow-hidden relative gap-2">
+                     <span className="bg-[#f5c518] text-black font-black text-sm px-2.5 py-1 rounded tracking-tighter shadow-[0_0_15px_rgba(245,197,24,0.3)]">IMDb</span>
+                     <span className="text-white/30 text-xs font-mono font-bold tracking-widest uppercase">Stream Ready</span>
+                     <div className="absolute bottom-2 left-2 flex gap-1 items-center">
+                       <span className="w-1.5 h-1.5 rounded-full bg-[#f5c518] animate-pulse"></span>
+                       <span className="text-[8px] text-[#f5c518] uppercase tracking-widest font-bold">HLS Proxy Active</span>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <section id="formats" className="py-20 bg-surface-container-lowest/40">
           <div className="px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
             <div className="text-center mb-12">
