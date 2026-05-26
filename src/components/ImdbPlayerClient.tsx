@@ -358,64 +358,64 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="min-h-screen bg-[#04040a] flex flex-col pt-16"
+            className="min-h-screen bg-[#04040a] flex flex-col pt-16 overflow-x-hidden"
           >
             {/* Cinematic top bar */}
-            <div className="px-6 py-5 flex items-center justify-between border-b border-white/5">
+            <div className="px-4 sm:px-6 py-3 sm:py-5 flex items-center gap-3 sm:justify-between border-b border-white/5 min-w-0">
               <button
                 onClick={() => setIsPlaying(false)}
-                className="flex items-center gap-2 text-white/50 hover:text-white transition-colors group"
+                className="flex items-center gap-1.5 sm:gap-2 text-white/50 hover:text-white transition-colors group shrink-0 max-w-[96px] sm:max-w-none"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                <span className="text-sm font-medium">Back to Search</span>
+                <span className="text-xs sm:text-sm font-medium leading-tight">Back to Search</span>
               </button>
 
               {streamData.movie && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1 sm:flex-none">
                   {streamData.movie.poster && (
                     <div className="relative w-8 h-11 rounded overflow-hidden shrink-0">
                       <Image src={streamData.movie.poster} alt="" fill className="object-cover" sizes="32px" />
                     </div>
                   )}
-                  <div>
-                    <p className="text-sm font-bold text-white leading-tight">{streamData.movie.title}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-white leading-tight line-clamp-2 sm:truncate">{streamData.movie.title}</p>
                     <p className="text-xs text-white/35">{streamData.movie.year}</p>
                   </div>
                 </div>
               )}
 
-              <div className="w-24"></div>
+              <div className="hidden sm:block w-24"></div>
             </div>
 
             {/* Player */}
-            <div className="flex-1 flex items-center justify-center px-4 py-6">
+            <div className="flex-1 flex items-start lg:items-center justify-center px-3 sm:px-4 py-4 sm:py-6">
               <div className="w-full max-w-[1400px]">
                 {/* Glow halo behind player */}
                 <div className="relative">
-                  <div className="absolute -inset-4 rounded-3xl blur-3xl opacity-20 pointer-events-none"
+                  <div className="absolute -inset-2 sm:-inset-4 rounded-2xl sm:rounded-3xl blur-3xl opacity-20 pointer-events-none"
                     style={gradientStyle} />
-                  <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_120px_rgba(0,0,0,0.8)] border border-white/8">
+                  <div className="relative w-full aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/8">
                     <CustomPlayer src={streamData.url} />
                   </div>
                 </div>
 
                 {/* Now playing info below player */}
                 {streamData.movie && (
-                  <div className="mt-6 flex items-start gap-4">
+                  <div className="mt-5 sm:mt-6 flex items-start gap-3 sm:gap-4 min-w-0">
                     {streamData.movie.poster && (
-                      <div className="relative w-14 h-20 rounded-xl overflow-hidden shrink-0 shadow-lg border border-white/10">
+                      <div className="relative w-16 h-24 sm:w-14 sm:h-20 rounded-xl overflow-hidden shrink-0 shadow-lg border border-white/10">
                         <Image src={streamData.movie.poster} alt="" fill className="object-cover" sizes="56px" />
                       </div>
                     )}
-                    <div className="flex-1 pt-1">
+                    <div className="flex-1 pt-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <Film className="w-3.5 h-3.5" style={{ color: ACCENT }} />
                         <span className="text-xs font-bold uppercase tracking-wider" style={{ color: ACCENT }}>Now Playing</span>
                       </div>
-                      <h2 className="text-xl md:text-2xl font-black text-white leading-tight mb-2">
+                      <h2 className="text-xl md:text-2xl font-black text-white leading-tight mb-2 line-clamp-2 break-words">
                         {streamData.movie.title}
                       </h2>
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-white/40">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/40 min-w-0">
                         {streamData.movie.year && <span>{streamData.movie.year}</span>}
                         {streamData.movie.rating && parseFloat(streamData.movie.rating) > 0 && (
                           <span className="flex items-center gap-1">
@@ -423,13 +423,13 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                             {streamData.movie.rating}
                           </span>
                         )}
-                        <span className="flex items-center gap-1 text-emerald-400">
+                        <span className="flex items-center gap-1 text-emerald-400 min-w-0">
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          Verified stream · {streamData.provider}
+                          <span className="truncate">Verified stream · {streamData.provider}</span>
                         </span>
                       </div>
                       {streamData.movie.overview && (
-                        <p className="mt-3 text-sm text-white/30 leading-relaxed line-clamp-2 max-w-2xl">
+                        <p className="mt-3 text-sm text-white/30 leading-relaxed line-clamp-3 sm:line-clamp-2 max-w-2xl break-words">
                           {streamData.movie.overview}
                         </p>
                       )}

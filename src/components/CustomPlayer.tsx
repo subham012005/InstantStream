@@ -101,7 +101,7 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
   // Player state machine
   const [playerState, setPlayerState] = useState<PlayerState>("preparing");
   const [bufferProgress, setBufferProgress] = useState(0); // 0-100%
-  const [requiredBufferSeconds] = useState(8); // Start playback at 8s buffer (fast start)
+  const [requiredBufferSeconds] = useState(6); // Start playback after a short smooth-start buffer
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -122,6 +122,7 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
   const [qualityLabel, setQualityLabel] = useState<string | null>(null);
   const [bufferHealth, setBufferHealth] = useState<number>(0);
   const [bufferedPercent, setBufferedPercent] = useState(0);
+  const controlsVisible = showControls && (playerState === "ready" || playerState === "playing");
   
   const loadStartRef = useRef<number>(0);
   const loadElapsedTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -221,7 +222,21 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
           if (playPromise !== undefined) {
             playPromise
               .then(() => { setIsPlaying(true); })
-              .catch(() => { /* autoplay blocked or interrupted — user can tap play */ });
+              .catch(() => {
+                // Mobile browsers often block delayed autoplay with sound. Retry muted so Watch starts automatically.
+                video.muted = true;
+                setIsMuted(true);
+                video.play()
+                  .then(() => {
+                    setIsPlaying(true);
+                    showToast("Autoplay started muted. Tap volume to unmute.");
+                  })
+                  .catch(() => {
+                    playerStateRef.current = "ready";
+                    setPlayerState("ready");
+                    setLoadStage("Ready to play");
+                  });
+              });
           } else {
             setIsPlaying(true);
           }
@@ -641,6 +656,7 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
         }}
         onClick={togglePlay}
         preload="auto"
+        playsInline
         {...(isHlsSource ? { crossOrigin: 'anonymous' as const } : {})}
         controlsList="nodownload"
       />
@@ -676,21 +692,21 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
       )}
 
       {/* Loading / Buffering Overlay — shows stage + buffer progress + elapsed time */}
-      <div className={`absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 z-10 ${(playerState === "preparing" || playerState === "buffering" || playerState === "stalled") ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="flex flex-col items-center gap-4 px-6 max-w-xs text-center">
+      <div className={`absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 z-30 ${(playerState === "preparing" || playerState === "buffering" || playerState === "stalled") ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="flex flex-col items-center gap-3 sm:gap-4 px-5 max-w-[18rem] text-center">
           {/* Spinner */}
           <div className="relative flex items-center justify-center">
-            <div className="w-14 h-14 border-4 border-white/10 rounded-full"></div>
-            <div className="w-14 h-14 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0 drop-shadow-[0_0_12px_rgba(99,102,241,0.5)]"></div>
+            <div className="w-10 h-10 sm:w-14 sm:h-14 border-4 border-white/10 rounded-full"></div>
+            <div className="w-10 h-10 sm:w-14 sm:h-14 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0 drop-shadow-[0_0_12px_rgba(99,102,241,0.5)]"></div>
           </div>
           {/* Stage label */}
-          <span className="text-white font-semibold text-sm tracking-wide animate-pulse">
+          <span className="text-white font-semibold text-xs sm:text-sm tracking-wide animate-pulse leading-relaxed">
             {loadStage || "Loading…"}
           </span>
           
           {/* Buffer progress bar (only for buffering state) */}
           {(playerState === "buffering" || playerState === "preparing") && (
-            <div className="w-48 h-1.5 bg-white/10 rounded-full overflow-hidden mt-2">
+            <div className="w-40 sm:w-48 h-1.5 bg-white/10 rounded-full overflow-hidden mt-1 sm:mt-2">
               <div 
                 className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-200"
                 style={{ width: `${Math.min(bufferProgress, 100)}%` }}
@@ -732,20 +748,21 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
         {toastMessage}
       </div>
 
-      {/* Center Interactive Overlay Controls (Skip & Play/Pause for Mobile & Desktop) */}
-      <div 
-        className={`absolute inset-0 flex items-center justify-center gap-8 pointer-events-none transition-opacity duration-300 z-20 ${showControls && (playerState === "playing" || playerState === "ready") ? 'opacity-100' : 'opacity-0'}`}
+      {/* Center Interactive Overlay Controls (Skip & Play/Pause for desktop/tablet) */}
+      {controlsVisible && (
+      <div
+        className="absolute inset-0 hidden sm:flex items-center justify-center gap-8 pointer-events-none transition-opacity duration-300 z-20"
       >
-        <button 
-          onClick={(e) => { e.stopPropagation(); skip(-5); showToast("Rewound 5s"); }} 
+        <button
+          onClick={(e) => { e.stopPropagation(); skip(-5); showToast("Rewound 5s"); }}
           className="pointer-events-auto w-12 h-12 md:w-14 md:h-14 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-primary/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-primary transition-all active:scale-90 hover:scale-105 shadow-lg"
           title="Rewind 5s"
         >
           <Rewind fill="currentColor" size={20} className="md:w-6 md:h-6" />
         </button>
 
-        <button 
-          onClick={(e) => { e.stopPropagation(); togglePlay(); }} 
+        <button
+          onClick={(e) => { e.stopPropagation(); togglePlay(); }}
           className="pointer-events-auto w-16 h-16 md:w-20 md:h-20 bg-black/50 hover:bg-black/70 border border-white/20 hover:border-primary/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-primary transition-all active:scale-90 hover:scale-105 shadow-xl"
           title={isPlaying ? "Pause" : "Play"}
         >
@@ -756,26 +773,28 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
           )}
         </button>
 
-        <button 
-          onClick={(e) => { e.stopPropagation(); skip(5); showToast("Skipped 5s"); }} 
+        <button
+          onClick={(e) => { e.stopPropagation(); skip(5); showToast("Skipped 5s"); }}
           className="pointer-events-auto w-12 h-12 md:w-14 md:h-14 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-primary/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-primary transition-all active:scale-90 hover:scale-105 shadow-lg"
           title="Skip 5s"
         >
           <FastForward fill="currentColor" size={20} className="md:w-6 md:h-6" />
         </button>
       </div>
+      )}
 
       {/* Overlay controls */}
-      <div 
-        className={`absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent transition-opacity duration-300 pointer-events-none ${showControls ? 'opacity-100' : 'opacity-0'}`}
+      {controlsVisible && (
+      <div
+        className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/10 to-transparent transition-opacity duration-300 pointer-events-none"
       >
         <div 
-          className="w-full px-6 pb-6 pt-12 pointer-events-auto"
+          className="w-full px-3 sm:px-6 pb-3 sm:pb-6 pt-10 sm:pt-12 pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Progress Bar */}
-          <div className="flex items-center gap-4 w-full mb-4">
-            <span className="text-white text-xs font-mono">{formatTime(progress)}</span>
+          <div className="flex items-center gap-2 sm:gap-4 w-full mb-2 sm:mb-4">
+            <span className="text-white text-[10px] sm:text-xs font-mono tabular-nums w-9 sm:w-auto">{formatTime(progress)}</span>
             <Slider.Root 
               className="relative flex items-center select-none touch-none w-full h-5 group cursor-pointer"
               value={[progress]}
@@ -810,30 +829,30 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
               </Slider.Track>
               <Slider.Thumb className="block w-4 h-4 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.5)] rounded-[10px] hover:bg-white focus:outline-none focus:scale-125 transition-transform" />
             </Slider.Root>
-            <span className="text-white text-xs font-mono">{formatTime(duration)}</span>
+            <span className="text-white text-[10px] sm:text-xs font-mono tabular-nums w-9 sm:w-auto text-right">{formatTime(duration)}</span>
           </div>
 
           {/* Controls Row — flex-wrap for mobile: row 1 = playback, row 2 = settings */}
-          <div className="flex flex-wrap items-center gap-y-2">
+          <div className="flex flex-wrap items-center gap-y-1 sm:gap-y-2">
             {/* Row 1: play/pause, rewind, skip, volume — always visible */}
-            <div className="flex items-center gap-3 sm:gap-5 flex-1 min-w-0">
-              <button onClick={togglePlay} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md">
-                {isPlaying ? <Pause fill="currentColor" size={24} /> : <Play fill="currentColor" size={24} />}
+            <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-5 w-full sm:w-auto sm:flex-1 min-w-0">
+              <button onClick={togglePlay} className="w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md">
+                {isPlaying ? <Pause fill="currentColor" size={22} /> : <Play fill="currentColor" size={22} />}
               </button>
               
-              <button onClick={() => skip(-5)} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Rewind 5s">
+              <button onClick={() => skip(-5)} className="w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Rewind 5s">
                 <Rewind fill="currentColor" size={20} />
               </button>
               
-              <button onClick={() => skip(5)} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Skip 5s">
+              <button onClick={() => skip(5)} className="w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Skip 5s">
                 <FastForward fill="currentColor" size={20} />
               </button>
 
               <div className="flex items-center gap-2 group/volume relative">
-                <button onClick={toggleMute} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md">
+                <button onClick={toggleMute} className="w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md">
                   {isMuted || volume === 0 ? <VolumeX size={20} /> : volume < 0.5 ? <Volume1 size={20} /> : <Volume2 size={20} />}
                 </button>
-                <div className="w-0 overflow-hidden group-hover/volume:w-20 sm:group-hover/volume:w-24 transition-all duration-300 ease-out flex items-center">
+                <div className="hidden sm:flex w-0 overflow-hidden group-hover/volume:w-24 transition-all duration-300 ease-out items-center">
                   <Slider.Root 
                     className="relative flex items-center select-none touch-none w-20 sm:w-24 h-5 cursor-pointer"
                     value={[isMuted ? 0 : volume]}
@@ -851,12 +870,12 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
             </div>
 
             {/* Row 2: quality, speed, stats, pip, fullscreen — wraps on mobile */}
-            <div className="flex items-center gap-2 sm:gap-3 ml-auto flex-wrap justify-end">
+            <div className="flex items-center justify-between sm:justify-end gap-1 sm:gap-3 w-full sm:w-auto sm:ml-auto flex-wrap">
               {/* Video Quality Settings */}
               {availableQualities.length > 0 ? (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <button className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md gap-1 text-xs font-bold bg-white/10 px-2 rounded-lg border border-white/10">
+                    <button className="h-9 min-w-11 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md gap-1 text-[11px] sm:text-xs font-bold bg-white/10 px-2 rounded-lg border border-white/10">
                       <Settings size={16} />
                       {currentQuality === -1 ? 'Auto' : `${availableQualities.find(q => q.level === currentQuality)?.height}p`}
                     </button>
@@ -889,7 +908,7 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
               ) : (
                 <button 
                   onClick={() => showToast("Quality switching is fixed by the source for this format.")}
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md gap-1 text-xs font-bold bg-white/5 px-2 rounded-lg border border-white/5 opacity-80"
+                  className="h-9 min-w-11 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md gap-1 text-[11px] sm:text-xs font-bold bg-white/5 px-2 rounded-lg border border-white/5 opacity-80"
                   title="Settings (Quality fixed)"
                 >
                   <Settings size={16} />
@@ -900,7 +919,7 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
               {/* Playback Speed */}
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <button className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white text-xs font-bold bg-white/10 border border-white/10 hover:bg-white/20 px-2 rounded transition-colors focus:outline-none drop-shadow-md">
+                  <button className="h-9 min-w-11 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white text-[11px] sm:text-xs font-bold bg-white/10 border border-white/10 hover:bg-white/20 px-2 rounded transition-colors focus:outline-none drop-shadow-md">
                     {playbackRate}x
                   </button>
                 </DropdownMenu.Trigger>
@@ -927,23 +946,24 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
               {/* Stats Toggle */}
               <button
                 onClick={() => setShowStats(s => !s)}
-                className={`min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors focus:outline-none drop-shadow-md ${showStats ? 'text-primary' : 'text-white hover:text-primary'}`}
+                className={`w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center transition-colors focus:outline-none drop-shadow-md ${showStats ? 'text-primary' : 'text-white hover:text-primary'}`}
                 title="Toggle stats overlay"
               >
                 <Activity size={20} />
               </button>
 
-              <button onClick={togglePip} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Picture in Picture">
+              <button onClick={togglePip} className="w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Picture in Picture">
                 <PictureInPicture size={20} />
               </button>
 
-              <button onClick={toggleFullscreen} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Fullscreen">
+              <button onClick={toggleFullscreen} className="w-9 h-9 sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-white hover:text-primary transition-colors focus:outline-none drop-shadow-md" title="Fullscreen">
                 {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
               </button>
             </div>
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
