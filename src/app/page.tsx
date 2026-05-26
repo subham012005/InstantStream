@@ -30,7 +30,7 @@ const InlineReportForm = dynamic(
   { ssr: false }
 );
 import { 
-  ArrowLeft, CheckCircle2, Link2, X, History, Play, Video, Tv, HardDrive, Send, 
+  ArrowLeft, ArrowRight, CheckCircle2, Link2, X, History, Play, Video, Tv, HardDrive, Send, 
   Download, Subtitles, Rocket, Zap, CloudOff, Gauge, Smartphone, Server, 
   Activity, Languages, Users, Bookmark, Compass, Sparkles, FileText, 
   Minimize2, Maximize2, AlertTriangle, List
@@ -141,11 +141,11 @@ export default function Home() {
               transition={{ duration: 0.4, ease: "easeInOut" }}
             >
               {/* Hero Section */}
-        <section id="stream" className="min-h-screen flex flex-col items-center justify-center text-center px-container-padding-mobile md:px-container-padding-desktop relative pt-24">
+        <section id="stream" className="min-h-[80vh] md:min-h-[85vh] flex flex-col items-center justify-center text-center px-container-padding-mobile md:px-container-padding-desktop relative pt-8 md:pt-12">
           <div className="max-w-3xl mx-auto z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest">Free · No Signup · Works Instantly</span>
+            <div className="inline-flex flex-wrap items-center justify-center w-auto max-w-[95%] gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 mb-6">
+              <span className="w-2 h-2 shrink-0 rounded-full bg-primary animate-pulse mt-0.5"></span>
+              <span className="font-label-sm text-[9px] min-[375px]:text-[10px] sm:text-xs text-primary uppercase tracking-wider sm:tracking-widest leading-none text-center sm:whitespace-nowrap">Free · No Signup · Works Instantly</span>
             </div>
             <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg mb-5 leading-tight tracking-tighter">FluxPlays: A Modern Video<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Streaming Web App</span></h1>
             <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto tracking-tight">FluxPlays (formerly InstantStream) is a modern streaming web app for watching and discovering movies, shows, and video content with a fast, responsive user experience. Paste any MP4, Google Drive, Telegram, HLS, or direct video URL and stream it instantly.</p>
@@ -166,7 +166,7 @@ export default function Home() {
                       <Link2 className="mr-2 transition-colors text-on-surface-variant w-5 h-5 shrink-0" />
                     )}
                     <input 
-                      className="bg-transparent border-none text-on-surface focus:ring-0 w-full placeholder:text-on-surface-variant/40 font-body-md outline-none pr-8" 
+                      className="bg-transparent border-none text-sm sm:text-base text-on-surface focus:ring-0 w-full placeholder:text-on-surface-variant/40 font-body-md outline-none pr-8 truncate" 
                       placeholder="Paste MP4, Drive, Telegram, or video URL…" 
                       type="text" 
                       value={url}
@@ -265,7 +265,7 @@ export default function Home() {
                   className="w-full mt-2 flex flex-col items-center"
                 >
                   <div className="flex flex-wrap justify-center gap-2 items-center">
-                    <span className="text-xs font-label-sm uppercase tracking-wider text-on-surface-variant flex items-center gap-1 mr-2">
+                    <span className="w-full md:w-auto text-center justify-center md:justify-start text-xs font-label-sm uppercase tracking-wider text-on-surface-variant flex items-center gap-1 md:mr-2 mb-1 md:mb-0">
                       <History className="w-[14px] h-[14px]" />
                       Recent
                     </span>
@@ -294,6 +294,109 @@ export default function Home() {
 
         </section>
 
+        {/* Community CTA Section */}
+        <section id="community-cta" className="py-12 md:py-20 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
+          <div className="glass-panel p-8 md:p-14 rounded-3xl border border-primary/20 relative overflow-hidden flex flex-col lg:flex-row items-center gap-12 bg-gradient-to-br from-surface to-primary/[0.05] dark:from-surface-container dark:to-primary/[0.03]">
+            {/* Background Orbs */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
+            
+            <div className="flex-1 relative z-10 w-full text-center lg:text-left">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/10 mb-6">
+                <Users className="w-4 h-4 text-primary" />
+                <span className="font-label-sm text-xs font-bold text-primary uppercase tracking-widest">Community Directory</span>
+              </span>
+              <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Need a movie to watch?<br className="hidden lg:block"/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Find it here.</span></h2>
+              <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
+                Don&#39;t have a direct video link? No problem. Browse our community-curated collection of the absolute best streaming websites on the internet.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6 mb-10 text-on-surface font-medium text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  <span>Movies & TV Shows</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  <span>Anime & Sports</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  <span>Submit your favorites</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <a 
+                  href="/community-sites" 
+                  className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 premium-button-gradient hover:shadow-[0_0_30px_rgba(0,112,243,0.4)] shadow-xl rounded-xl hover:scale-[1.02] active:scale-95 transition-all font-bold text-on-primary text-base group"
+                >
+                  <Compass className="w-5 h-5" />
+                  <span>Browse Streaming Sites</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+                </a>
+                <a 
+                  href="/community-sites#submit" 
+                  className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-surface-container-highest border border-black/10 dark:border-white/10 hover:bg-surface-dim hover:border-black/20 dark:hover:border-white/20 rounded-xl hover:scale-[1.02] active:scale-95 transition-all font-bold text-on-surface text-base"
+                >
+                  <span>Submit a Site</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Visual Graphic Representation */}
+            <div className="relative z-10 hidden md:block shrink-0 w-full max-w-[380px]">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full"></div>
+                <div className="glass-panel p-6 rounded-2xl border border-black/5 dark:border-white/10 bg-surface-container-lowest/80 backdrop-blur-xl shadow-2xl relative rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
+                  <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Top Rated</span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-highest/50 border border-black/5 dark:border-white/5 hover:bg-primary/5 transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center"><Tv className="w-5 h-5 text-primary" /></div>
+                      <div>
+                        <div className="text-sm font-bold text-on-surface">CineStream HD</div>
+                        <div className="text-xs text-on-surface-variant">Movies & TV</div>
+                      </div>
+                      <div className="ml-auto flex gap-0.5 text-yellow-500">
+                        <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span className="text-[10px] ml-1 font-bold text-on-surface">4.9</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-highest/50 border border-black/5 dark:border-white/5 hover:bg-secondary/5 transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center"><Zap className="w-5 h-5 text-secondary" /></div>
+                      <div>
+                        <div className="text-sm font-bold text-on-surface">AnimeFlix</div>
+                        <div className="text-xs text-on-surface-variant">Anime</div>
+                      </div>
+                      <div className="ml-auto flex gap-0.5 text-yellow-500">
+                        <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span className="text-[10px] ml-1 font-bold text-on-surface">4.8</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-highest/50 border border-black/5 dark:border-white/5 hover:bg-tertiary/5 transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center"><Video className="w-5 h-5 text-tertiary" /></div>
+                      <div>
+                        <div className="text-sm font-bold text-on-surface">SportsLive</div>
+                        <div className="text-xs text-on-surface-variant">Live Matches</div>
+                      </div>
+                      <div className="ml-auto flex gap-0.5 text-yellow-500">
+                        <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span className="text-[10px] ml-1 font-bold text-on-surface">4.7</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Supported Formats Section */}
         <section id="formats" className="py-20 bg-surface-container-lowest/40">
