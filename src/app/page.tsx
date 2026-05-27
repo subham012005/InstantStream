@@ -29,7 +29,9 @@ export default function Home() {
             <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto tracking-tight">FluxPlays (formerly InstantStream) is a modern streaming web app for watching and discovering movies, shows, and video content with a fast, responsive user experience. Paste any MP4, Google Drive, Telegram, HLS, or direct video URL and stream it instantly.</p>
 
             {/* Interactive Client Component handles Input, Player, Recent Streams, FAQ, and Feedback */}
-            <HomeClient />
+            <div className="min-h-[160px] md:min-h-[180px] w-full flex flex-col items-center">
+              <HomeClient />
+            </div>
           </div>
         </section>
 
@@ -43,7 +45,7 @@ export default function Home() {
             <div className="flex-1 relative z-10 w-full text-center lg:text-left">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/10 mb-6">
                 <Users className="w-4 h-4 text-primary" />
-                <span className="font-label-sm text-xs font-bold text-primary uppercase tracking-widest">Community Directory</span>
+                <span className="font-label-sm text-xs font-bold text-primary dark:text-[#8ab8ff] uppercase tracking-widest">Community Directory</span>
               </span>
               <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Need website links for movies?<br className="hidden lg:block" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Find them here.</span></h2>
               <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
@@ -145,8 +147,8 @@ export default function Home() {
 
             <div className="flex-1 relative z-10 w-full text-center lg:text-left">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#f5c518]/30 bg-[#f5c518]/10 mb-6">
-                <Play className="w-4 h-4 text-[#f5c518] fill-current" />
-                <span className="font-label-sm text-xs font-bold text-[#b58f0b] dark:text-[#f5c518] uppercase tracking-widest">New Feature</span>
+                <Play className="w-4 h-4 text-[#b58f0b] dark:text-[#f5c518] fill-current" />
+                <span className="font-label-sm text-xs font-bold text-[#8a6d07] dark:text-[#f5c518] uppercase tracking-widest">New Feature</span>
               </span>
               <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Stream movies instantly <br className="hidden lg:block" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5c518] to-yellow-200">by IMDb ID.</span></h2>
               <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
