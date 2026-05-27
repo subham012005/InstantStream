@@ -170,6 +170,17 @@ export default function HomeClient() {
     setShowReportForm(true);
   };
 
+  // State for deferred parts to reduce initial JS execution
+  const [isIdle, setIsIdle] = useState(false);
+  useEffect(() => {
+    const idleCallback = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1000));
+    const handle = idleCallback(() => setIsIdle(true));
+    return () => {
+      if ((window as any).cancelIdleCallback) (window as any).cancelIdleCallback(handle);
+      else clearTimeout(handle);
+    };
+  }, []);
+
   return (
     <AnimatePresence mode="wait">
       {!streamData ? (
@@ -285,8 +296,8 @@ export default function HomeClient() {
               </motion.div>
             )}
           </AnimatePresence>
-
-          {recentStreams.length > 0 && (
+          
+          {isIdle && recentStreams.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -370,8 +381,12 @@ export default function HomeClient() {
           </div>
         </motion.div>
       )}
-      <FAQSection faqs={homeFaqs} />
-      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+      {isIdle && (
+        <>
+          <FAQSection faqs={homeFaqs} />
+          <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+        </>
+      )}
     </AnimatePresence>
   );
 }
