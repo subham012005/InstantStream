@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import ThirdPartyLoader from "@/components/ThirdPartyLoader";
@@ -188,6 +189,7 @@ export default function RootLayout({
             />
           </noscript>
           {children}
+          <Footer />
         <Analytics />
         <ThirdPartyLoader />
         </ThemeProvider>

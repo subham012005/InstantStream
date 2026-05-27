@@ -70,18 +70,6 @@ export default function GuidesIndex() {
         </div>
       </main>
 
-      <footer className="border-t border-black/5 dark:border-white/5 py-8 px-6 md:px-16 mt-10">
-        <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-on-surface-variant">
-          <span className="flex items-center gap-2">
-            <Logo className="w-6 h-6" />
-            <span>© 2026 FluxPlays</span>
-          </span>
-          <div className="flex gap-5">
-            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-            <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

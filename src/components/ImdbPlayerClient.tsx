@@ -178,16 +178,29 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="text-base md:text-lg text-white/45 max-w-lg mx-auto mb-10 leading-relaxed"
+                className="text-base md:text-lg text-white/45 max-w-lg mx-auto mb-5 leading-relaxed"
               >
                 Paste any IMDb ID and instantly stream the movie in high quality — no sign-up, no downloads.
               </motion.p>
+
+              {/* IMDb ID format explainer */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.18 }}
+                className="inline-flex flex-wrap items-center justify-center gap-2 mb-8 text-xs"
+              >
+                <span className="text-white/25 shrink-0">IMDb ID lives in the URL:</span>
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/8 bg-white/[0.04] text-white/35 font-mono">
+                  imdb.com/title/<strong style={{ color: ACCENT }}>tt0111161</strong>
+                </span>
+              </motion.div>
 
               {/* Search box */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.22 }}
                 className="w-full"
               >
                 <motion.div
@@ -265,82 +278,119 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -16, scale: 0.96 }}
                     transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-8 w-full rounded-3xl overflow-hidden border border-white/8 shadow-[0_40px_120px_rgba(0,0,0,0.6)]"
-                    style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)" }}
+                    className="mt-8 w-full"
                   >
-                    <div className="flex flex-col sm:flex-row">
-                      {/* Poster */}
-                      {streamData.movie?.poster ? (
-                        <div className="relative w-full sm:w-[160px] shrink-0 aspect-[2/3] sm:aspect-auto overflow-hidden">
-                          <Image
-                            src={streamData.movie.poster}
-                            alt={streamData.movie.title ?? "poster"}
-                            fill
-                            className="object-cover"
-                            sizes="160px"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 sm:block hidden" />
+                    {/* "Stream found" divider */}
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
+                      <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.13em] px-3.5 py-1.5 rounded-full border border-emerald-400/25 text-emerald-400" style={{ background: "rgba(52,211,153,0.06)" }}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+                        Stream Located
+                      </span>
+                      <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
+                    </div>
+
+                    <div className="rounded-3xl overflow-hidden border border-white/8 shadow-[0_40px_120px_rgba(0,0,0,0.7)]"
+                      style={{ background: "linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%)" }}>
+
+                      {/* ── IMDb info bar ── */}
+                      <div className="flex items-center gap-2.5 px-5 py-3 border-b border-white/6" style={{ background: `${ACCENT}12` }}>
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-black tracking-tight text-black" style={{ background: ACCENT }}>
+                          IMDb
                         </div>
-                      ) : (
-                        <div className="w-full sm:w-[160px] shrink-0 aspect-[2/3] sm:aspect-auto flex items-center justify-center bg-white/5">
-                          <Clapperboard className="w-10 h-10 text-white/20" />
+                        <span className="text-xs text-white/40 font-mono">{streamData.imdbId}</span>
+                        <span className="text-white/15 text-xs hidden sm:inline">·</span>
+                        <span className="text-xs text-white/30 hidden sm:inline">Internet Movie Database ID — the unique code for every film</span>
+                        <div className="ml-auto flex items-center gap-1.5 text-[11px] text-white/30 font-mono shrink-0">
+                          <Tv2 className="w-3 h-3" />
+                          {streamData.type.toUpperCase()} · {streamData.provider}
                         </div>
-                      )}
+                      </div>
 
-                      {/* Info */}
-                      <div className="flex-1 p-7 flex flex-col justify-between gap-6 text-left">
-                        <div>
-                          {/* Ready badge */}
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-1 rounded-full">
-                              <CheckCircle2 className="w-3 h-3" /> Stream Ready
-                            </span>
-                            <span className="text-xs text-white/30 font-mono flex items-center gap-1">
-                              <Tv2 className="w-3 h-3" />
-                              {streamData.type.toUpperCase()} · {streamData.provider}
-                            </span>
-                          </div>
-
-                          {/* Title */}
-                          <h2 className="text-2xl font-black text-white leading-tight mb-2">
-                            {streamData.movie?.title ?? streamData.imdbId}
-                          </h2>
-
-                          {/* Meta row */}
-                          <div className="flex flex-wrap gap-4 text-sm text-white/40 mb-4">
-                            {streamData.movie?.year && (
-                              <span className="flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5" />{streamData.movie.year}
-                              </span>
-                            )}
+                      <div className="flex flex-col sm:flex-row">
+                        {/* Poster */}
+                        {streamData.movie?.poster ? (
+                          <div className="relative w-full sm:w-[190px] shrink-0 aspect-[2/3] sm:aspect-auto overflow-hidden">
+                            <Image
+                              src={streamData.movie.poster}
+                              alt={streamData.movie.title ?? "poster"}
+                              fill
+                              className="object-cover"
+                              sizes="190px"
+                            />
+                            {/* Mobile: gradient from bottom */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent sm:hidden" />
+                            {/* Desktop: gradient from right edge */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/40 hidden sm:block" />
+                            {/* Rating overlay on poster — mobile only */}
                             {streamData.movie?.rating && parseFloat(streamData.movie.rating) > 0 && (
-                              <span className="flex items-center gap-1.5">
-                                <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                                <span className="text-white/70 font-semibold">{streamData.movie.rating}</span>
-                                <span className="text-white/30">/10</span>
+                              <div className="absolute bottom-3 left-3 sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-black font-black text-sm shadow-xl" style={gradientStyle}>
+                                <Star className="w-3.5 h-3.5 fill-black" />
+                                {streamData.movie.rating}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="w-full sm:w-[190px] shrink-0 aspect-[2/3] sm:aspect-auto flex flex-col items-center justify-center gap-3 border-r border-white/6" style={{ background: `${ACCENT}08` }}>
+                            <Clapperboard className="w-10 h-10 text-white/15" />
+                            <span className="text-xs text-white/20 font-medium">No Poster</span>
+                          </div>
+                        )}
+
+                        {/* Info */}
+                        <div className="flex-1 p-6 sm:p-7 flex flex-col justify-between gap-5 text-left">
+                          <div>
+                            {/* Badge row */}
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                              <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-3 py-1.5 rounded-full">
+                                <CheckCircle2 className="w-3 h-3" /> Stream Ready
                               </span>
+                              <span className="text-[11px] font-mono font-semibold text-white/35 bg-white/5 border border-white/8 px-3 py-1.5 rounded-full">
+                                {streamData.type.toUpperCase()}
+                              </span>
+                            </div>
+
+                            {/* Movie title */}
+                            <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight mb-3 tracking-tight">
+                              {streamData.movie?.title ?? streamData.imdbId}
+                            </h2>
+
+                            {/* Meta chips */}
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {streamData.movie?.year && (
+                                <span className="flex items-center gap-1.5 text-sm text-white/50 bg-white/5 px-3 py-1 rounded-lg border border-white/8">
+                                  <Calendar className="w-3 h-3" />{streamData.movie.year}
+                                </span>
+                              )}
+                              {streamData.movie?.rating && parseFloat(streamData.movie.rating) > 0 && (
+                                <span className="flex items-center gap-1.5 text-sm font-bold px-3 py-1 rounded-lg border" style={{ color: ACCENT, background: `${ACCENT}15`, borderColor: `${ACCENT}35` }}>
+                                  <Star className="w-3 h-3 fill-current" />
+                                  {streamData.movie.rating}
+                                  <span className="text-white/30 font-normal text-xs">/ 10 IMDb</span>
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Overview */}
+                            {streamData.movie?.overview && (
+                              <p className="text-sm text-white/40 leading-relaxed line-clamp-4">
+                                {streamData.movie.overview}
+                              </p>
                             )}
                           </div>
 
-                          {/* Overview */}
-                          {streamData.movie?.overview && (
-                            <p className="text-sm text-white/40 leading-relaxed line-clamp-3">
-                              {streamData.movie.overview}
-                            </p>
-                          )}
+                          {/* CTA */}
+                          <button
+                            onClick={() => setIsPlaying(true)}
+                            className="relative flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-black overflow-hidden group transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl"
+                            style={gradientStyle}
+                          >
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                            <Play className="w-5 h-5 fill-black relative z-10" />
+                            <span className="relative z-10">Watch Now in Cinema Mode</span>
+                            <ChevronRight className="w-4 h-4 relative z-10" />
+                          </button>
                         </div>
-
-                        {/* CTA */}
-                        <button
-                          onClick={() => setIsPlaying(true)}
-                          className="relative flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-black overflow-hidden group transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-                          style={gradientStyle}
-                        >
-                          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                          <Play className="w-5 h-5 fill-black relative z-10" />
-                          <span className="relative z-10">Watch Now</span>
-                          <ChevronRight className="w-4 h-4 relative z-10" />
-                        </button>
                       </div>
                     </div>
                   </motion.div>

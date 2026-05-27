@@ -33,6 +33,75 @@ export default function Home() {
               <HomeClient />
             </div>
           </div>
+        </section>        {/* IMDb Stream Player CTA Section */}
+        <section id="imdb-player-cta" className="py-12 md:py-10 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
+          <div className="glass-panel p-8 md:p-14 rounded-3xl border border-yellow-500/20 relative overflow-hidden flex flex-col lg:flex-row-reverse items-center gap-12 bg-gradient-to-bl from-surface to-[#f5c518]/[0.05] dark:from-surface-container dark:to-[#f5c518]/[0.03]">
+            {/* Background Orbs */}
+            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#f5c518]/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
+
+            <div className="flex-1 relative z-10 w-full text-center lg:text-left">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#f5c518]/30 bg-[#f5c518]/10 mb-6">
+                <Play className="w-4 h-4 text-[#b58f0b] dark:text-[#f5c518] fill-current" />
+                <span className="font-label-sm text-xs font-bold text-[#8a6d07] dark:text-[#f5c518] uppercase tracking-widest">New Feature</span>
+              </span>
+              <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Stream movies instantly <br className="hidden lg:block" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5c518] to-yellow-200">by IMDb ID.</span></h2>
+              <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-6">
+                Know exactly what movie you want to watch? Skip the search engines and shady sites. Just paste the IMDb ID and watch it right here in Cinema Mode, fully loaded with metadata.
+              </p>
+              {/* What is IMDb ID explainer */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-8 text-sm text-on-surface-variant">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#f5c518]/8 border border-[#f5c518]/20">
+                  <span className="font-black text-xs text-black dark:text-[#f5c518] bg-[#f5c518] px-1.5 py-0.5 rounded">IMDb</span>
+                  <span className="font-mono text-xs text-on-surface font-bold">tt0111161</span>
+                  <span className="text-on-surface-variant text-xs">→ The Shawshank Redemption</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#f5c518]/8 border border-[#f5c518]/20">
+                  <span className="font-black text-xs text-black dark:text-[#f5c518] bg-[#f5c518] px-1.5 py-0.5 rounded">IMDb</span>
+                  <span className="font-mono text-xs text-on-surface font-bold">tt0468569</span>
+                  <span className="text-on-surface-variant text-xs">→ The Dark Knight</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <a
+                  href="/imdb-movie-stream-player"
+                  className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-[#f5c518] hover:bg-[#e4b713] text-black shadow-xl rounded-xl transition-all font-bold text-base group"
+                >
+                  <Search className="w-5 h-5 text-black" />
+                  <span>Try IMDb Player</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform text-black" />
+                </a>
+                <p className="text-xs text-on-surface-variant">Find the IMDb ID on any movie&apos;s IMDb page URL</p>
+              </div>
+            </div>
+
+            {/* Visual Graphic Representation */}
+            <div className="relative z-10 hidden md:flex shrink-0 w-full max-w-[380px] justify-center">
+              <div className="relative w-full">
+                <div className="absolute inset-0 bg-[#f5c518]/10 blur-2xl rounded-full"></div>
+                <div className="glass-panel p-6 rounded-2xl border border-black/5 dark:border-white/10 bg-surface-container-lowest/90 backdrop-blur-xl shadow-2xl relative -rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
+                  <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-surface-container-highest/50 border border-black/5 dark:border-white/5">
+                    <div className="w-12 h-10 rounded-lg flex items-center justify-center bg-[#f5c518] shrink-0">
+                      <span className="font-black text-black text-xs tracking-tighter">IMDb</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs text-on-surface-variant">Paste any IMDb ID</div>
+                      <div className="text-sm font-bold text-on-surface tracking-widest font-mono">tt0111161</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-center w-full aspect-video bg-[#04040a] rounded-lg border border-white/10 overflow-hidden relative gap-2">
+                    <span className="bg-[#f5c518] text-black font-black text-sm px-2.5 py-1 rounded tracking-tighter shadow-[0_0_15px_rgba(245,197,24,0.3)]">IMDb</span>
+                    <span className="text-white/60 text-xs font-bold">The Shawshank Redemption</span>
+                    <span className="text-white/30 text-xs font-mono font-bold tracking-widest uppercase">Stream Ready</span>
+                    <div className="absolute bottom-2 left-2 flex gap-1 items-center">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#f5c518] animate-pulse"></span>
+                      <span className="text-[8px] text-[#f5c518] uppercase tracking-widest font-bold">HLS Proxy Active</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Community CTA Section */}
@@ -55,11 +124,11 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6 mb-10 text-on-surface font-medium text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>Movies & TV Shows</span>
+                  <span>Movies &amp; TV Shows</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>Anime & Sports</span>
+                  <span>Anime &amp; Sports</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -103,7 +172,7 @@ export default function Home() {
                       <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center"><Tv className="w-5 h-5 text-primary" /></div>
                       <div>
                         <div className="text-sm font-bold text-on-surface">CineStream HD</div>
-                        <div className="text-xs text-on-surface-variant">Movies & TV</div>
+                        <div className="text-xs text-on-surface-variant">Movies &amp; TV</div>
                       </div>
                       <div className="ml-auto flex gap-0.5 text-yellow-500">
                         <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
@@ -131,62 +200,6 @@ export default function Home() {
                         <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                         <span className="text-[10px] ml-1 font-bold text-on-surface">4.7</span>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* IMDb Stream Player CTA Section */}
-        <section id="imdb-player-cta" className="py-12 md:py-10 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
-          <div className="glass-panel p-8 md:p-14 rounded-3xl border border-yellow-500/20 relative overflow-hidden flex flex-col lg:flex-row-reverse items-center gap-12 bg-gradient-to-bl from-surface to-[#f5c518]/[0.05] dark:from-surface-container dark:to-[#f5c518]/[0.03]">
-            {/* Background Orbs */}
-            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#f5c518]/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
-
-            <div className="flex-1 relative z-10 w-full text-center lg:text-left">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#f5c518]/30 bg-[#f5c518]/10 mb-6">
-                <Play className="w-4 h-4 text-[#b58f0b] dark:text-[#f5c518] fill-current" />
-                <span className="font-label-sm text-xs font-bold text-[#8a6d07] dark:text-[#f5c518] uppercase tracking-widest">New Feature</span>
-              </span>
-              <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface mb-5 leading-tight tracking-tight">Stream movies instantly <br className="hidden lg:block" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5c518] to-yellow-200">by IMDb ID.</span></h2>
-              <p className="text-on-surface-variant font-body-md text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
-                Know exactly what movie you want to watch? Skip the search engines and shady sites. Just paste the IMDb ID and watch it right here in Cinema Mode, fully loaded with metadata.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <a
-                  href="/imdb-movie-stream-player"
-                  className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-[#f5c518] hover:bg-[#e4b713] text-black shadow-xl rounded-xl transition-all font-bold text-base group"
-                >
-                  <Search className="w-5 h-5 text-black" />
-                  <span>Try IMDb Player</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform text-black" />
-                </a>
-              </div>
-            </div>
-
-            {/* Visual Graphic Representation */}
-            <div className="relative z-10 hidden md:flex shrink-0 w-full max-w-[380px] justify-center">
-              <div className="relative w-full">
-                <div className="absolute inset-0 bg-[#f5c518]/10 blur-2xl rounded-full"></div>
-                <div className="glass-panel p-6 rounded-2xl border border-black/5 dark:border-white/10 bg-surface-container-lowest/90 backdrop-blur-xl shadow-2xl relative -rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
-                  <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-surface-container-highest/50 border border-black/5 dark:border-white/5">
-                    <div className="w-12 h-10 rounded-lg flex items-center justify-center bg-[#f5c518] shrink-0">
-                      <span className="font-black text-black text-xs tracking-tighter">IMDb</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs text-on-surface-variant">IMDb ID Context</div>
-                      <div className="text-sm font-bold text-on-surface tracking-widest font-mono">tt0111161</div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center justify-center w-full aspect-video bg-[#04040a] rounded-lg border border-white/10 overflow-hidden relative gap-2">
-                    <span className="bg-[#f5c518] text-black font-black text-sm px-2.5 py-1 rounded tracking-tighter shadow-[0_0_15px_rgba(245,197,24,0.3)]">IMDb</span>
-                    <span className="text-white/30 text-xs font-mono font-bold tracking-widest uppercase">Stream Ready</span>
-                    <div className="absolute bottom-2 left-2 flex gap-1 items-center">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f5c518] animate-pulse"></span>
-                      <span className="text-[8px] text-[#f5c518] uppercase tracking-widest font-bold">HLS Proxy Active</span>
                     </div>
                   </div>
                 </div>

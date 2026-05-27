@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import FAQSection from "@/components/FAQSection";
+import HomeClient from "@/components/HomeClient";
 import type { LandingPageData } from "@/app/landingPagesData";
 
 export default function LandingPage({ data }: { data: LandingPageData }) {
@@ -23,6 +26,11 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
     isPartOf: { "@type": "WebSite", name: "FluxPlays", url: "https://fluxplays.live" },
   };
 
+  const scrollToPlayer = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.getElementById('player')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
@@ -42,17 +50,17 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
               <Link href="/guides" className="hover:text-on-surface transition-colors">Guides</Link>
               <Link href="/about" className="hover:text-on-surface transition-colors">About</Link>
             </nav>
-            <Link
-              href="/"
+            <button
+              onClick={scrollToPlayer}
               className="premium-button-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-lg hover:scale-105 active:scale-95 transition-transform"
             >
               Try Free →
-            </Link>
+            </button>
           </div>
         </header>
 
         {/* ── HERO ── */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background pt-16">
+        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background pt-16">
           {/* Animated background orbs */}
           <div
             className="absolute rounded-full pointer-events-none"
@@ -122,12 +130,12 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
-              <Link
-                href="/"
+              <button
+                onClick={scrollToPlayer}
                 className="premium-button-gradient button-glow-ring inline-flex items-center gap-2 px-9 py-4 rounded-full text-white font-semibold text-base shadow-2xl hover:scale-105 active:scale-95 transition-transform"
               >
                 {data.ctaText}
-              </Link>
+              </button>
               <Link
                 href="/guides"
                 className="inline-flex items-center gap-2 px-7 py-4 rounded-full text-sm font-medium text-on-surface-variant border border-outline hover:border-primary hover:text-on-surface transition-all bg-surface"
@@ -143,6 +151,23 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
                   <span style={{ color: data.accentColor }}>✓</span> {t}
                 </span>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── PLAYER SECTION ── */}
+        <section id="player" className="py-24 bg-background relative overflow-hidden">
+          {/* Decorative background for the player area */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-2xl bg-primary/5 blur-[120px] rounded-full pointer-events-none -z-0" />
+          
+          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-on-surface mb-3 tracking-tight">Launch the Player</h2>
+              <p className="text-on-surface-variant text-sm max-w-md mx-auto">Paste your link below to start streaming immediately in your browser.</p>
+            </div>
+            
+            <div className="glass-panel p-2 rounded-3xl border border-black/5 dark:border-white/5 bg-surface-container-lowest/50 backdrop-blur-xl">
+               <HomeClient />
             </div>
           </div>
         </section>
@@ -313,28 +338,6 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
           </div>
         </section>
 
-        {/* ── FOOTER ── */}
-        <footer className="py-10 bg-surface border-t border-outline-variant">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <Link href="/" className="flex items-center gap-2 font-semibold text-on-surface opacity-80 hover:opacity-100 transition-opacity">
-                <Logo className="w-5 h-5" />
-                <span className="text-sm">FluxPlays</span>
-              </Link>
-              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-on-surface-variant">
-                <Link href="/" className="hover:text-on-surface transition-colors">Player</Link>
-                <Link href="/blog" className="hover:text-on-surface transition-colors">Blog</Link>
-                <Link href="/guides" className="hover:text-on-surface transition-colors">Guides</Link>
-                <Link href="/about" className="hover:text-on-surface transition-colors">About</Link>
-                <Link href="/contact" className="hover:text-on-surface transition-colors">Contact</Link>
-                <Link href="/privacy" className="hover:text-on-surface transition-colors">Privacy</Link>
-                <Link href="/terms" className="hover:text-on-surface transition-colors">Terms</Link>
-                <Link href="/cookie-notice" className="hover:text-on-surface transition-colors">Cookie Notice</Link>
-              </div>
-              <p className="text-xs text-on-surface-variant">© 2026 FluxPlays. Free forever.</p>
-            </div>
-          </div>
-        </footer>
       </div>
     </>
   );
