@@ -103,6 +103,7 @@ export default function RootLayout({
           name="google-site-verification"
           content="KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI"
         />
+        <meta name="google-adsense-account" content="ca-pub-3111082445226249" />
         {/* Bing Webmaster Verification */}
         <meta name="msvalidate.01" content="34F600811BDD9E429D675B2E52369FA0" />
 

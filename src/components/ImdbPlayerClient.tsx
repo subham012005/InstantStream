@@ -519,8 +519,10 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
             <div className="flex gap-5 text-xs text-white/30">
               <Link href="/" className="hover:text-white/70 transition-colors">Main Player</Link>
               <Link href="/community-sites" className="hover:text-white/70 transition-colors">Community</Link>
+              <Link href="/contact" className="hover:text-white/70 transition-colors">Contact</Link>
               <Link href="/privacy" className="hover:text-white/70 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-white/70 transition-colors">Terms</Link>
+              <Link href="/cookie-notice" className="hover:text-white/70 transition-colors">Cookie Notice</Link>
             </div>
             <p className="text-xs text-white/20">© 2026 FluxPlays.</p>
           </div>

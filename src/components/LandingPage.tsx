@@ -326,8 +326,10 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
                 <Link href="/blog" className="hover:text-on-surface transition-colors">Blog</Link>
                 <Link href="/guides" className="hover:text-on-surface transition-colors">Guides</Link>
                 <Link href="/about" className="hover:text-on-surface transition-colors">About</Link>
+                <Link href="/contact" className="hover:text-on-surface transition-colors">Contact</Link>
                 <Link href="/privacy" className="hover:text-on-surface transition-colors">Privacy</Link>
                 <Link href="/terms" className="hover:text-on-surface transition-colors">Terms</Link>
+                <Link href="/cookie-notice" className="hover:text-on-surface transition-colors">Cookie Notice</Link>
               </div>
               <p className="text-xs text-on-surface-variant">© 2026 FluxPlays. Free forever.</p>
             </div>

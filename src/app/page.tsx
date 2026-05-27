@@ -982,6 +982,7 @@ export default function Home() {
                 <nav className="flex flex-col gap-3">
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/#faq">FAQ</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/creators">Creators</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/contact">Contact</a>
                   <button onClick={() => setIsFeedbackOpen(true)} className="text-on-surface-variant hover:text-primary transition-colors text-left bg-transparent border-none p-0 outline-none cursor-pointer">Report Bug</button>
                 </nav>
               </div>
@@ -990,6 +991,7 @@ export default function Home() {
                 <nav className="flex flex-col gap-3">
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/privacy">Privacy Policy</a>
                   <a className="text-on-surface-variant hover:text-primary transition-colors" href="/terms">Terms of Service</a>
+                  <a className="text-on-surface-variant hover:text-primary transition-colors" href="/cookie-notice">Cookie Notice</a>
                 </nav>
               </div>
             </div>
