@@ -88,6 +88,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://fluxplays.live",
   },
+  verification: {
+    google: "KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI",
+  },
+  other: {
+    "google-adsense-account": "ca-pub-3111082445226249",
+    "msvalidate.01": "34F600811BDD9E429D675B2E52369FA0",
+  },
 };
 
 export default function RootLayout({
@@ -98,15 +105,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google Search Console Verification */}
-        <meta
-          name="google-site-verification"
-          content="KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI"
-        />
-        <meta name="google-adsense-account" content="ca-pub-3111082445226249" />
-        {/* Bing Webmaster Verification */}
-        <meta name="msvalidate.01" content="34F600811BDD9E429D675B2E52369FA0" />
-
         {/* Theme init — must run before paint to avoid flash */}
         <script
           id="theme-init"
@@ -208,7 +206,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* Google AdSense */}
         <Script
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3111082445226249"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           crossOrigin="anonymous"
         />
         {/* Microsoft Clarity */}
