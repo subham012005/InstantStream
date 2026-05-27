@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About FluxPlays | The Modern Web Video Streaming App",
   description: "Learn about FluxPlays, the team behind the modern browser video streaming utility, our mission, and our engineering principles.",
-  alternates: { canonical: "https://fluxplays.vercel.app/about" },
+  alternates: { canonical: "https://fluxplays.live/about" },
 };
 
 export default function AboutPage() {
@@ -15,8 +15,8 @@ export default function AboutPage() {
     "mainEntity": {
       "@type": "Organization",
       "name": "FluxPlays",
-      "url": "https://fluxplays.vercel.app",
-      "logo": "https://fluxplays.vercel.app/og-image.png",
+      "url": "https://fluxplays.live",
+      "logo": "https://fluxplays.live/og-image.png",
       "foundingDate": "2026-01-01"
     }
   };

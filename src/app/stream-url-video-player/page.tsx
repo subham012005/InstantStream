@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true },
   },
   alternates: {
-    canonical: 'https://fluxplays.vercel.app/stream-url-video-player'
+    canonical: 'https://fluxplays.live/stream-url-video-player'
   },
   openGraph: {
     title: 'Stream URL Video Player | FluxPlays',
     description: 'Stream any valid video URL instantly in your browser.',
-    url: 'https://fluxplays.vercel.app/stream-url-video-player',
+    url: 'https://fluxplays.live/stream-url-video-player',
     type: 'website',
     siteName: 'FluxPlays',
   },

@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service | FluxPlays",
   description: "Read the FluxPlays terms of service regarding legitimate use of our streaming platform.",
-  alternates: { canonical: "https://fluxplays.vercel.app/terms" },
+  alternates: { canonical: "https://fluxplays.live/terms" },
 };
 
 export default function TermsPage() {

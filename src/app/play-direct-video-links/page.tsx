@@ -45,7 +45,7 @@ export default function PlayDirectVideoLinksPage() {
     "@type": "VideoObject",
     name: "Play Direct Video Links",
     description: "Universal video player for direct video links.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

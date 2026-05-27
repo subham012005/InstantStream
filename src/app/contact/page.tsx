@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact Us | FluxPlays",
   description: "Get in touch with the FluxPlays engineering and support team.",
-  alternates: { canonical: "https://fluxplays.vercel.app/contact" },
+  alternates: { canonical: "https://fluxplays.live/contact" },
 };
 
 export default function ContactPage() {

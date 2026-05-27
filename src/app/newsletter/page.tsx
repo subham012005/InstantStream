@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Subscribe to the FluxPlays newsletter. Get the latest streaming technology guides, platform updates, and developer insights delivered to your inbox.",
   alternates: {
-    canonical: "https://fluxplays.vercel.app/newsletter",
+    canonical: "https://fluxplays.live/newsletter",
   },
   robots: {
     index: true,
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "FluxPlays Newsletter",
     description:
       "Subscribe for the latest streaming guides, open-source insights, and video technology news.",
-    url: "https://fluxplays.vercel.app/newsletter",
+    url: "https://fluxplays.live/newsletter",
     type: "website",
   },
 };
@@ -49,8 +49,8 @@ export default function NewsletterPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://fluxplays.vercel.app/" },
-      { "@type": "ListItem", position: 2, name: "Newsletter", item: "https://fluxplays.vercel.app/newsletter" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://fluxplays.live/" },
+      { "@type": "ListItem", position: 2, name: "Newsletter", item: "https://fluxplays.live/newsletter" },
     ],
   };
 

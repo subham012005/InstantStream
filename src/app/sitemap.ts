@@ -6,7 +6,7 @@ import { comparisonData } from "./compare/comparisonData";
 import { landingPages } from "./landingPagesData";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://fluxplays.vercel.app";
+  const baseUrl = "https://fluxplays.live";
   const now = new Date();
 
   // Landing pages — core SEO targets

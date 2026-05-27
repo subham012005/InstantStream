@@ -23,7 +23,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "3 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Streaming a video without downloading it sounds simple, but there's a lot happening under the hood. When you paste a direct video URL into FluxPlays, the browser doesn't save a file — it requests the video in small chunks and plays them as they arrive. Understanding this process helps you get better performance and avoid common pitfalls.",
     keyTakeaways: [
       "Modern streaming relies on HTTP Range Requests to fetch small chunks of video.",
@@ -46,7 +46,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "4 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "If you've ever wondered why some videos look better or load faster than others at the same file size, the container format often plays a role. MP4 and WEBM are the two dominant formats for browser-based streaming. Each has real trade-offs that matter depending on your use case.",
     sections: [
       { heading: "MP4: The Universal Standard", body: "MP4 with H.264 video and AAC audio is supported by every major browser, operating system, and device on the planet. It's the safest choice for streaming. H.264 compression is mature and efficient — a 90-minute film can be encoded at 1080p in under 3GB and still look excellent. The downside: H.264 is a patented codec, meaning some open-source projects avoid it. For streaming purposes, this doesn't matter at all." },
@@ -64,7 +64,7 @@ export const articles: Article[] = [
     tag: "Explained",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Before 2015, browser video required Flash or Silverlight plugins. Today, the browser itself handles everything — fetching, decoding, and rendering video at 60fps with no plugins at all. Two browser APIs are responsible for making this work: the HTML5 `<video>` element and the Media Source Extensions (MSE) API.",
     sections: [
       { heading: "The HTML5 Video Element", body: "The `<video>` tag is the simplest path for browser video. Point its `src` attribute at a direct MP4 URL and the browser fetches and plays it using HTTP Range Requests. The browser manages buffering automatically. This works perfectly for straightforward progressive MP4 streaming. The limitation: it can't handle adaptive bitrate formats like HLS without extra help." },
@@ -82,7 +82,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Free video streaming has split into several distinct categories in 2026. There are ad-supported subscription alternatives like Tubi and Pluto TV, open-source self-hosted servers like Jellyfin, and utility players like FluxPlays that let you stream any direct URL. Each category solves a different problem, and the right choice depends on what you're actually trying to watch.",
     sections: [
       { heading: "Ad-Supported Free Platforms (FAST)", body: "Tubi, Pluto TV, Peacock Free, and The Roku Channel dominate the free, curated-library category. These platforms use server-side ad insertion (SSAI), meaning ads are baked into the video stream before it reaches your browser — traditional ad blockers can't remove them. What you get in return is a large rotating catalog of licensed films and TV shows at no cost. Pluto TV's live channel model makes it feel like cable TV, which appeals to passive viewers who don't want to choose." },
@@ -100,7 +100,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "7 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Building a Netflix clone is one of the most complete frontend challenges you can take on. It demands mastery of layout, API integration, media playback, and state management simultaneously. This guide focuses on the architecture decisions that matter — not just getting something on screen, but building something that actually works like a streaming platform.",
     sections: [
       { heading: "Data Layer: TMDB API with React Server Components", body: "The TMDB (The Movie Database) API is free and gives you access to posters, metadata, trailers, and cast information. In Next.js with the App Router, fetch TMDB data inside Server Components — this keeps your API key off the client and means pages arrive with data pre-rendered. Use `fetch` with `next: { revalidate: 3600 }` to cache responses for an hour, preventing excessive API calls. Structure your data fetching around routes: `/movie/[id]` fetches individual movie data, while the homepage fetches trending lists." },
@@ -118,7 +118,7 @@ export const articles: Article[] = [
     tag: "Explained",
     date: "May 2026",
     readTime: "3 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Google Drive is a convenient place to store and share videos, but it wasn't designed as a streaming platform. Many users run into frustrating limitations when trying to use Drive video links in external players. Some of these are technical, some are policy-based, and knowing the difference saves a lot of troubleshooting time.",
     sections: [
       { heading: "The Problem with Direct Drive Links", body: "When you right-click a video in Google Drive and copy its sharing link, you get something like `drive.google.com/file/d/FILE_ID/view`. This renders Drive's own video player — it's not a direct file URL. External players and download managers can't use this link directly. To get a streamable URL, you need to convert it to the export format: `drive.google.com/uc?export=download&id=FILE_ID`. However, for files over 100MB, Drive adds a virus scan confirmation page that breaks automated requests." },
@@ -136,7 +136,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "4 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "React's declarative model and the imperative nature of HTML5 video are in constant tension. The video element fires dozens of events per second during playback. If you handle these events carelessly, your React app will re-render constantly, dropping frames and causing video stutter. Building a performant custom player requires deliberate architectural decisions.",
     sections: [
       { heading: "Use Refs, Not State, for Playback Values", body: "The `currentTime` of a video updates 25 times per second. If you store it in React state, your component re-renders 25 times per second — that's a guaranteed performance issue. Instead, use a `useRef` to hold a reference to the video DOM element and read `videoRef.current.currentTime` directly when you need it (such as on a timeline drag event). Only commit to React state for discrete events: play/pause toggle, volume changes, fullscreen transitions." },
@@ -154,7 +154,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "HLS and DASH both solve the same problem: delivering video at the right quality for the viewer's current network conditions. Both work by splitting a video into small segments and serving a manifest file that tells the player which segments to fetch at each quality level. Despite their similar goals, they make different choices around codec flexibility, browser support, and latency.",
     sections: [
       { heading: "HLS: Apple's Protocol That Became Universal", body: "HTTP Live Streaming was created by Apple for iOS Safari, where it remains the only natively supported adaptive format. It uses `.m3u8` playlist files and `.ts` (MPEG transport stream) or `.fmp4` segments. Every major CDN supports HLS packaging, and hls.js brings support to Chrome and Firefox via MSE. HLS is the dominant protocol for on-demand video delivery in 2026, largely because iOS has no fallback — if you want to reach iPhone users, you need HLS." },
@@ -172,7 +172,7 @@ export const articles: Article[] = [
     tag: "Explained",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Telegram is widely used to share video content in groups and channels. While Telegram has a web interface (web.telegram.org), it requires login and loads videos inside the platform's own player. If someone shares a direct media link — for example, from a Telegram CDN — it's possible to open it directly in a browser player. This guide explains what types of Telegram video links are playable externally and how to do it.",
     sections: [
       { heading: "Understanding Telegram's Media URLs", body: "When Telegram stores video, it serves it from its own CDN infrastructure (usually domains like `cdn*.telegram.org` or direct file links). These are typically authenticated short-lived URLs. If a media link is made public and doesn't require authentication headers, it can be treated as a standard video URL and played in any browser that supports the file format. The critical requirement is that the URL must be a direct media file — not a deep link to Telegram's app (`t.me/...` links cannot be played externally)." },
@@ -190,7 +190,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "7 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Live video streaming has two fundamentally different architecture families: HLS-based delivery and WebRTC-based delivery. They share the goal of getting video from a source to an audience, but they optimize for completely different constraints. Choosing the wrong one for your use case results in either unnecessary cost or unacceptable latency.",
     sections: [
       { heading: "HLS for Live: Scalable but Latency-Bounded", body: "Standard HLS for live streaming works by having an encoder (like FFmpeg or OBS with RTMP output) push video to an ingest server, which packages it into 4–8 second segments and updates a .m3u8 manifest. Viewers download the manifest, fetch segments, and watch. This architecture scales to millions of concurrent viewers trivially — it's just static file delivery from a CDN. The unavoidable cost is latency: standard HLS has 15–30 second end-to-end lag. Low-Latency HLS reduces this to 2–4 seconds, which is acceptable for most broadcasts." },
@@ -208,7 +208,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "3 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "The paradox of streaming in 2026: more content is available than ever, yet finding something worth watching feels harder than it used to. The endless scroll is a deliberate design pattern that keeps you engaged with the platform rather than making a decision. These movie discovery tools cut through that and help you actually find films you'll enjoy.",
     sections: [
       { heading: "Data-Driven Discovery Tools", body: "Letterboxd is the social layer that traditional streaming platforms lack. It's a film diary where users log every movie they've seen and rate it, building a watchlist and taste profile over time. Its recommendation engine is community-driven: you can follow critics whose taste matches yours and browse their favorites. JustWatch solves a different problem — it aggregates what's currently available across every streaming service you subscribe to so you never forget which platform has what you want to watch." },
@@ -226,7 +226,7 @@ export const articles: Article[] = [
     tag: "Explained",
     date: "May 2026",
     readTime: "4 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Most video platforms are built around content catalogs — they host videos and want you to stay within their ecosystem. FluxPlays takes a different approach. It's a stateless web player that plays any video URL you give it. This seemingly simple idea has real benefits that become obvious the first time you have a video link and just want to watch it without friction.",
     sections: [
       { heading: "No Account Required", body: "Creating an account is the single biggest friction point in any web application. FluxPlays has no sign-up flow. Your watch history is stored locally in your browser using localStorage — it persists between sessions but never leaves your device. This means there's no tracking database, no email requirement, and no login wall between you and the video you want to watch." },
@@ -244,7 +244,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Buffering is rarely random. It's almost always caused by one of a small set of identifiable problems: a slow network, an overloaded video server, a poorly encoded file, or an inefficient streaming setup. Identifying which one is causing your problem is the first step to fixing it.",
     sections: [
       { heading: "1–3: Network and Server Issues", body: "**1. Test your actual bandwidth.** Run a speed test while the video buffers. If your download speed is below 5 Mbps for 1080p content, the network is the bottleneck — no client-side fix will help. **2. Check the video server's region.** If your video is hosted in a US data center and you're in Southeast Asia, you're seeing the speed of light as a literal limitation. A CDN with edge nodes closer to you eliminates this. **3. Try a wired connection.** WiFi adds latency to every packet. A wired Ethernet connection is almost always faster and more stable for video streaming than WiFi at the same location." },
@@ -262,7 +262,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Self-hosting your video streaming means you control where your files live, who can access them, and how they're served. It's not as complex as it sounds. A modest home server or a $5/month cloud VM can serve video reliably to a small audience. This guide covers the most practical self-hosted approaches, from zero-configuration options to production-ready streaming setups.",
     sections: [
       { heading: "Option 1: Jellyfin on a Home Server", body: "Jellyfin is the simplest path to self-hosted streaming with a polished UI. Install it on any machine (Windows, Linux, macOS, or a Raspberry Pi 4B for low-power use), point it at a folder of video files, and access the web UI from any browser on your local network. Enable hardware transcoding (if your CPU or GPU supports it) to handle format conversion on the fly. For access outside your home, either set up port forwarding on your router or use Tailscale for a private VPN tunnel — the latter is significantly easier and more secure." },
@@ -280,7 +280,7 @@ export const articles: Article[] = [
     tag: "Explained",
     date: "May 2026",
     readTime: "7 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "The difference between a video that loads instantly and one that buffers for 10 seconds is often not the internet connection — it's where the video file is stored relative to the viewer. Content Delivery Networks (CDNs) solve this by caching video content at hundreds of edge locations worldwide, so the viewer receives data from the nearest node rather than a single distant origin server.",
     sections: [
       { heading: "How CDN Edge Caching Works", body: "When a CDN caches a video, it stores copies of the video segments at edge servers distributed globally. When your browser requests a video segment, the CDN routes that request to the nearest edge node — often within 50–100 miles of your location. The first request for a segment goes to the origin server (cache miss), but all subsequent requests for the same content are served from the cached edge copy at significantly lower latency. For popular content, nearly all requests are cache hits." },
@@ -298,7 +298,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "3 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Streaming UI design has one primary success metric: does the video play without the user thinking about the interface? Good streaming UX is invisible. Bad streaming UX surfaces itself through confusion, missed controls, and interruptions to playback. These best practices reflect what the most-used video platforms have converged on over the past decade — and why they work.",
     sections: [
       { heading: "Player Controls: The 3-Second Rule", body: "Player controls should appear immediately on user interaction (tap, mouse move, keypress) and disappear automatically after 3 seconds of inactivity during playback. This feels natural because it mirrors how physical remote controls work — you look at them when you need them and forget they exist otherwise. The play/pause button should be large enough to tap without precision on mobile (minimum 44x44px touch target). The timeline scrubber is the most-used control after play/pause — give it a tall hover hit area even if the visual bar is thin." },
@@ -316,7 +316,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "4 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "If you've tried to open an .m3u8 URL directly in a browser tab, you've seen the result: it either downloads as a text file or shows raw playlist content. That's because M3U8 is a playlist format — it's a text file listing video segments to download, not a video file itself. Your browser needs a player that understands HLS to use it. Here's how to play any M3U8 stream instantly.",
     sections: [
       { heading: "Why M3U8 Doesn't Play Natively", body: "An M3U8 file looks something like this: it contains lines like `#EXTINF:4.0,` followed by a URL to a 4-second video segment. Playing HLS requires a player that reads this manifest, fetches the listed segments in order, and feeds them into the browser's video decoder via MSE. Safari does this natively because Apple created HLS. Chrome and Firefox do not — they need a JavaScript library (hls.js or equivalent) to handle this automatically." },
@@ -334,7 +334,7 @@ export const articles: Article[] = [
     tag: "Explained",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Peer-to-peer file sharing has long been associated with desktop BitTorrent clients. WebTorrent changes that equation by implementing the BitTorrent protocol entirely in JavaScript, running inside your browser tab. This enables a genuinely novel use case: video streaming where the viewers share bandwidth with each other, reducing load on the hosting server as popularity increases.",
     sections: [
       { heading: "How WebTorrent Works in the Browser", body: "WebTorrent uses WebRTC data channels as its peer transport — the same browser API used for video calls. When you load a WebTorrent-powered page and start watching a video, your browser both downloads video chunks from other peers and serves the chunks it has already downloaded to new peers joining the swarm. A JavaScript library parses the torrent metadata, manages the peer connections, and feeds video chunks into the browser's MSE API for seamless playback. The server only needs to seed for the first few viewers — as the audience grows, peer bandwidth makes up more of the delivery." },
@@ -352,7 +352,7 @@ export const articles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Building a media streaming UI in React involves solving several interconnected problems: rendering a custom video player that doesn't fight with React's re-render cycle, designing a dark responsive interface that makes video the focal point, and implementing quality-of-life features like history tracking without requiring a backend. This guide covers the practical implementation patterns for each.",
     sections: [
       { heading: "Component Architecture for the Player", body: "Structure the player as three separate components: `VideoPlayer` (the raw `<video>` element and hls.js integration, controlled entirely through refs), `PlayerControls` (the overlay UI for play/pause, timeline, volume — communicates with VideoPlayer through callback props), and `PlayerShell` (the positioning wrapper that handles fullscreen, aspect ratio, and the dark background overlay). Keeping these separated prevents the UI state of the controls from causing video element re-renders. The VideoPlayer component should be wrapped in `React.memo` to prevent re-rendering when parent state changes." },
@@ -370,7 +370,7 @@ export const articles: Article[] = [
     tag: "Beginner Guide",
     date: "May 2026",
     readTime: "7 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "If you've built or used a video streaming app and then tested it on a different browser, you've likely encountered unexpected differences. Safari and Chrome have diverged significantly in how they handle video formats, adaptive streaming, autoplay restrictions, and DRM. These differences are intentional — they reflect underlying policy and technical choices by Apple and Google. Understanding them is essential for building video that works everywhere.",
     sections: [
       { heading: "Codec Support Differences", body: "Chrome supports H.264, VP8, VP9, AV1, and HEVC (on devices with hardware support). This makes Chrome the most codec-flexible browser. Safari supports H.264 and HEVC natively (leveraging Apple's hardware decoders on Mac and iOS), but historically lacked VP9 and AV1 support. Safari 17+ on macOS Sonoma added AV1 support on Apple Silicon devices. In practice: MP4 H.264 plays everywhere. WEBM VP9 plays in Chrome, Firefox, and Edge, but not in older Safari. Always test on Safari separately — it will reject formats Chrome accepts." },
@@ -388,7 +388,7 @@ export const articles: Article[] = [
     tag: "Technical Guide",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: "Historically, the BitTorrent protocol functioned linearly: you downloaded an entire file, waited for 100% completion, and then watched the movie. But modern advancements in how browsers handle peer-to-peer (P2P) connections have entirely changed the paradigm. Today, it is possible to stream torrents sequentially directly inside your web browser.",
     keyTakeaways: [
       "WebTorrent enables torrent streaming in browsers utilizing WebRTC.",

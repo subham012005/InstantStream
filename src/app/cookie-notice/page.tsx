@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Cookie Notice | FluxPlays",
   description:
     "Read FluxPlays' cookie notice to understand how cookies and similar technologies are used for analytics, personalization, and ad services.",
-  alternates: { canonical: "https://fluxplays.vercel.app/cookie-notice" },
+  alternates: { canonical: "https://fluxplays.live/cookie-notice" },
 };
 
 export default function CookieNoticePage() {

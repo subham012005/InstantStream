@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   title: "Streaming Guides & Comparisons | FluxPlays",
   description:
     "Comprehensive guides, comparisons, and technical blueprints for building and understanding modern video streaming platforms.",
-  alternates: { canonical: "https://fluxplays.vercel.app/guides" },
+  alternates: { canonical: "https://fluxplays.live/guides" },
   openGraph: {
     title: "Streaming Guides & Comparisons | FluxPlays",
     description: "Deep-dive programmatic SEO guides on video streaming.",
-    url: "https://fluxplays.vercel.app/guides",
+    url: "https://fluxplays.live/guides",
   },
 };
 

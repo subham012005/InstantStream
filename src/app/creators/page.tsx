@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Creators & Authors | FluxPlays",
   description: "Meet the engineering team behind FluxPlays. Read our technical backgrounds and track records in building modern React web apps.",
-  alternates: { canonical: "https://fluxplays.vercel.app/creators" },
+  alternates: { canonical: "https://fluxplays.live/creators" },
 };
 
 export default function CreatorsPage() {
@@ -16,7 +16,7 @@ export default function CreatorsPage() {
       "@type": "Person",
       "name": "Subham Sharma",
       "jobTitle": "Lead Developer",
-      "url": "https://fluxplays.vercel.app/creators",
+      "url": "https://fluxplays.live/creators",
       "sameAs": [
         "https://github.com/subham012005"
       ]

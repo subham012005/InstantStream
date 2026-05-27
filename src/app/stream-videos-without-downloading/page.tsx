@@ -45,7 +45,7 @@ export default function StreamWithoutDownloadingPage() {
     "@type": "VideoObject",
     name: "Stream Videos Without Downloading",
     description: "Stream videos without downloading them to your device.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

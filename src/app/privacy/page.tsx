@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy | FluxPlays",
   description: "Read the FluxPlays privacy policy to understand how we protect your data while streaming video content online.",
-  alternates: { canonical: "https://fluxplays.vercel.app/privacy" },
+  alternates: { canonical: "https://fluxplays.live/privacy" },
 };
 
 export default function PrivacyPage() {

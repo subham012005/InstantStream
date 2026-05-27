@@ -19,8 +19,8 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/search"],
       },
     ],
-    sitemap: "https://fluxplays.vercel.app/sitemap.xml",
-    host: "https://fluxplays.vercel.app",
+    sitemap: "https://fluxplays.live/sitemap.xml",
+    host: "https://fluxplays.live",
   };
 }
 

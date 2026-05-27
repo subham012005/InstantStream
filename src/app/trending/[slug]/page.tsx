@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Page Not Found" };
   }
 
-  const url = `https://fluxplays.vercel.app/trending/${page.slug}`;
+  const url = `https://fluxplays.live/trending/${page.slug}`;
 
   return {
     title: `${page.title} | FluxPlays`,
@@ -64,19 +64,19 @@ export default async function TrendingPage({ params }: Props) {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://fluxplays.vercel.app/"
+            "item": "https://fluxplays.live/"
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Trending",
-            "item": "https://fluxplays.vercel.app/trending"
+            "item": "https://fluxplays.live/trending"
           },
           {
             "@type": "ListItem",
             "position": 3,
             "name": page.title,
-            "item": `https://fluxplays.vercel.app/trending/${page.slug}`
+            "item": `https://fluxplays.live/trending/${page.slug}`
           }
         ]
       },

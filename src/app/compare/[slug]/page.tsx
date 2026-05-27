@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Compare | Not Found" };
   }
 
-  const url = `https://fluxplays.vercel.app/compare/${page.slug}`;
+  const url = `https://fluxplays.live/compare/${page.slug}`;
 
   return {
     title: `${page.title} | FluxPlays`,
@@ -64,19 +64,19 @@ export default async function ComparePage({ params }: Props) {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://fluxplays.vercel.app/"
+            "item": "https://fluxplays.live/"
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Compare",
-            "item": "https://fluxplays.vercel.app/compare"
+            "item": "https://fluxplays.live/compare"
           },
           {
             "@type": "ListItem",
             "position": 3,
             "name": page.title,
-            "item": `https://fluxplays.vercel.app/compare/${page.slug}`
+            "item": `https://fluxplays.live/compare/${page.slug}`
           }
         ]
       },

@@ -45,7 +45,7 @@ export default function TelegramVideoPlayerPage() {
     "@type": "VideoObject",
     name: "Telegram Video Player Online",
     description: "Stream Telegram videos directly in your browser.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

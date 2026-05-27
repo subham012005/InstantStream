@@ -1,13 +1,13 @@
 <div align="center">
-  <img src="https://fluxplays.vercel.app/og-image.png" alt="FluxPlays - Modern Video Streaming Web App" width="100%" />
+  <img src="https://fluxplays.live/og-image.png" alt="FluxPlays - Modern Video Streaming Web App" width="100%" />
 
   <h1>FluxPlays</h1>
   <p><strong>The Modern, Zero-Latency Browser Video Streaming Utility</strong></p>
 
   <p>
-    <a href="https://fluxplays.vercel.app">Live Demo</a> •
-    <a href="https://fluxplays.vercel.app/guides">Architecture Guides</a> •
-    <a href="https://fluxplays.vercel.app/blog">Blog</a>
+    <a href="https://fluxplays.live">Live Demo</a> •
+    <a href="https://fluxplays.live/guides">Architecture Guides</a> •
+    <a href="https://fluxplays.live/blog">Blog</a>
   </p>
 </div>
 

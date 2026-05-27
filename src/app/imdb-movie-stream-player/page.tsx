@@ -44,7 +44,7 @@ export default function ImdbMovieStreamPlayerPage() {
     "@type": "VideoObject",
     name: "IMDb Movie Stream Player",
     description: "Stream movies using their IMDb IDs directly in your browser.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

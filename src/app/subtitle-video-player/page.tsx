@@ -47,7 +47,7 @@ export default function SubtitleVideoPlayerPage() {
     "@type": "VideoObject",
     name: "Subtitle Video Player",
     description: "Watch videos with SRT and VTT subtitles in your browser.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

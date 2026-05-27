@@ -20,12 +20,12 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true },
   },
   alternates: {
-    canonical: 'https://fluxplays.vercel.app/watch-videos-online-without-saving'
+    canonical: 'https://fluxplays.live/watch-videos-online-without-saving'
   },
   openGraph: {
     title: 'Watch Videos Online Without Saving | FluxPlays',
     description: 'Stream videos without saving files. Keep your storage clean.',
-    url: 'https://fluxplays.vercel.app/watch-videos-online-without-saving',
+    url: 'https://fluxplays.live/watch-videos-online-without-saving',
     type: 'website',
     siteName: 'FluxPlays',
   },

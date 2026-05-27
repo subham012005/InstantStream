@@ -47,7 +47,7 @@ export default function Mp4StreamPlayerPage() {
     "@type": "VideoObject",
     name: "MP4 Stream Player",
     description: "Stream MP4 videos directly from any URL with progressive download.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

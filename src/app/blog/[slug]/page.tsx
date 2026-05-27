@@ -20,11 +20,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: article.metaTitle,
     description: article.metaDescription,
-    alternates: { canonical: `https://fluxplays.vercel.app/blog/${slug}` },
+    alternates: { canonical: `https://fluxplays.live/blog/${slug}` },
     openGraph: {
       title: article.metaTitle,
       description: article.metaDescription,
-      url: `https://fluxplays.vercel.app/blog/${slug}`,
+      url: `https://fluxplays.live/blog/${slug}`,
       type: "article",
     },
   };
@@ -45,9 +45,9 @@ export default async function ArticlePage({ params }: Props) {
     headline: article.title,
     description: article.metaDescription,
     author: { "@type": "Person", name: article.author.name, url: article.author.url },
-    publisher: { "@type": "Organization", name: "FluxPlays", url: "https://fluxplays.vercel.app" },
+    publisher: { "@type": "Organization", name: "FluxPlays", url: "https://fluxplays.live" },
     datePublished: "2026-05-18",
-    url: `https://fluxplays.vercel.app/blog/${slug}`,
+    url: `https://fluxplays.live/blog/${slug}`,
   };
 
   return (
@@ -58,9 +58,9 @@ export default async function ArticlePage({ params }: Props) {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fluxplays.vercel.app" },
-          { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fluxplays.vercel.app/blog" },
-          { "@type": "ListItem", "position": 3, "name": article.title, "item": `https://fluxplays.vercel.app/blog/${slug}` }
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fluxplays.live" },
+          { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fluxplays.live/blog" },
+          { "@type": "ListItem", "position": 3, "name": article.title, "item": `https://fluxplays.live/blog/${slug}` }
         ]
       }) }} />
 

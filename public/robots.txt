@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /search
 
-Sitemap: https://fluxplays.vercel.app/sitemap.xml
+Sitemap: https://fluxplays.live/sitemap.xml

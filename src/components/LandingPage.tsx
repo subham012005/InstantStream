@@ -20,7 +20,7 @@ export default function LandingPage({ data }: { data: LandingPageData }) {
     name: `${data.headlinePart1} ${data.headlinePart2}`,
     description: data.subheadline,
     url: data.canonicalUrl,
-    isPartOf: { "@type": "WebSite", name: "FluxPlays", url: "https://fluxplays.vercel.app" },
+    isPartOf: { "@type": "WebSite", name: "FluxPlays", url: "https://fluxplays.live" },
   };
 
   return (

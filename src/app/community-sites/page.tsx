@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Community Curated Streaming Sites | FluxPlays Directory',
   description: 'Browse our community-curated collection of the absolute best streaming websites on the internet. Find movies, tv shows, sports, and anime streaming sites.',
   alternates: {
-    canonical: 'https://fluxplays.vercel.app/community-sites'
+    canonical: 'https://fluxplays.live/community-sites'
   }
 };
 

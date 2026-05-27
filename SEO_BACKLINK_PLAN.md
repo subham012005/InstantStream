@@ -49,7 +49,7 @@ This document defines all ethical, natural backlink acquisition strategies for F
 
 **Publishing Notes:**
 - Each Hashnode article links to the relevant FluxPlays blog cluster page
-- End each post with "Try streaming without downloading: [FluxPlays](https://fluxplays.vercel.app)"
+- End each post with "Try streaming without downloading: [FluxPlays](https://fluxplays.live)"
 - Submit to Hashnode's official NodeJS and React newsletters
 
 ---
@@ -59,7 +59,7 @@ This document defines all ethical, natural backlink acquisition strategies for F
 **Target:** Non-technical enthusiasts + general tech readers
 
 - Publish on Medium's "Better Programming" and "The Startup" publications
-- Use `canonical` URL pointing to fluxplays.vercel.app to protect SEO
+- Use `canonical` URL pointing to fluxplays.live to protect SEO
 - Titles should be more accessible: "I Stopped Paying for Netflix — Here's What I Use Instead"
 
 ---
@@ -189,7 +189,7 @@ Provide genuinely helpful, long-form answers. Mention FluxPlays naturally in con
 >
 > I came across your article "[Title]" and noticed it covers streaming tools for developers. I recently built FluxPlays — a free, browser-based utility for streaming MP4, HLS, and Google Drive links without downloading them. It might be a useful addition to your list, particularly for the "bring your own content" use case.
 >
-> Link: https://fluxplays.vercel.app
+> Link: https://fluxplays.live
 >
 > Happy to answer any questions about the technical architecture.
 >

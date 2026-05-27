@@ -46,7 +46,7 @@ export default function WatchMp4OnlinePlayerPage() {
     "@type": "VideoObject",
     name: "Watch MP4 Online Player",
     description: "Stream MP4 videos instantly in your browser.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

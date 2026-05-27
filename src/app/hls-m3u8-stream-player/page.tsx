@@ -50,7 +50,7 @@ export default function HlsM3u8StreamPlayerPage() {
     "@type": "VideoObject",
     name: "HLS M3U8 Stream Player",
     description: "Stream HLS and M3U8 video playlists directly in your browser with adaptive bitrate streaming.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     duration: "PT5M",
     url: data.canonicalUrl,

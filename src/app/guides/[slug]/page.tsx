@@ -20,11 +20,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: guide.metaTitle,
     description: guide.metaDescription,
-    alternates: { canonical: `https://fluxplays.vercel.app/guides/${slug}` },
+    alternates: { canonical: `https://fluxplays.live/guides/${slug}` },
     openGraph: {
       title: guide.metaTitle,
       description: guide.metaDescription,
-      url: `https://fluxplays.vercel.app/guides/${slug}`,
+      url: `https://fluxplays.live/guides/${slug}`,
       type: "article",
     },
   };
@@ -45,18 +45,18 @@ export default async function GuidePage({ params }: Props) {
     headline: guide.title,
     description: guide.metaDescription,
     author: { "@type": "Organization", name: "FluxPlays" },
-    publisher: { "@type": "Organization", name: "FluxPlays", url: "https://fluxplays.vercel.app" },
+    publisher: { "@type": "Organization", name: "FluxPlays", url: "https://fluxplays.live" },
     datePublished: guide.publishDate,
-    url: `https://fluxplays.vercel.app/guides/${slug}`,
+    url: `https://fluxplays.live/guides/${slug}`,
   };
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fluxplays.vercel.app" },
-      { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fluxplays.vercel.app/guides" },
-      { "@type": "ListItem", "position": 3, "name": guide.title, "item": `https://fluxplays.vercel.app/guides/${slug}` }
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fluxplays.live" },
+      { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fluxplays.live/guides" },
+      { "@type": "ListItem", "position": 3, "name": guide.title, "item": `https://fluxplays.live/guides/${slug}` }
     ]
   };
 

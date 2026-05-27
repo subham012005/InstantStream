@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fluxplays.vercel.app"),
+  metadataBase: new URL("https://fluxplays.live"),
   title: {
     default: "FluxPlays – Modern Movie & Video Streaming Web App",
     template: "%s | FluxPlays",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://fluxplays.vercel.app",
+    url: "https://fluxplays.live",
     siteName: "FluxPlays",
     title: "FluxPlays – Modern Movie & Video Streaming Web App",
     description:
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     creator: "@fluxplays",
   },
   alternates: {
-    canonical: "https://fluxplays.vercel.app",
+    canonical: "https://fluxplays.live",
   },
 };
 
@@ -125,7 +125,7 @@ export default function RootLayout({
               "@type": "WebApplication",
               name: "FluxPlays",
               alternateName: "InstantStream",
-              url: "https://fluxplays.vercel.app/",
+              url: "https://fluxplays.live/",
               description:
                 "FluxPlays is a modern video streaming web app for discovering and watching movies, shows, and entertainment content online.",
               applicationCategory: "EntertainmentApplication",
@@ -150,13 +150,13 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "FluxPlays",
-              url: "https://fluxplays.vercel.app/",
+              url: "https://fluxplays.live/",
               potentialAction: {
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
                   urlTemplate:
-                    "https://fluxplays.vercel.app/search?q={search_term_string}",
+                    "https://fluxplays.live/search?q={search_term_string}",
                 },
                 "query-input": "required name=search_term_string",
               },

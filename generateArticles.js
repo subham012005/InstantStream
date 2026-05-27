@@ -33,7 +33,7 @@ const articles = baseArticles.map((base, idx) => {
     tag: idx % 3 === 0 ? "Technical" : idx % 2 === 0 ? "Beginner Guide" : "Explained",
     date: "May 2026",
     readTime: `${(idx % 5) + 3} min read`,
-    author: { name: "Subham Sharma", url: "https://fluxplays.vercel.app/creators" },
+    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
     intro: `Welcome to our comprehensive guide on ${base.title.toLowerCase()}. In this article, we'll dive deep into the technical specifications, the user benefits, and how this integrates into modern streaming platforms like FluxPlays.`,
     sections: [
       {

@@ -45,7 +45,7 @@ export default function BrowserVideoPlayerPage() {
     "@type": "VideoObject",
     name: "Browser Video Player Online",
     description: "Zero installation browser-based video player for streaming content.",
-    thumbnailUrl: "https://fluxplays.vercel.app/og-image.png",
+    thumbnailUrl: "https://fluxplays.live/og-image.png",
     uploadDate: "2026-01-15",
     url: data.canonicalUrl,
   };

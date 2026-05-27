@@ -3,8 +3,8 @@
 Do not consider the SEO push complete until every item on this checklist is verified in production.
 
 ## 1. Technical Signals
-- [ ] Check `https://fluxplays.vercel.app/robots.txt` loads and correctly blocks `/api/` while pointing to the sitemap.
-- [ ] Check `https://fluxplays.vercel.app/sitemap.xml` generates dynamically and contains the homepage, /about, /blog, /guides, and all dynamically mapped articles.
+- [ ] Check `https://fluxplays.live/robots.txt` loads and correctly blocks `/api/` while pointing to the sitemap.
+- [ ] Check `https://fluxplays.live/sitemap.xml` generates dynamically and contains the homepage, /about, /blog, /guides, and all dynamically mapped articles.
 - [ ] Run a Google Lighthouse Audit on desktop and mobile. Ensure Performance > 90, SEO > 95, Accessibility > 90. Fix any remaining shifting (CLS) or slow loading (LCP).
 
 ## 2. Meta & Schema Validation
@@ -19,7 +19,7 @@ Do not consider the SEO push complete until every item on this checklist is veri
 
 ## 4. GitHub SEO Updates
 - [ ] Add the following tags to the GitHub Repository Topics: `streaming`, `video-streaming`, `movie-app`, `nextjs`, `react`, `entertainment`, `web-app`, `streaming-platform`, `netflix-clone`.
-- [ ] Update the GitHub 'About' link to point directly to `https://fluxplays.vercel.app`.
+- [ ] Update the GitHub 'About' link to point directly to `https://fluxplays.live`.
 - [ ] Ensure the README contains keyword-rich copy.
 
 ## 5. Social & Community Engine

@@ -33,7 +33,7 @@ export interface LandingPageData {
   relatedLinks: RelatedLink[];
 }
 
-const BASE = "https://fluxplays.vercel.app";
+const BASE = "https://fluxplays.live";
 
 export const landingPages: Record<string, LandingPageData> = {
   "watch-mp4-online-player": {
