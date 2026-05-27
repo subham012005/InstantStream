@@ -205,6 +205,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             `,
           }}
         />
+        {/* Google AdSense */}
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3111082445226249"
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
         {/* Microsoft Clarity */}
         <Script
           id="clarity-init"
