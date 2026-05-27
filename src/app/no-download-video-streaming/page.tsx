@@ -79,5 +79,3 @@ export default function NoDownloadVideoStreamingPage() {
     </>
   );
 }
-  return <LandingPage data={data} />;
-}

@@ -79,5 +79,3 @@ export default function PlayDirectVideoLinksPage() {
     </>
   );
 }
-  return <LandingPage data={data} />;
-}

@@ -79,5 +79,3 @@ export default function StreamWithoutDownloadingPage() {
     </>
   );
 }
-  return <LandingPage data={data} />;
-}
