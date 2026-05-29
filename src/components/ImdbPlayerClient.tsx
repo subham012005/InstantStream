@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,16 +22,6 @@ import {
 import FAQSection from "@/components/FAQSection";
 import Logo from "@/components/Logo";
 import type { LandingPageData } from "@/app/landingPagesData";
-
-const CustomPlayer = dynamic(() => import("@/components/CustomPlayer"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full min-h-[40vh] flex items-center justify-center text-white/60 gap-3">
-      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-      <span className="text-sm font-medium">Initializing player…</span>
-    </div>
-  ),
-});
 
 interface MovieMeta {
   title: string;
@@ -99,6 +88,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     WebkitTextFillColor: "transparent" as const,
     backgroundClip: "text" as const,
   };
+
+  const externalPlayerUrl = streamData ? `https://gemma416okl.com/play/${encodeURIComponent(streamData.imdbId)}` : "";
 
   return (
     <div className="min-h-screen bg-[#080810] text-white">
@@ -401,7 +392,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
         )}
 
         {/* ═══════════════ PLAYER STATE ═══════════════ */}
-        {isPlaying && streamData?.url && (
+        {isPlaying && streamData?.imdbId && (
           <motion.div
             key="player"
             initial={{ opacity: 0 }}
@@ -445,7 +436,14 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                   <div className="absolute -inset-2 sm:-inset-4 rounded-2xl sm:rounded-3xl blur-3xl opacity-20 pointer-events-none"
                     style={gradientStyle} />
                   <div className="relative w-full aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/8">
-                    <CustomPlayer src={streamData.url} />
+                    <iframe
+                      className="w-full h-full"
+                      src={externalPlayerUrl}
+                      title="IMDb Movie Player"
+                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                      allowFullScreen
+                      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                    />
                   </div>
                 </div>
 
