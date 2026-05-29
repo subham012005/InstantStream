@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { fetchFromProviders, type StreamResult } from './providers';
+import type { StreamResult } from './providers';
 
 const VAPLAYER_API_URL = process.env.VAPLAYER_API_URL || 'https://streamdata.vaplayer.ru/api.php';
 const BRIGHTPATH_BASE = 'https://brightpathsignals.com/embed';
@@ -264,16 +264,7 @@ export async function fetchVideoSource(
   let streams = await fetchPromise;
 
   if (!streams) {
-    console.log('[scraper] Primary provider failed — trying movie-web providers...');
-    try {
-      streams = await fetchFromProviders(imdbId, type, season, episode);
-      if (streams) {
-        console.log('[scraper] Providers fallback OK');
-        setCached(key, streams);
-      }
-    } catch (e) {
-      console.log('[scraper] Providers fallback failed:', e instanceof Error ? e.message : String(e));
-    }
+    console.log('[scraper] Primary provider failed — no TMDB fallback will be used for IMDb IDs.');
   }
 
   return streams ? { streams, type: 'direct' } : null;

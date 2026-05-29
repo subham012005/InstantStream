@@ -92,6 +92,54 @@ async function tryVidsrcXYZ(imdbId: string): Promise<string | null> {
   }
 }
 
+function parseIpFromHeaders(request: NextRequest): string | null {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0].trim();
+  return forwarded || request.headers.get("x-real-ip") || request.headers.get("x-client-ip") || null;
+}
+
+function isPrivateIp(ip: string): boolean {
+  return (
+    /^127\./.test(ip) ||
+    /^10\./.test(ip) ||
+    /^192\.168\./.test(ip) ||
+    /^169\.254\./.test(ip) ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip) ||
+    /^::1$/.test(ip) ||
+    /^fc00:/i.test(ip) ||
+    /^fe80:/i.test(ip)
+  );
+}
+
+async function lookupCountryFromIp(ip: string): Promise<string | null> {
+  try {
+    const res = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/country/`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return null;
+    return (await res.text()).trim().toUpperCase() || null;
+  } catch {
+    return null;
+  }
+}
+
+async function getCountryFromRequest(request: NextRequest): Promise<string | null> {
+  const geoCountry = (request as any).geo?.country;
+  const headerCountry =
+    geoCountry ||
+    request.headers.get("x-vercel-country") ||
+    request.headers.get("cf-ipcountry") ||
+    request.headers.get("x-country") ||
+    request.headers.get("x-nf-country") ||
+    request.headers.get("x-appengine-country");
+
+  if (headerCountry) return headerCountry.toString().toUpperCase();
+
+  const ip = parseIpFromHeaders(request);
+  if (!ip || isPrivateIp(ip)) return null;
+
+  return await lookupCountryFromIp(ip);
+}
+
 async function resolveStream(imdbId: string): Promise<StreamResult | null> {
   const engine = await tryStreamEngine(imdbId);
   if (engine) return engine;
@@ -138,11 +186,24 @@ export async function GET(
   }
 
   const stream = await resolveStream(imdbId);
+  const countryCode = await getCountryFromRequest(_req);
+  const playerSource = countryCode === "IN" ? "Gemma" : "VixSrc";
+  const playerUrl = playerSource === "Gemma"
+    ? `https://gemma416okl.com/play/${imdbId}`
+    : `https://vixsrc.to/movie/${imdbId}`;
 
   if (!stream) {
     return NextResponse.json(
-      { error: "No stream source could be found for this title right now. Try again later." },
-      { status: 404 }
+      {
+        imdbId,
+        url: "",
+        type: "hls",
+        provider: "Player Embed",
+        movie: null,
+        playerUrl,
+        playerSource,
+      },
+      { status: 200 }
     );
   }
 
@@ -152,5 +213,7 @@ export async function GET(
     type: stream.type,
     provider: stream.provider,
     movie: buildMovieMeta(stream.meta, imdbId),
+    playerUrl,
+    playerSource,
   });
 }

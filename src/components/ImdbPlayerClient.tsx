@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -37,6 +37,8 @@ interface StreamResponse {
   type: "hls" | "mp4";
   provider: string;
   movie: MovieMeta | null;
+  playerUrl: string;
+  playerSource: "Gemma" | "VixSrc";
   error?: string;
 }
 
@@ -50,6 +52,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [shake, setShake] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedPlayerUrl, setSelectedPlayerUrl] = useState<string>("");
 
   const isValidId = /^tt\d{7,8}$/.test(imdbId.trim());
 
@@ -89,7 +92,20 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     backgroundClip: "text" as const,
   };
 
-  const externalPlayerUrl = streamData ? `https://gemma416okl.com/play/${encodeURIComponent(streamData.imdbId)}` : "";
+  const externalPlayerUrl = selectedPlayerUrl || (streamData ? streamData.playerUrl : "");
+
+  useEffect(() => {
+    // Reset manual selection when a new stream is loaded
+    if (streamData?.playerUrl) {
+      setSelectedPlayerUrl("");
+    }
+  }, [streamData?.playerUrl]);
+
+  const alternatePlayerUrl = streamData
+    ? streamData.playerSource === "Gemma"
+      ? `https://vixsrc.to/movie/${streamData.imdbId}`
+      : `https://gemma416okl.com/play/${encodeURIComponent(streamData.imdbId)}`
+    : "";
 
   return (
     <div className="min-h-screen bg-[#080810] text-white">
@@ -381,6 +397,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                             <span className="relative z-10">Watch Now in Cinema Mode</span>
                             <ChevronRight className="w-4 h-4 relative z-10" />
                           </button>
+                          {/* Removed auto-selected player text and play buttons per request */}
                         </div>
                       </div>
                     </div>
@@ -425,7 +442,27 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 </div>
               )}
 
-              <div className="hidden sm:block w-24"></div>
+              <div className="hidden sm:flex items-center gap-3">
+                {streamData && (
+                  <>
+                    <span className="text-xs text-white/40">Player:</span>
+                    <button
+                      onClick={() => { if (streamData.playerUrl) setSelectedPlayerUrl(streamData.playerUrl); }}
+                      className={`px-3 py-1 rounded-lg font-semibold ${(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) ? 'bg-white text-black' : 'bg-white/5 text-white'}`} 
+                    >
+                      {streamData.playerSource}
+                    </button>
+                    {alternatePlayerUrl && (
+                      <button
+                        onClick={() => { setSelectedPlayerUrl(alternatePlayerUrl); }}
+                        className={`px-3 py-1 rounded-lg font-semibold ${selectedPlayerUrl === alternatePlayerUrl ? 'bg-white text-black' : 'bg-white/5 text-white'}`}
+                      >
+                        {streamData.playerSource === "Gemma" ? 'VixSrc' : 'Gemma'}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Player */}
@@ -440,9 +477,9 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                       className="w-full h-full"
                       src={externalPlayerUrl}
                       title="IMDb Movie Player"
-                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-read; clipboard-write"
                       allowFullScreen
-                      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                 </div>
