@@ -208,6 +208,31 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Tools Explorer Section */}
+        <section id="tools-cta" className="py-12 md:py-16 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-8">
+            <div>
+              <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2 block">Site Utilities</span>
+              <h2 className="font-headline-md sm:font-headline-lg text-on-surface">Explore our free tools</h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="/tools/imdb-tmdb-converter" className="group glass-panel rounded-2xl border border-black/5 dark:border-white/5 hover:border-primary/20 dark:hover:border-primary/20 overflow-hidden transition-all duration-300 p-6 flex flex-col items-start relative bg-surface-container-low hover:bg-surface-container-highest">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                <Search className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-headline-md text-on-surface mb-3">IMDb ↔ TMDB Converter</h3>
+              <p className="text-on-surface-variant font-body-md text-sm leading-relaxed mb-6">
+                Instantly convert between IMDb and TMDB registry IDs. Fetches comprehensive rich movie metadata powered by Wikidata and OMDb. Completely free.
+              </p>
+              <div className="mt-auto flex items-center text-primary font-bold text-sm group-hover:text-primary">
+                <span>Try Converter Tool</span>
+                <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1.5 transition-transform" />
+              </div>
+            </a>
+          </div>
+        </section>
+
         <section id="formats" className="py-20 bg-surface-container-lowest/40">
           <div className="px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto">
             <div className="text-center mb-12">

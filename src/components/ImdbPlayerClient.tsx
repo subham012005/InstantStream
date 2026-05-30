@@ -442,7 +442,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 </div>
               )}
 
-              <div className="hidden sm:flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 {streamData && (
                   <>
                     <span className="text-xs text-white/40">Player:</span>

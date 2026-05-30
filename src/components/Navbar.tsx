@@ -26,6 +26,7 @@ export function Navbar() {
             <Link className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/community-sites">Community</Link>
             <Link className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/guides">Guides</Link>
             <Link className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/blog">Blog</Link>
+            <Link className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/tools/imdb-tmdb-converter">Tools</Link>
             <Link className="text-on-surface-variant font-medium text-sm hover:text-primary transition-colors" href="/search">Search</Link>
           </nav>
           <div className="flex items-center gap-4">
