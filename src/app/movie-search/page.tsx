@@ -19,8 +19,10 @@ interface OMDBMovieDetail {
   Runtime: string;
   Genre: string;
   Director: string;
+  Writer?: string;
   Actors: string;
   Plot: string;
+  Country?: string;
   imdbRating: string;
   imdbVotes: string;
   Poster: string;
