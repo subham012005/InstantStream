@@ -37,6 +37,7 @@ export default function MovieSearchPage() {
   const [results, setResults] = useState<OMDBSearchResult[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [errorSearch, setErrorSearch] = useState<string | null>(null);
+  const [correctedQuery, setCorrectedQuery] = useState<string | null>(null);
 
   const [selectedMovie, setSelectedMovie] = useState<OMDBMovieDetail | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -58,6 +59,7 @@ export default function MovieSearchPage() {
     setResults([]);
     setSelectedMovie(null);
     setErrorDetails(null);
+    setCorrectedQuery(null);
 
     const searchQuery = query.trim();
 
@@ -82,6 +84,9 @@ export default function MovieSearchPage() {
 
       if (searchResults.length > 0) {
          setResults(searchResults);
+         if (data.CorrectedQuery) {
+            setCorrectedQuery(data.CorrectedQuery);
+         }
       } else {
          setErrorSearch("No movies found");
       }
@@ -309,6 +314,11 @@ export default function MovieSearchPage() {
 
         {results.length > 0 && (
           <div className="w-full mt-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {correctedQuery && (
+              <div className="p-4 bg-primary/10 text-primary rounded-2xl border border-primary/20 text-center font-medium max-w-2xl mx-auto shadow-sm mb-8">
+                Showing results for <span className="font-bold text-on-surface">{correctedQuery}</span>
+              </div>
+            )}
             <h2 className="text-xl md:text-2xl font-headline-md mb-8 text-on-surface border-b border-black/5 dark:border-white/5 pb-4">Top Search Results</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
               {results.map((item) => (
