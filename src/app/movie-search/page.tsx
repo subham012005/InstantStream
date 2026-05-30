@@ -59,15 +59,31 @@ export default function MovieSearchPage() {
     setSelectedMovie(null);
     setErrorDetails(null);
 
+    const searchQuery = query.trim();
+
     try {
-      const res = await fetch(`/api/omdb?search=${encodeURIComponent(query.trim())}`);
-      if (!res.ok) throw new Error('Search request failed');
-      const data = await res.json();
-      
-      if (data.Response === "False") {
-         setErrorSearch(data.Error === "Movie not found!" ? "Movie not found" : data.Error);
+      // 1. Try IMDb search first
+      let res = await fetch(`/api/imdb-search?q=${encodeURIComponent(searchQuery)}`);
+      let data = await res.json();
+      let searchResults = [];
+
+      if (res.ok && data.Response === "True" && data.Search && data.Search.length > 0) {
+        searchResults = data.Search;
       } else {
-         setResults(data.Search || []);
+        // 2. Fallback to OMDb search
+        res = await fetch(`/api/omdb?search=${encodeURIComponent(searchQuery)}`);
+        if (!res.ok) throw new Error('Search request failed');
+        data = await res.json();
+        
+        if (data.Response === "True" && data.Search) {
+          searchResults = data.Search;
+        }
+      }
+
+      if (searchResults.length > 0) {
+         setResults(searchResults);
+      } else {
+         setErrorSearch("No movies found");
       }
     } catch (err: any) {
       setErrorSearch(err.message || 'An error occurred during search.');

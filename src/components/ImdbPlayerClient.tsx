@@ -319,7 +319,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
 
               {/* ── Result Card ── */}
               <AnimatePresence>
-                {streamData?.url && (
+                {(streamData?.url || streamData?.playerUrl) && (
                   <motion.div
                     key="result-card"
                     initial={{ opacity: 0, y: 24, scale: 0.96 }}
