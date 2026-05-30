@@ -131,9 +131,9 @@ export default function ConverterPage() {
          throw new Error('Missing IMDb ID required to fetch movie details.');
       }
 
-      // 2. Fetch Rich Movie Metadata exclusively from OMDb using IMDb ID
-      const omdbUrl = `https://www.omdbapi.com/?i=${resolvedImdbId}&apikey=fb8a128f`;
-      const omdbResponse = await fetch(omdbUrl);
+      // 2. Fetch Rich Movie Metadata securely via internal API route
+      const internalApiUrl = `/api/omdb?id=${resolvedImdbId}`;
+      const omdbResponse = await fetch(internalApiUrl);
       
       if (!omdbResponse.ok) {
         throw new Error('Failed to fetch movie details from OMDb API');
