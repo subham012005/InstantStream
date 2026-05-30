@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import ImdbPlayerClient from "@/components/ImdbPlayerClient";
 import { landingPages } from "@/app/landingPagesData";
 
@@ -74,7 +75,9 @@ export default function ImdbMovieStreamPlayerPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolSchema) }}
       />
-      <ImdbPlayerClient data={data} />
+      <Suspense fallback={<div className="min-h-screen bg-[#080810] flex items-center justify-center">Loading player...</div>}>
+         <ImdbPlayerClient data={data} />
+      </Suspense>
     </>
   );
 }

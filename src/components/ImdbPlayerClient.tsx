@@ -18,10 +18,13 @@ import {
   Clapperboard,
   ChevronRight,
   Zap,
+  X,
 } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 import Logo from "@/components/Logo";
 import type { LandingPageData } from "@/app/landingPagesData";
+
+import { useSearchParams } from "next/navigation";
 
 interface MovieMeta {
   title: string;
@@ -45,6 +48,10 @@ interface StreamResponse {
 const EXAMPLES = ["tt0111161", "tt0468569", "tt1375666", "tt0110912"];
 
 export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
+  const searchParams = useSearchParams();
+  const initialId = searchParams.get("id");
+  const autoPlayFired = useRef(false);
+
   const [imdbId, setImdbId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -53,14 +60,34 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [shake, setShake] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedPlayerUrl, setSelectedPlayerUrl] = useState<string>("");
+  const [showHint, setShowHint] = useState(false);
+
+  useEffect(() => {
+    let showTimer: NodeJS.Timeout;
+    let hideTimer: NodeJS.Timeout;
+
+    if (isPlaying && streamData?.url) { // changed condition slightly to avoid early triggers
+      showTimer = setTimeout(() => setShowHint(true), 2000);
+      hideTimer = setTimeout(() => setShowHint(false), 22000);
+    } else {
+      setShowHint(false);
+    }
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [isPlaying, streamData?.url]);
 
   const isValidId = /^tt\d{7,8}$/.test(imdbId.trim());
 
+  const triggerShake = () => { setShake(true); setTimeout(() => setShake(false), 500); };
+
   const handleSearch = async (id = imdbId.trim()) => {
-    if (!id) { setError("Please enter an IMDb ID."); triggerShake(); return; }
+    if (!id) { setError("Please enter an IMDb ID."); triggerShake(); return false; }
     if (!/^tt\d{7,8}$/.test(id)) {
       setError("Invalid format. Use 'tt' followed by 7–8 digits, e.g. tt0111161");
-      triggerShake(); return;
+      triggerShake(); return false;
     }
     setImdbId(id);
     setLoading(true); setError(""); setStreamData(null); setIsPlaying(false);
@@ -71,16 +98,30 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
         setError(json.error || "No stream found for this title.");
         if (json.movie) setStreamData({ ...json, url: "", type: "hls", provider: "" });
         triggerShake();
+        return false;
       } else {
         setStreamData(json);
+        return true;
       }
     } catch {
       setError("Failed to connect to the server. Please try again.");
       triggerShake();
+      return false;
     } finally { setLoading(false); }
   };
 
-  const triggerShake = () => { setShake(true); setTimeout(() => setShake(false), 500); };
+  useEffect(() => {
+    if (initialId && !autoPlayFired.current) {
+      autoPlayFired.current = true;
+      setImdbId(initialId);
+      handleSearch(initialId).then((success) => {
+        if (success) {
+          setIsPlaying(true);
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialId]);
 
   const ACCENT = data.accentColor || "#f5c518";
   const SECONDARY = data.secondaryColor || "#e67e22";
@@ -445,20 +486,50 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
               <div className="flex flex-wrap items-center gap-3">
                 {streamData && (
                   <>
-                    <span className="text-xs text-white/40">Player:</span>
+                    <span className="text-xs text-white/40 hidden sm:inline">Player:</span>
                     <button
                       onClick={() => { if (streamData.playerUrl) setSelectedPlayerUrl(streamData.playerUrl); }}
-                      className={`px-3 py-1 rounded-lg font-semibold ${(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) ? 'bg-white text-black' : 'bg-white/5 text-white'}`} 
+                      className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition-all ${(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) ? 'bg-white text-black shadow-lg shadow-white/20 scale-105' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}
                     >
                       {streamData.playerSource}
                     </button>
                     {alternatePlayerUrl && (
-                      <button
-                        onClick={() => { setSelectedPlayerUrl(alternatePlayerUrl); }}
-                        className={`px-3 py-1 rounded-lg font-semibold ${selectedPlayerUrl === alternatePlayerUrl ? 'bg-white text-black' : 'bg-white/5 text-white'}`}
-                      >
-                        {streamData.playerSource === "Gemma" ? 'VixSrc' : 'Gemma'}
-                      </button>
+                      <div className="relative">
+                        <button
+                          onClick={() => { setSelectedPlayerUrl(alternatePlayerUrl); }}
+                          className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition-all ${selectedPlayerUrl === alternatePlayerUrl ? 'bg-white text-black shadow-lg shadow-white/20 scale-105' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'}`}
+                        >
+                          {streamData.playerSource === "Gemma" ? 'VixSrc' : 'Gemma'}
+                        </button>
+
+                        {/* Elegant floating block below */}
+                        <AnimatePresence>
+                          {showHint && (!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -5, scale: 0.95 }}
+                              transition={{ duration: 0.3 }}
+                              className="absolute top-full right-0 mt-3 w-48 bg-[#0D0D15] border border-white/10 rounded-xl shadow-2xl z-50 p-3"
+                            >
+                              {/* Upward pointing triangle / caret */}
+                              <div className="absolute -top-1.5 right-6 w-3 h-3 bg-[#0D0D15] border-l border-t border-white/10 rotate-45 transform" />
+
+                              <div className="relative z-10 flex flex-col gap-1.5">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider opacity-90">Having trouble?</span>
+                                  </div>
+                                  <button onClick={() => setShowHint(false)} className="text-white/40 hover:text-white transition-colors">
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                                <p className="text-xs text-white/60 leading-tight">If the stream isn't loading smoothly, try switching to this server.</p>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     )}
                   </>
                 )}

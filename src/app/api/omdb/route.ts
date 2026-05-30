@@ -3,9 +3,10 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
+  const search = searchParams.get('search'); // Used for ?s= querying
 
-  if (!id) {
-    return NextResponse.json({ Response: "False", Error: "Missing IMDb ID" }, { status: 400 });
+  if (!id && !search) {
+    return NextResponse.json({ Response: "False", Error: "Missing IMDb ID or Search parameter" }, { status: 400 });
   }
 
   // Secure API key on the server-side to prevent exposing it in browser dev tools.
@@ -13,7 +14,13 @@ export async function GET(request: Request) {
   const API_KEY = process.env.OMDB_API_KEY || "fb8a128f";
   
   try {
-    const omdbUrl = `https://www.omdbapi.com/?i=${id}&apikey=${API_KEY}`;
+    let omdbUrl = "";
+    if (id) {
+       omdbUrl = `https://www.omdbapi.com/?i=${encodeURIComponent(id)}&apikey=${API_KEY}`;
+    } else if (search) {
+       omdbUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(search)}&apikey=${API_KEY}`;
+    }
+
     const response = await fetch(omdbUrl);
     
     if (!response.ok) {

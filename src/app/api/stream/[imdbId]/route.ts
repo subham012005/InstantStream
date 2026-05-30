@@ -156,19 +156,26 @@ async function resolveStream(imdbId: string): Promise<StreamResult | null> {
   return null;
 }
 
-function buildMovieMeta(rawMeta: StreamMeta | undefined, imdbId: string) {
-  if (!rawMeta?.title) return null;
+async function fetchOmdbMeta(imdbId: string) {
+  try {
+    const API_KEY = process.env.OMDB_API_KEY || "fb8a128f";
+    const res = await fetch(`https://www.omdbapi.com/?i=${encodeURIComponent(imdbId)}&apikey=${API_KEY}`, {
+      signal: AbortSignal.timeout(6000)
+    });
+    const data = await res.json();
+    
+    if (data.Response === "False") return null;
 
-  const yearMatch = rawMeta.title.match(/(\d{4})/);
-  const cleanTitle = rawMeta.title.replace(/\s*\(?\d{4}\)?.*$/, "").trim() || imdbId;
-
-  return {
-    title: cleanTitle,
-    year: yearMatch ? yearMatch[1] : "",
-    poster: rawMeta.backdrop || null,
-    rating: "",
-    overview: rawMeta.file_name || "",
-  };
+    return {
+      title: data.Title,
+      year: data.Year,
+      poster: data.Poster !== "N/A" ? data.Poster : null,
+      rating: data.imdbRating !== "N/A" ? data.imdbRating : "",
+      overview: data.Plot !== "N/A" ? data.Plot : "",
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function GET(
@@ -185,9 +192,14 @@ export async function GET(
     );
   }
 
+  // Use OMDb to fetch precise movie metadata independent of stream availability
+  const movieMeta = await fetchOmdbMeta(imdbId);
+  
+  // Resolve streaming providers
   const stream = await resolveStream(imdbId);
+  
   const countryCode = await getCountryFromRequest(_req);
-  const playerSource = countryCode === "IN" ? "Gemma" : "VixSrc";
+  const playerSource = "Gemma";
   const playerUrl = playerSource === "Gemma"
     ? `https://gemma416okl.com/play/${imdbId}`
     : `https://vixsrc.to/movie/${imdbId}`;
@@ -199,7 +211,7 @@ export async function GET(
         url: "",
         type: "hls",
         provider: "Player Embed",
-        movie: null,
+        movie: movieMeta, // return rich OMDB meta even if no native stream found
         playerUrl,
         playerSource,
       },
@@ -212,7 +224,7 @@ export async function GET(
     url: stream.url,
     type: stream.type,
     provider: stream.provider,
-    movie: buildMovieMeta(stream.meta, imdbId),
+    movie: movieMeta,
     playerUrl,
     playerSource,
   });

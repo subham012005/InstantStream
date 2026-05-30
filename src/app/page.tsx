@@ -217,6 +217,19 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="/movie-search" className="group glass-panel rounded-2xl border border-black/5 dark:border-white/5 hover:border-primary/20 dark:hover:border-primary/20 overflow-hidden transition-all duration-300 p-6 flex flex-col items-start relative bg-surface-container-low hover:bg-surface-container-highest">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                <Search className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-headline-md text-on-surface mb-3">Movie Search Explorer</h3>
+              <p className="text-on-surface-variant font-body-md text-sm leading-relaxed mb-6">
+                Search our massive database via OMDb for any movie or series title. Get rich cast, rating, and storyline details, and effortlessly stream matches instantly.
+              </p>
+              <div className="mt-auto flex items-center text-primary font-bold text-sm group-hover:text-primary">
+                <span>Start Searching</span>
+                <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1.5 transition-transform" />
+              </div>
+            </a>
             <a href="/tools/imdb-tmdb-converter" className="group glass-panel rounded-2xl border border-black/5 dark:border-white/5 hover:border-primary/20 dark:hover:border-primary/20 overflow-hidden transition-all duration-300 p-6 flex flex-col items-start relative bg-surface-container-low hover:bg-surface-container-highest">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                 <Search className="w-6 h-6 text-primary" />
