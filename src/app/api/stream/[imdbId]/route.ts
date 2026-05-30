@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchVideoSource } from "@/lib/scraper";
 
 interface StreamMeta {
   title?: string;
@@ -14,28 +13,6 @@ interface StreamResult {
   meta?: StreamMeta;
 }
 
-async function tryStreamEngine(imdbId: string): Promise<StreamResult | null> {
-  try {
-    const result = await fetchVideoSource(imdbId, "movie");
-    if (!result?.streams?.length) return null;
-
-    const stream = result.streams[0];
-    const isHls = stream.url.includes(".m3u8") || !stream.url.includes(".mp4");
-    const url =
-      isHls && stream.proxyable
-        ? `/api/hls-proxy?url=${encodeURIComponent(stream.url)}&imdbId=${encodeURIComponent(imdbId)}`
-        : stream.url;
-
-    return {
-      url,
-      type: isHls ? "hls" : "mp4",
-      provider: "StreamIMDb",
-      meta: stream.meta,
-    };
-  } catch {
-    return null;
-  }
-}
 
 async function tryVidsrcCC(imdbId: string): Promise<string | null> {
   try {
@@ -141,9 +118,6 @@ async function getCountryFromRequest(request: NextRequest): Promise<string | nul
 }
 
 async function resolveStream(imdbId: string): Promise<StreamResult | null> {
-  const engine = await tryStreamEngine(imdbId);
-  if (engine) return engine;
-
   const cc = await tryVidsrcCC(imdbId);
   if (cc) return { url: cc, type: cc.includes(".m3u8") ? "hls" : "mp4", provider: "VidSrc.cc" };
 

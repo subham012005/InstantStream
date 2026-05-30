@@ -58,6 +58,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [streamData, setStreamData] = useState<StreamResponse | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [shake, setShake] = useState(false);
+  const [tmdbId, setTmdbId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedPlayerUrl, setSelectedPlayerUrl] = useState<string>("");
   const [showHint, setShowHint] = useState(false);
@@ -66,7 +67,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     let showTimer: NodeJS.Timeout;
     let hideTimer: NodeJS.Timeout;
 
-    if (isPlaying && streamData?.url) { // changed condition slightly to avoid early triggers
+    if (isPlaying && streamData?.playerUrl) {
       showTimer = setTimeout(() => setShowHint(true), 2000);
       hideTimer = setTimeout(() => setShowHint(false), 22000);
     } else {
@@ -90,7 +91,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       triggerShake(); return false;
     }
     setImdbId(id);
-    setLoading(true); setError(""); setStreamData(null); setIsPlaying(false);
+    setLoading(true); setError(""); setStreamData(null); setIsPlaying(false); setTmdbId(null);
     try {
       const res = await fetch(`/api/stream/${id}`);
       const json: StreamResponse = await res.json();
@@ -101,6 +102,21 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
         return false;
       } else {
         setStreamData(json);
+        
+        // Fetch TMDB ID
+        try {
+          const sparqlQuery = `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${id}". ?movie wdt:P4947 ?tmdbId. } LIMIT 1`;
+          const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
+          const wdRes = await fetch(wdUrl, { headers: { 'Accept': 'application/sparql-results+json' } });
+          const wdData = await wdRes.json();
+          const bindings = wdData.results.bindings;
+          if (bindings.length > 0 && bindings[0].tmdbId) {
+            setTmdbId(bindings[0].tmdbId.value);
+          }
+        } catch (e) {
+          console.error("Failed to fetch TMDB ID", e);
+        }
+
         return true;
       }
     } catch {
@@ -487,19 +503,21 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 {streamData && (
                   <>
                     <span className="text-xs text-white/40 hidden sm:inline">Player:</span>
+                    
                     <button
                       onClick={() => { if (streamData.playerUrl) setSelectedPlayerUrl(streamData.playerUrl); }}
                       className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition-all ${(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) ? 'bg-white text-black shadow-lg shadow-white/20 scale-105' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'}`}
                     >
-                      {streamData.playerSource}
+                      Default Player
                     </button>
+
                     {alternatePlayerUrl && (
                       <div className="relative">
                         <button
                           onClick={() => { setSelectedPlayerUrl(alternatePlayerUrl); }}
                           className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition-all ${selectedPlayerUrl === alternatePlayerUrl ? 'bg-white text-black shadow-lg shadow-white/20 scale-105' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'}`}
                         >
-                          {streamData.playerSource === "Gemma" ? 'VixSrc' : 'Gemma'}
+                          VixSrc
                         </button>
 
                         {/* Elegant floating block below */}
@@ -531,6 +549,17 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                         </AnimatePresence>
                       </div>
                     )}
+                    
+
+                    
+                    <button
+                      onClick={() => { if (tmdbId) setSelectedPlayerUrl(`https://player.videasy.net/movie/${tmdbId}`); }}
+                      disabled={!tmdbId}
+                      title={!tmdbId ? "TMDB ID not available for this title" : "VidEasy"}
+                      className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition-all ${selectedPlayerUrl === `https://player.videasy.net/movie/${tmdbId}` ? 'bg-white text-black shadow-lg shadow-white/20 scale-105' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed'}`}
+                    >
+                      VidEasy
+                    </button>
                   </>
                 )}
               </div>
