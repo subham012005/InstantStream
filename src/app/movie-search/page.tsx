@@ -544,7 +544,7 @@ function MovieSearchContent() {
               <p className="font-[family-name:var(--font-dm-sans)] text-[13px] text-[var(--text-muted)] mb-6">
                 Results for &ldquo;<span className="text-[var(--text-secondary)]">{query}</span>&rdquo;
               </p>
-            ) : activeGenre !== "All" ? (
+            ) : activeGenre !== "Trending" ? (
               <p className="font-[family-name:var(--font-dm-sans)] text-[13px] text-[var(--text-muted)] mb-6">
                 Popular <span className="text-[var(--text-secondary)] font-bold">{activeGenre}</span> Movies
               </p>
@@ -562,7 +562,7 @@ function MovieSearchContent() {
         {results.length === 0 && !loadingSearch && !loadingDefault && (
           <div>
             <p className="font-[family-name:var(--font-dm-sans)] text-[13px] text-[var(--text-muted)] mb-6">
-              {(query.trim() || activeGenre !== "All") && errorSearch ? '' : 'Popular Movies'}
+              {errorSearch ? '' : '🔥 Trending Now'}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px]">
               {defaultMovies.map((item) => (
