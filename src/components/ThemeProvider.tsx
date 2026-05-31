@@ -17,27 +17,20 @@ const ThemeContext = createContext<ThemeContextValue>({
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
 
-  // On mount, read the stored preference (already applied to <html> by the
-  // inline script in layout.tsx head — no flash).
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
+    const stored = localStorage.getItem("fx-theme") as Theme | null;
     if (stored === "light" || stored === "dark") {
       setThemeState(stored);
     } else {
-      // Fallback: read what the inline script already applied
-      const isDark = document.documentElement.classList.contains("dark");
-      setThemeState(isDark ? "dark" : "light");
+      const current = document.documentElement.getAttribute("data-theme") as Theme | null;
+      setThemeState(current === "light" ? "light" : "dark");
     }
   }, []);
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
-    localStorage.setItem("theme", t);
-    if (t === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    localStorage.setItem("fx-theme", t);
+    document.documentElement.setAttribute("data-theme", t);
   };
 
   return (

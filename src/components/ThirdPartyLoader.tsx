@@ -1,44 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Script from "next/script";
 
 export default function ThirdPartyLoader() {
-  const [shouldLoad, setShouldLoad] = useState(false);
-
-  useEffect(() => {
-    // Only load scripts on user interaction or after a long timeout
-    const loadScripts = () => {
-      setShouldLoad(true);
-      removeEventListeners();
-    };
-
-    const removeEventListeners = () => {
-      window.removeEventListener("scroll", loadScripts);
-      window.removeEventListener("mousemove", loadScripts);
-      window.removeEventListener("touchstart", loadScripts);
-      window.removeEventListener("keydown", loadScripts);
-    };
-
-    window.addEventListener("scroll", loadScripts, { passive: true });
-    window.addEventListener("mousemove", loadScripts, { passive: true });
-    window.addEventListener("touchstart", loadScripts, { passive: true });
-    window.addEventListener("keydown", loadScripts, { passive: true });
-
-    // Fallback: Load after 6 seconds anyway if no interaction
-    const timer = setTimeout(loadScripts, 6000);
-
-    return () => {
-      removeEventListeners();
-      clearTimeout(timer);
-    };
-  }, []);
-
-  if (!shouldLoad) return null;
-
   return (
     <>
-      {/* Google Tag Manager */}
+      {/* Google Tag Manager - Loads GTM Script */}
       <Script
         id="gtm-init"
         strategy="afterInteractive"
@@ -51,7 +18,7 @@ export default function ThirdPartyLoader() {
         }}
       />
 
-      {/* Google Analytics */}
+      {/* Google Analytics - Direct GA4 Loading */}
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-H7J24Y6QDM"
         strategy="afterInteractive"
@@ -69,14 +36,7 @@ export default function ThirdPartyLoader() {
         }}
       />
 
-      {/* Google AdSense */}
-      <Script
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3111082445226249"
-        strategy="afterInteractive"
-        crossOrigin="anonymous"
-      />
-
-      {/* Microsoft Clarity */}
+      {/* Microsoft Clarity - Direct Loading */}
       <Script
         id="clarity-init"
         strategy="afterInteractive"
@@ -87,6 +47,13 @@ export default function ThirdPartyLoader() {
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             })(window,document,"clarity","script","wup6qmdbx4");`,
         }}
+      />
+
+      {/* Google AdSense */}
+      <Script
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3111082445226249"
+        strategy="lazyOnload"
+        crossOrigin="anonymous"
       />
     </>
   );
