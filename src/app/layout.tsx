@@ -3,23 +3,27 @@ import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Geist, JetBrains_Mono } from "next/font/google";
+import { Sora, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import ThirdPartyLoader from "@/components/ThirdPartyLoader";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
   display: "swap",
-  preload: true,
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -118,14 +122,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
-        
-        {/* Theme init — must run before paint to avoid flash */}
-        <script
-          id="theme-init"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
-          }}
-        />
 
         {/* Structured Data — WebApplication */}
         <script
@@ -176,7 +172,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className={`${geistSans.variable} ${jetbrainsMono.variable} bg-surface font-body-md text-on-surface antialiased transition-colors duration-300`}>
+      <body suppressHydrationWarning className={`${sora.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            const t = localStorage.getItem('fx-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+          })();
+        `}} />
         <ThemeProvider>
           <Navbar />
           {/* Google Tag Manager (noscript) */}
