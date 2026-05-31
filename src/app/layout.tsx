@@ -29,10 +29,10 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://fluxplays.live"),
   title: {
-    default: "FluxPlays – Free Movies Stream without Ads and Login",
+    default: "FluxPlays – Watch Movies Free Online | No Signup, No Ads",
     template: "%s | FluxPlays",
   },
-  description: "Watch movies online free — stream by IMDb ID, paste any video URL, or browse 500K+ titles. No signup, no downloads, works instantly in your browser.",
+  description: "Watch movies online free by IMDb ID, browse 500K+ titles, or paste any video URL. Stream instantly in your browser — no signup, no downloads, no ads.",
   keywords: [
     "fluxplays",
     "fluxplays.live",
@@ -97,8 +97,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://fluxplays.live",
     siteName: "FluxPlays",
-    title: "FluxPlays – Free Movies Stream without Ads and Login",
-    description: "Watch movies online free — stream by IMDb ID, paste any video URL, or browse 500K+ titles. No signup, no downloads, works instantly in your browser.",
+    title: "FluxPlays – Watch Movies Free Online | No Signup, No Ads",
+    description: "Watch movies online free by IMDb ID, browse 500K+ titles, or paste any video URL. Stream instantly in your browser — no signup, no downloads, no ads.",
     images: [
       {
         url: "/og-image.png",
@@ -110,8 +110,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FluxPlays – Free Movies Stream without Ads and Login",
-    description: "Watch movies online free — stream by IMDb ID, paste any video URL, or browse 500K+ titles. No signup, no downloads, works instantly in your browser.",
+    title: "FluxPlays – Watch Movies Free Online | No Signup, No Ads",
+    description: "Watch movies online free by IMDb ID, browse 500K+ titles, or paste any video URL. Stream instantly in your browser — no signup, no downloads, no ads.",
     images: ["/og-image.png"],
     creator: "@fluxplays",
   },
