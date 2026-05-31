@@ -15,7 +15,7 @@
 
 **FluxPlays (formerly InstantStream)** is a highly optimized, browser-based video streaming application built on Next.js. It bypasses the need for downloading bulky MP4 files or native media players by leveraging the browser's native capabilities, HTTP Range Requests, and HLS protocols.
 
-If you have a direct link to a video file, FluxPlays will stream it instantly.
+If you have a direct link to a video file, FluxPlays will stream it instantly .
 
 ## 🚀 Key Features
 - **Zero Latency Seeking**: Implements sub-150ms HTTP Range Request chunks for scrubbing.
