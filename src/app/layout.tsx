@@ -29,11 +29,10 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://fluxplays.live"),
   title: {
-    default: "FluxPlays – Modern Movie & Video Streaming Web App",
+    default: "FluxPlays – Free Movies Stream without Ads and Login",
     template: "%s | FluxPlays",
   },
-  description:
-    "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
+  description: "Watch movies online free — stream by IMDb ID, paste any video URL, or browse 500K+ titles. No signup, no downloads, works instantly in your browser.",
   keywords: [
     "fluxplays",
     "fluxplays.live",
@@ -56,7 +55,34 @@ export const metadata: Metadata = {
     "direct mp4 player online",
     "free web video player",
     "how to stream videos without downloading",
-    "progressive video stream player"
+    "progressive video stream player",
+    // Brand
+    "fluxplays", "fluxplays.live",
+
+    // Casual audience (HIGH PRIORITY — missing right now)
+    "watch movies online free", "stream movies browser",
+    "watch movies without downloading", "free movie streaming no signup",
+    "online movie player no account", "watch movies free 2026",
+    "stream movies instantly", "free video streaming website",
+
+    // Tool audience
+    "browser video player", "online video streaming",
+    "stream direct video links", "paste and stream",
+    "HLS streaming", "m3u8 player online",
+    "HLS stream player web", "direct mp4 player online",
+    "free web video player",
+
+    // Players
+    "Google Drive video player", "google drive video player online",
+    "telegram video player browser", "stream telegram video online",
+
+    // IMDb specific (HIGH PRIORITY — big gap in market)
+    "imdb id movie player", "stream movie by imdb id",
+    "watch movie using imdb id", "imdb id player online free",
+
+    // Converter
+    "imdb to tmdb converter", "imdb id to tmdb id",
+    "convert imdb to tmdb online", "movie id converter online",
   ],
   authors: [{ name: "fluxplays.live" }],
   creator: "fluxplays.live",
@@ -71,9 +97,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://fluxplays.live",
     siteName: "FluxPlays",
-    title: "FluxPlays – Modern Movie & Video Streaming Web App",
-    description:
-      "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
+    title: "FluxPlays – Free Movies Stream without Ads and Login",
+    description: "Watch movies online free — stream by IMDb ID, paste any video URL, or browse 500K+ titles. No signup, no downloads, works instantly in your browser.",
     images: [
       {
         url: "/og-image.png",
@@ -85,9 +110,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FluxPlays – Modern Movie & Video Streaming Web App",
-    description:
-      "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
+    title: "FluxPlays – Free Movies Stream without Ads and Login",
+    description: "Watch movies online free — stream by IMDb ID, paste any video URL, or browse 500K+ titles. No signup, no downloads, works instantly in your browser.",
     images: ["/og-image.png"],
     creator: "@fluxplays",
   },
@@ -117,7 +141,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.clarity.ms" />
         <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
         <link rel="preconnect" href="https://ep1.adtrafficquality.google" />
-        
+
         {/* DNS Prefetch for secondary origins */}
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
@@ -173,7 +197,8 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className={`${sora.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}>
-        <script dangerouslySetInnerHTML={{ __html: `
+        <script dangerouslySetInnerHTML={{
+          __html: `
           (function() {
             const t = localStorage.getItem('fx-theme') || 'dark';
             document.documentElement.setAttribute('data-theme', t);
@@ -192,8 +217,8 @@ export default function RootLayout({
           </noscript>
           {children}
           <Footer />
-        <Analytics />
-        <ThirdPartyLoader />
+          <Analytics />
+          <ThirdPartyLoader />
         </ThemeProvider>
       </body>
     </html>
