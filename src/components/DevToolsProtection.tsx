@@ -5,93 +5,103 @@ import Script from "next/script";
 
 export default function DevToolsProtection() {
   const [isDevToolsOpen, setIsDevToolsOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Secret console backdoor for Subham
-    if (typeof window !== "undefined") {
-      Object.defineProperty(window, "imsubham", {
-        get: function () {
-          localStorage.setItem("allow_devtools", "true");
-          setTimeout(() => window.location.reload(), 500);
-          return "Access granted, boss! Reloading...";
-        },
-        configurable: true
-      });
+    setIsClient(true);
 
-      Object.defineProperty(window, "lock", {
-        get: function () {
-          localStorage.removeItem("allow_devtools");
-          setTimeout(() => window.location.reload(), 500);
-          return "Protection restored! Reloading...";
+    // ── Owner backdoor ──────────────────────────────────────────────────────
+    try {
+      Object.defineProperty(window, "imsubham", {
+        get() {
+          try { localStorage.setItem("allow_devtools", "true"); } catch (e) {}
+          setTimeout(() => window.location.reload(), 300);
+          return "✅ Access granted, boss! Reloading...";
         },
-        configurable: true
+        configurable: true,
       });
+      Object.defineProperty(window, "lock", {
+        get() {
+          try { localStorage.removeItem("allow_devtools"); } catch (e) {}
+          setTimeout(() => window.location.reload(), 300);
+          return "🔒 Protection restored! Reloading...";
+        },
+        configurable: true,
+      });
+    } catch (_) {}
+
+    // ── Disable right-click ─────────────────────────────────────────────────
+    const onContextMenu = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener("contextmenu", onContextMenu);
+
+    // ── Block common DevTools keyboard shortcuts ─────────────────────────────
+    const onKeyDown = (e: KeyboardEvent) => {
+      const blocked =
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && ["i","I","j","J","c","C"].includes(e.key)) ||
+        (e.ctrlKey && ["u","U"].includes(e.key)) ||
+        (e.metaKey && e.altKey && ["i","I","j","J","u","U"].includes(e.key));
+      if (blocked) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown, true);
+
+    // ── Skip detection for owner ────────────────────────────────────────────
+    try {
+      if (localStorage.getItem("allow_devtools") === "true") {
+        return () => {
+          document.removeEventListener("contextmenu", onContextMenu);
+          document.removeEventListener("keydown", onKeyDown, true);
+        };
+      }
+    } catch (e) {}
+
+    // ── Skip detection on mobile devices ────────────────────────────────────
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || "ontouchstart" in window;
+
+    if (isMobile) {
+      return () => {
+        document.removeEventListener("contextmenu", onContextMenu);
+        document.removeEventListener("keydown", onKeyDown, true);
+      };
     }
 
-    // Disable right click
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-    };
+    // ── Aggressive DevTools Detector Integration (Option A) ──────────────────
+    let devtoolsModule: any = null;
 
-    // Disable common shortcuts
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i")) ||
-        (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j")) ||
-        (e.ctrlKey && e.shiftKey && (e.key === "C" || e.key === "c")) ||
-        (e.ctrlKey && (e.key === "U" || e.key === "u")) ||
-        (e.metaKey && e.altKey && (e.key === "I" || e.key === "i")) ||
-        (e.metaKey && e.altKey && (e.key === "J" || e.key === "j")) ||
-        (e.metaKey && e.altKey && (e.key === "U" || e.key === "u"))
-      ) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener("contextmenu", handleContextMenu);
-    document.addEventListener("keydown", handleKeyDown);
-
-    // DevTools detection loop
-    let devtoolsDetectionInterval: NodeJS.Timeout;
-
-    const detectDevTools = () => {
-      // Owner bypass: if you set localStorage.getItem('allow_devtools') = 'true', it bypasses protection
-      if (typeof window !== "undefined" && localStorage.getItem("allow_devtools") === "true") {
-        setIsDevToolsOpen(false);
-        return;
-      }
-
-      let devtools = false;
-
-      // 1. Check window dimensions (docked devtools)
-      const widthThreshold = window.outerWidth - window.innerWidth > 160;
-      const heightThreshold = window.outerHeight - window.innerHeight > 160;
-
-      if (widthThreshold || heightThreshold) {
-        devtools = true;
-      }
-
-      setIsDevToolsOpen(devtools);
-    };
-
-    // Run detection continuously
-    devtoolsDetectionInterval = setInterval(detectDevTools, 1000);
+    import("devtools-detector").then((mod) => {
+      devtoolsModule = mod.default || mod;
+      
+      devtoolsModule.addListener((isOpen: boolean) => {
+        setIsDevToolsOpen(isOpen);
+      });
+      
+      devtoolsModule.launch();
+    });
 
     return () => {
-      document.removeEventListener("contextmenu", handleContextMenu);
-      document.removeEventListener("keydown", handleKeyDown);
-      clearInterval(devtoolsDetectionInterval);
+      document.removeEventListener("contextmenu", onContextMenu);
+      document.removeEventListener("keydown", onKeyDown, true);
+      if (devtoolsModule && typeof devtoolsModule.stop === "function") {
+        devtoolsModule.stop();
+      }
     };
   }, []);
 
-  if (!isDevToolsOpen) {
-    return null;
-  }
+  const returnToHomepage = () => {
+    window.location.href = "/";
+  };
+
+  if (!isClient || !isDevToolsOpen) return null;
 
   return (
-    <div 
-      id="devtools-protection" 
+    <div
+      id="devtools-protection"
       className="fixed inset-0 z-[999999] bg-[var(--bg-base)] text-[var(--text-primary)] flex flex-col min-h-screen overflow-y-auto"
     >
       <Script id="devtools-ad-script" strategy="afterInteractive">
@@ -100,6 +110,7 @@ export default function DevToolsProtection() {
 
       <div className="max-w-3xl mx-auto px-4 py-16 sm:px-6 lg:px-8 w-full mt-10">
         <div className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+
           <div className="text-center">
             <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)] font-[family-name:var(--font-jetbrains-mono)] mb-4">
               Action Required
@@ -122,16 +133,15 @@ export default function DevToolsProtection() {
           </div>
 
           <div className="mt-8 text-center">
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => window.location.href = "/"}
-                className="inline-flex items-center justify-center rounded-[12px] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)]"
-              >
-                Return to Homepage
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={returnToHomepage}
+              className="inline-flex items-center justify-center rounded-[12px] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)]"
+            >
+              Return to Homepage
+            </button>
           </div>
+
         </div>
       </div>
     </div>
