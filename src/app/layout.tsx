@@ -3,6 +3,7 @@ import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import DevToolsProtection from "@/components/DevToolsProtection";
 import { Sora, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import ThirdPartyLoader from "@/components/ThirdPartyLoader";
@@ -200,6 +201,7 @@ export default function RootLayout({
           })();
         `}} />
         <ThemeProvider>
+          <DevToolsProtection />
           <Navbar />
           {/* Google Tag Manager (noscript) */}
           <noscript>

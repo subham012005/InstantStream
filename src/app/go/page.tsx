@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import GoPageClient from "./GoPageClient";
 import type { Metadata } from "next";
 
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function GoPage() {
-  return <GoPageClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center text-[var(--text-primary)]">Loading...</div>}>
+      <GoPageClient />
+    </Suspense>
+  );
 }
