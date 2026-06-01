@@ -49,12 +49,6 @@ export default function ThirdPartyLoader() {
         }}
       />
 
-      {/* Google AdSense */}
-      <Script
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3111082445226249"
-        strategy="lazyOnload"
-        crossOrigin="anonymous"
-      />
     </>
   );
 }

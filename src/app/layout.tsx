@@ -122,7 +122,6 @@ export const metadata: Metadata = {
     google: "KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI",
   },
   other: {
-    "google-adsense-account": "ca-pub-3111082445226249",
     "msvalidate.01": "34F600811BDD9E429D675B2E52369FA0",
   },
 };
@@ -136,14 +135,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Preconnect to critical third-party origins */}
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.clarity.ms" />
-        <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
-        <link rel="preconnect" href="https://ep1.adtrafficquality.google" />
 
         {/* DNS Prefetch for secondary origins */}
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
 

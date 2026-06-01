@@ -55,6 +55,31 @@ export default function CommunityDashboard({ sites, formUrl }: Props) {
     return name.includes(query) || desc.includes(query) || tag.includes(query);
   });
 
+  const trackExitClick = (destinationUrl: string | undefined, siteName?: string) => {
+    if (!destinationUrl) return;
+    const payload = { event: 'community_exit_click', destination: destinationUrl, site: siteName || '' };
+    try {
+      if (typeof window !== 'undefined') {
+        // GTM dataLayer
+        (window as any).dataLayer = (window as any).dataLayer || [];
+        (window as any).dataLayer.push(payload);
+
+        // gtag (GA4)
+        if (typeof (window as any).gtag === 'function') {
+          (window as any).gtag('event', 'community_exit_click', { destination: destinationUrl, site: siteName });
+        }
+
+        // Microsoft Clarity
+        if (typeof (window as any).clarity === 'function') {
+          try { (window as any).clarity('set', 'community_exit_destination', destinationUrl); } catch {}
+          try { (window as any).clarity('event', 'community_exit_click'); } catch {}
+        }
+      }
+    } catch (e) {
+      // swallow
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       
@@ -125,12 +150,12 @@ export default function CommunityDashboard({ sites, formUrl }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredSites.map((site, index) => {
                   const url = site['Site URL']?.startsWith('http') ? site['Site URL'] : `https://${site['Site URL']}`;
+                  const redirectUrl = `/go?url=${encodeURIComponent(url)}&name=${encodeURIComponent(site['Site Name'] || '')}&desc=${encodeURIComponent(site['Description'] || '')}&type=${encodeURIComponent(site['Which kind of movies present there ? '] || '')}`;
                   return (
                     <a
                       key={index}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={redirectUrl}
+                      onClick={() => trackExitClick(url, site['Site Name'])}
                       className="group bg-[var(--bg-surface)] border border-[var(--border)] rounded-[14px] p-6 hover:border-[var(--accent)] transition-all hover:-translate-y-1 block relative"
                     >
                       <div className="absolute top-6 right-6">
