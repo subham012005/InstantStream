@@ -166,7 +166,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   }, [isPlaying]);
 
   const baseExternalPlayerUrl = selectedPlayerUrl || (streamData ? streamData.playerUrl : "");
-  const externalPlayerUrl = baseExternalPlayerUrl ? baseExternalPlayerUrl + (baseExternalPlayerUrl.includes('?') ? '&autoplay=1' : '?autoplay=1') : "";
+  const externalPlayerUrl = baseExternalPlayerUrl;
 
   useEffect(() => {
     if (streamData?.playerUrl) setSelectedPlayerUrl("");
@@ -450,12 +450,12 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                   >
 
                     <iframe
-                      className="w-full h-full"
+                      className="w-full h-full border-0"
                       src={externalPlayerUrl}
                       title="IMDb Movie Player"
-                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-read; clipboard-write"
+                      allow="autoplay; fullscreen"
                       allowFullScreen
-                      referrerPolicy="no-referrer"
+                      referrerPolicy="strict-origin-when-cross-origin"
                     />
                   </div>
                 </div>
