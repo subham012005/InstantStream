@@ -165,7 +165,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     }
   }, [isPlaying]);
 
-  const externalPlayerUrl = selectedPlayerUrl || (streamData ? streamData.playerUrl : "");
+  const baseExternalPlayerUrl = selectedPlayerUrl || (streamData ? streamData.playerUrl : "");
+  const externalPlayerUrl = baseExternalPlayerUrl ? baseExternalPlayerUrl + (baseExternalPlayerUrl.includes('?') ? '&autoplay=1' : '?autoplay=1') : "";
 
   useEffect(() => {
     if (streamData?.playerUrl) setSelectedPlayerUrl("");
@@ -398,7 +399,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 {/* Main Player Section */}
                 <div className="w-full">
                     
-                  {/* Player Title & Rating */}
+                  {/* Player Title & Rating & Server Selection */}
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                     <div>
                       <h1 className="font-bold text-[32px] md:text-[48px] text-[var(--text-primary)] leading-tight font-serif transition-colors duration-300" style={{ fontFamily: "var(--font-sora)" }}>
@@ -415,24 +416,19 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                         <span className="flex items-center gap-1.5 text-[var(--text-primary)]"><Star className="w-4 h-4 fill-[#F5C518] text-[#F5C518]" /> <span className="text-lg font-bold">{streamData.movie?.rating || '?'}</span> <span className="text-[var(--text-muted)] font-normal">/10</span></span>
                       </div>
                     </div>
-                  </div>
-
-                  <div
-                    ref={playerRef}
-                    className="w-full aspect-video bg-black rounded-[12px] md:rounded-[20px] overflow-hidden border border-[var(--border)] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative group/player transition-colors duration-300"
-                  >
-                    {/* Server Selection overlay */}
-                    <div className="absolute top-4 right-4 z-10 flex gap-2 opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
+                    
+                    {/* Server Selection */}
+                    <div className="flex flex-wrap gap-2 md:mb-1">
                       <button
                         onClick={() => { if (streamData.playerUrl) setSelectedPlayerUrl(streamData.playerUrl); }}
-                        className={`px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all backdrop-blur-md shadow-lg ${(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) ? 'bg-[#F5C518] text-black ring-2 ring-[var(--bg-base)]' : 'bg-[var(--bg-elevated)]/80 text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
+                        className={`px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all shadow-sm ${(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) ? 'bg-[#F5C518] text-black ring-2 ring-[var(--bg-base)]' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
                       >
                          Server 1 {(!selectedPlayerUrl || selectedPlayerUrl === streamData.playerUrl) && '• Active'}
                       </button>
                       {alternatePlayerUrl && (
                         <button
                           onClick={() => setSelectedPlayerUrl(alternatePlayerUrl)}
-                          className={`px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all backdrop-blur-md shadow-lg ${selectedPlayerUrl === alternatePlayerUrl ? 'bg-[#F5C518] text-black ring-2 ring-[var(--bg-base)]' : 'bg-[var(--bg-elevated)]/80 text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
+                          className={`px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all shadow-sm ${selectedPlayerUrl === alternatePlayerUrl ? 'bg-[#F5C518] text-black ring-2 ring-[var(--bg-base)]' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
                         >
                           Server 2 {selectedPlayerUrl === alternatePlayerUrl && '• Active'}
                         </button>
@@ -440,12 +436,18 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                       {tmdbId && (
                         <button
                           onClick={() => setSelectedPlayerUrl(`https://player.videasy.net/movie/${tmdbId}`)}
-                          className={`px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all backdrop-blur-md shadow-lg ${selectedPlayerUrl === `https://player.videasy.net/movie/${tmdbId}` ? 'bg-[#F5C518] text-black ring-2 ring-[var(--bg-base)]' : 'bg-[var(--bg-elevated)]/80 text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
+                          className={`px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all shadow-sm ${selectedPlayerUrl === `https://player.videasy.net/movie/${tmdbId}` ? 'bg-[#F5C518] text-black ring-2 ring-[var(--bg-base)]' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
                         >
                           Server 3 {selectedPlayerUrl === `https://player.videasy.net/movie/${tmdbId}` && '• Active'}
                         </button>
                       )}
                     </div>
+                  </div>
+
+                  <div
+                    ref={playerRef}
+                    className="w-full aspect-video bg-black rounded-[12px] md:rounded-[20px] overflow-hidden border border-[var(--border)] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative group/player transition-colors duration-300"
+                  >
 
                     <iframe
                       className="w-full h-full"
