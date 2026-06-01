@@ -7,6 +7,27 @@ export default function DevToolsProtection() {
   const [isDevToolsOpen, setIsDevToolsOpen] = useState(false);
 
   useEffect(() => {
+    // Secret console backdoor for Subham
+    if (typeof window !== "undefined") {
+      Object.defineProperty(window, "imsubham", {
+        get: function () {
+          localStorage.setItem("allow_devtools", "true");
+          setTimeout(() => window.location.reload(), 500);
+          return "Access granted, boss! Reloading...";
+        },
+        configurable: true
+      });
+
+      Object.defineProperty(window, "lock", {
+        get: function () {
+          localStorage.removeItem("allow_devtools");
+          setTimeout(() => window.location.reload(), 500);
+          return "Protection restored! Reloading...";
+        },
+        configurable: true
+      });
+    }
+
     // Disable right click
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -35,9 +56,15 @@ export default function DevToolsProtection() {
     let devtoolsDetectionInterval: NodeJS.Timeout;
 
     const detectDevTools = () => {
+      // Owner bypass: if you set localStorage.getItem('allow_devtools') = 'true', it bypasses protection
+      if (typeof window !== "undefined" && localStorage.getItem("allow_devtools") === "true") {
+        setIsDevToolsOpen(false);
+        return;
+      }
+
       let devtools = false;
 
-      // Check window dimensions (docked devtools)
+      // 1. Check window dimensions (docked devtools)
       const widthThreshold = window.outerWidth - window.innerWidth > 160;
       const heightThreshold = window.outerHeight - window.innerHeight > 160;
 
@@ -45,6 +72,30 @@ export default function DevToolsProtection() {
         devtools = true;
       }
 
+      // 2. Check for detached DevTools (Console getter trick)
+      const element = new Image();
+      Object.defineProperty(element, "id", {
+        get: function () {
+          devtools = true;
+        },
+      });
+      // @ts-ignore
+      console.debug("%c", element);
+
+      // 3. Regex toString trick (works in some browsers)
+      const re = /./;
+      re.toString = function () {
+        devtools = true;
+        return "";
+      };
+      console.debug(re);
+
+      // 4. Firebug / older browser check
+      if ((window as any).Firebug && (window as any).Firebug.chrome && (window as any).Firebug.chrome.isInitialized) {
+        devtools = true;
+      }
+
+      console.clear();
       setIsDevToolsOpen(devtools);
     };
 
