@@ -95,16 +95,21 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       }
 
       // 2. Fetch OMDb data
-      const omdbRes = await fetch(`/api/omdb?id=${id}`);
-      if (!omdbRes.ok) {
-        throw new Error("Failed to fetch movie details.");
-      }
-      const omdbData = await omdbRes.json();
-      
-      if (omdbData.Response === "False") {
-         setError(omdbData.Error || "No movie found for this IMDb ID.");
-         triggerShake();
-         return false;
+      let omdbData: any = null;
+      try {
+        const omdbRes = await fetch(`/api/omdb?id=${id}`);
+        if (omdbRes.ok) {
+          const data = await omdbRes.json();
+          if (data.Response !== "False") {
+            omdbData = data;
+          } else {
+            console.warn("OMDb API returned False:", data.Error);
+          }
+        } else {
+          console.warn("OMDb API failed with status:", omdbRes.status);
+        }
+      } catch (err) {
+        console.error("OMDb fetch exception:", err);
       }
 
       const streamJson: StreamResponse = {
@@ -113,18 +118,18 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
         type: "hls",
         provider: "Frontend",
         movie: {
-          title: omdbData.Title !== "N/A" ? omdbData.Title : "",
-          year: omdbData.Year !== "N/A" ? omdbData.Year : "",
-          poster: omdbData.Poster !== "N/A" ? omdbData.Poster : null,
-          rating: omdbData.imdbRating !== "N/A" ? omdbData.imdbRating : "",
-          overview: omdbData.Plot !== "N/A" ? omdbData.Plot : "",
-          genre: omdbData.Genre !== "N/A" ? omdbData.Genre : undefined,
-          director: omdbData.Director !== "N/A" ? omdbData.Director : undefined,
-          writer: omdbData.Writer !== "N/A" ? omdbData.Writer : undefined,
-          actors: omdbData.Actors !== "N/A" ? omdbData.Actors : undefined,
-          runtime: omdbData.Runtime !== "N/A" ? omdbData.Runtime : undefined,
-          released: omdbData.Released !== "N/A" ? omdbData.Released : undefined,
-          language: omdbData.Language !== "N/A" ? omdbData.Language : undefined
+          title: omdbData?.Title && omdbData.Title !== "N/A" ? omdbData.Title : `IMDb: ${id}`,
+          year: omdbData?.Year && omdbData.Year !== "N/A" ? omdbData.Year : "",
+          poster: omdbData?.Poster && omdbData.Poster !== "N/A" ? omdbData.Poster : null,
+          rating: omdbData?.imdbRating && omdbData.imdbRating !== "N/A" ? omdbData.imdbRating : "",
+          overview: omdbData?.Plot && omdbData.Plot !== "N/A" ? omdbData.Plot : "",
+          genre: omdbData?.Genre && omdbData.Genre !== "N/A" ? omdbData.Genre : undefined,
+          director: omdbData?.Director && omdbData.Director !== "N/A" ? omdbData.Director : undefined,
+          writer: omdbData?.Writer && omdbData.Writer !== "N/A" ? omdbData.Writer : undefined,
+          actors: omdbData?.Actors && omdbData.Actors !== "N/A" ? omdbData.Actors : undefined,
+          runtime: omdbData?.Runtime && omdbData.Runtime !== "N/A" ? omdbData.Runtime : undefined,
+          released: omdbData?.Released && omdbData.Released !== "N/A" ? omdbData.Released : undefined,
+          language: omdbData?.Language && omdbData.Language !== "N/A" ? omdbData.Language : undefined
         },
         playerUrl: `https://gemma416okl.com/play/${id}`,
         playerSource: "Gemma"

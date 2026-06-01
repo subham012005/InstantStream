@@ -72,30 +72,6 @@ export default function DevToolsProtection() {
         devtools = true;
       }
 
-      // 2. Check for detached DevTools (Console getter trick)
-      const element = new Image();
-      Object.defineProperty(element, "id", {
-        get: function () {
-          devtools = true;
-        },
-      });
-      // @ts-ignore
-      console.debug("%c", element);
-
-      // 3. Regex toString trick (works in some browsers)
-      const re = /./;
-      re.toString = function () {
-        devtools = true;
-        return "";
-      };
-      console.debug(re);
-
-      // 4. Firebug / older browser check
-      if ((window as any).Firebug && (window as any).Firebug.chrome && (window as any).Firebug.chrome.isInitialized) {
-        devtools = true;
-      }
-
-      console.clear();
       setIsDevToolsOpen(devtools);
     };
 
