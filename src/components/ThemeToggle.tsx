@@ -3,6 +3,7 @@
 import { useTheme } from "@/components/ThemeProvider";
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -13,16 +14,31 @@ export default function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="w-10 h-10" />;
+    return <div className="w-[56px] h-[28px] rounded-full bg-[var(--bg-elevated)] border border-[var(--border)]" />;
   }
+
+  const isDark = theme === "dark";
 
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 transition-colors flex items-center justify-center text-on-surface-variant hover:text-primary"
-      title="Toggle Dark Mode"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative w-[56px] h-[28px] rounded-full bg-[var(--bg-elevated)] border border-[var(--border)] flex items-center px-1 transition-colors hover:border-[var(--accent)] outline-none"
+      aria-label="Toggle theme"
     >
-      {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+      <motion.div
+        className="w-5 h-5 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] flex items-center justify-center shadow-sm z-10"
+        initial={false}
+        animate={{
+          x: isDark ? 26 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      >
+        {isDark ? (
+          <Moon className="w-3 h-3 text-[var(--text-secondary)]" />
+        ) : (
+          <Sun className="w-3 h-3 text-[var(--text-secondary)]" />
+        )}
+      </motion.div>
     </button>
   );
 }

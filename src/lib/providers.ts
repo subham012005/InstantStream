@@ -123,10 +123,6 @@ export async function fetchFromProviders(
   season?: number,
   episode?: number
 ): Promise<StreamResult[] | null> {
-  const tmdbId = await convertImdbToTmdb(imdbId);
-  if (!tmdbId) {
-    console.log('[providers] Failed to convert IMDb → TMDB');
-    return null;
-  }
-  return searchStreams(tmdbId, type, season, episode);
+  console.log('[providers] fetchFromProviders disabled for IMDb only flow — no TMDB conversion');
+  return null;
 }

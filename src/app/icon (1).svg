@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D946EF" /> {/* Fuchsia */}
+      <stop offset="50%" stop-color="#8B5CF6" /> {/* Violet */}
+      <stop offset="100%" stop-color="#3B82F6" /> {/* Cyber Blue */}
+    </linearGradient>
+  </defs>
+  {/* Thickened outer flux stream path for perfect 16x16 scaling visibility */}
+  <path
+    d="M25 25C12 40 12 60 25 75C38 90 62 90 75 75C82 68 85 58 82 48"
+    stroke="url(#icon-grad)"
+    stroke-width="8"
+    stroke-linecap="round"
+  />
+  {/* High-visibility play arrow */}
+  <path
+    d="M44 34L68 50L44 66V34Z"
+    fill="url(#icon-grad)"
+  />
+</svg>

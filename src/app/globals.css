@@ -1,335 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Sora:wght@100..800&display=swap');
+
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/container-queries";
 
 @theme {
-  --color-background: #fdfdfd;
-  --color-on-background: #111111;
-  --color-surface: #ffffff;
-  --color-surface-dim: #f5f5f5;
-  --color-surface-bright: #ffffff;
-  
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f8f9fa;
-  --color-surface-container: #f1f3f5;
-  --color-surface-container-high: #e9ecef;
-  --color-surface-container-highest: #dee2e6;
-  
-  --color-on-surface: #111111;
-  --color-on-surface-variant: #555555;
-  
-  --color-primary: #0061e0;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #ddebff;
-  --color-on-primary-container: #0033aa;
-  
-  --color-secondary: #7928ca;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #f3d9ff;
-  --color-on-secondary-container: #440077;
-  
-  --color-tertiary: #ff0080;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #ffd4e5;
-  --color-on-tertiary-container: #770033;
-  
-  --color-error: #ff3333;
-  --color-on-error: #ffffff;
-  --color-error-container: #ffe6e6;
-  --color-on-error-container: #990000;
-  
-  --color-outline: #cccccc;
-  --color-outline-variant: #e0e0e0;
-  --color-inverse-surface: #111111;
-  --color-inverse-on-surface: #ffffff;
-  --color-inverse-primary: #8ab8ff;
-  
-  --color-on-tertiary-fixed-variant: #770033;
-  --color-on-secondary-fixed: #440077;
-  --color-on-secondary-fixed-variant: #440077;
-  --color-tertiary-fixed-dim: #ffd4e5;
-  --color-secondary-fixed: #f3d9ff;
-  --color-tertiary-fixed: #ffd4e5;
-  --color-surface-tint: #0070f3;
-  --color-on-primary-fixed-variant: #0033aa;
-  --color-primary-fixed: #ddebff;
-  --color-primary-fixed-dim: #8ab8ff;
-  --color-secondary-fixed-dim: #c586ff;
-  --color-on-primary-fixed: #0033aa;
-  --color-on-tertiary-fixed: #770033;
+  /* We can define custom values here if needed, but Tailwind CSS variables will pick up from below automatically or we can just map them */
+}
 
-  --radius-DEFAULT: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+/* DARK THEME (default) */
+[data-theme="dark"] {
+  --bg-base: #090909;
+  --bg-surface: #161618;
+  --bg-elevated: #1E1E21;
+  --border: #2A2A2F;
+  --border-subtle: #1A1A1C;
+  --accent: #E63B2E;
+  --accent-hover: #FF5A4E;
+  --text-primary: #F5F5F7;
+  --text-secondary: #A0A0AE;
+  --text-muted: #5A5A66;
+}
 
-  --spacing-container-padding-mobile: 20px;
-  --spacing-gutter: 24px;
-  --spacing-stack-sm: 12px;
-  --spacing-unit: 8px;
-  --spacing-container-padding-desktop: 64px;
-  --spacing-stack-md: 24px;
-  --spacing-stack-lg: 48px;
-
-  --font-body-lg: var(--font-geist-sans), sans-serif;
-  --font-headline-lg: var(--font-geist-sans), sans-serif;
-  --font-headline-md: var(--font-geist-sans), sans-serif;
-  --font-body-md: var(--font-geist-sans), sans-serif;
-  --font-headline-lg-mobile: var(--font-geist-sans), sans-serif;
-  --font-display-lg: var(--font-geist-sans), sans-serif;
-  --font-label-sm: var(--font-jetbrains-mono), monospace;
-  --font-headline: var(--font-geist-sans), sans-serif;
-  --font-display: var(--font-geist-sans), sans-serif;
-  --font-body: var(--font-geist-sans), sans-serif;
-  --font-label: var(--font-geist-sans), sans-serif;
-
-  --text-body-lg: 18px;
-  --text-body-lg--line-height: 1.6;
-  --text-body-lg--font-weight: 400;
-  
-  --text-headline-lg: 40px;
-  --text-headline-lg--line-height: 1.2;
-  --text-headline-lg--letter-spacing: -0.02em;
-  --text-headline-lg--font-weight: 600;
-
-  --text-headline-md: 24px;
-  --text-headline-md--line-height: 1.4;
-  --text-headline-md--letter-spacing: -0.01em;
-  --text-headline-md--font-weight: 600;
-
-  --text-body-md: 16px;
-  --text-body-md--line-height: 1.6;
-  --text-body-md--font-weight: 400;
-
-  --text-headline-lg-mobile: 32px;
-  --text-headline-lg-mobile--line-height: 1.2;
-  --text-headline-lg-mobile--letter-spacing: -0.02em;
-  --text-headline-lg-mobile--font-weight: 600;
-
-  --text-display-lg: 64px;
-  --text-display-lg--line-height: 1.1;
-  --text-display-lg--letter-spacing: -0.04em;
-  --text-display-lg--font-weight: 700;
-
-  --text-label-sm: 12px;
-  --text-label-sm--line-height: 1;
-  --text-label-sm--letter-spacing: 0.05em;
-  --text-label-sm--font-weight: 500;
+/* LIGHT THEME */
+[data-theme="light"] {
+  --bg-base: #e7e7ef;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F7F7F9;
+  --border: #D8D8E0;
+  --border-subtle: #E8E8EE;
+  --accent: #E63B2E;
+  --accent-hover: #CC2F24;
+  --text-primary: #0A0A0C;
+  --text-secondary: #4A4A58;
+  --text-muted: #7A7A88;
 }
 
 @layer base {
-  body {
-    overflow-x: hidden;
-    scroll-behavior: smooth;
+  * {
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
   }
 
-  .dark {
-    --color-background: #000000;
-    --color-on-background: #ffffff;
-    --color-surface: #050505;
-    --color-surface-dim: #0a0a0a;
-    --color-surface-bright: #111111;
-    
-    --color-surface-container-lowest: #000000;
-    --color-surface-container-low: #0a0a0a;
-    --color-surface-container: #111111;
-    --color-surface-container-high: #1a1a1a;
-    --color-surface-container-highest: #222222;
-    
-    --color-on-surface: #ffffff;
-    --color-on-surface-variant: #a1a1aa;
-    
-    --color-primary: #0070f3;
-    --color-on-primary: #ffffff;
-    --color-primary-container: #002366;
-    --color-on-primary-container: #cce0ff;
-    
-    --color-secondary: #7928ca;
-    --color-on-secondary: #ffffff;
-    --color-secondary-container: #330066;
-    --color-on-secondary-container: #ebd6ff;
-    
-    --color-tertiary: #ff0080;
-    --color-on-tertiary: #ffffff;
-    --color-tertiary-container: #660033;
-    --color-on-tertiary-container: #ffccdf;
-    
-    --color-error: #ff4444;
-    --color-on-error: #ffffff;
-    --color-error-container: #660000;
-    --color-on-error-container: #ffcccc;
-    
-    --color-outline: #333333;
-    --color-outline-variant: #222222;
-    --color-inverse-surface: #ffffff;
-    --color-inverse-on-surface: #000000;
-    --color-inverse-primary: #8ab8ff;
-
-    --color-on-tertiary-fixed-variant: #660033;
-    --color-on-secondary-fixed: #330066;
-    --color-on-secondary-fixed-variant: #330066;
-    --color-tertiary-fixed-dim: #ffccdf;
-    --color-secondary-fixed: #ebd6ff;
-    --color-tertiary-fixed: #ffccdf;
-    --color-surface-tint: #0070f3;
-    --color-on-primary-fixed-variant: #002366;
-    --color-primary-fixed: #cce0ff;
-    --color-primary-fixed-dim: #8ab8ff;
-    --color-secondary-fixed-dim: #c586ff;
-    --color-on-primary-fixed: #002366;
-    --color-on-tertiary-fixed: #660033;
+  html,
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
   }
 }
 
 @layer utilities {
-
-
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-top: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-  }
-
-  .dark .glass-panel {
-    background: rgba(10, 10, 10, 0.5);
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .premium-button-gradient {
-    position: relative;
-    background: linear-gradient(135deg, #0070f3 0%, #7928ca 100%);
-    background-size: 200% 200%;
-    overflow: hidden;
-  }
-  
-  .premium-button-gradient::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #7928ca 0%, #0070f3 100%);
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
-    animation: gradientPulse 4s ease infinite;
-    z-index: 0;
-  }
-
-  .premium-button-gradient > * {
-    position: relative;
-    z-index: 1;
-  }
-  
-  @keyframes gradientPulse {
-    0%, 100% { opacity: 0; }
-    50% { opacity: 1; }
-  }
-
-  .button-glow-ring {
-    position: relative;
-  }
-
-  .button-glow-ring::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    border: 2px solid #0070f3;
-    border-radius: inherit;
-    animation: pulse-ring-new 2s infinite cubic-bezier(0.66, 0, 0, 1);
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  @keyframes pulse-ring-new {
-    0% { transform: scale(1); opacity: 0.7; }
-    100% { transform: scale(1.3); opacity: 0; }
-  }
-
-  .hero-glow {
-    background: radial-gradient(circle at center, rgba(0, 112, 243, 0.15) 0%, transparent 70%);
-  }
-
-  .dark .hero-glow {
-    background: radial-gradient(circle at center, rgba(0, 112, 243, 0.12) 0%, transparent 70%);
-  }
-
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    z-index: -1;
-    opacity: 0.6;
-    will-change: transform;
-  }
-  
-  .dark .orb {
-    opacity: 0.4;
-  }
-
-  @keyframes orb-float-1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(80px, 40px) scale(1.1); }
-  }
-
-  @keyframes orb-float-2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-60px, -80px) scale(1.2); }
-  }
-
-  .orb-animate-1 {
-    animation: orb-float-1 15s linear infinite;
-  }
-
-  .orb-animate-2 {
-    animation: orb-float-2 20s linear infinite;
-  }
-
-  .feature-card {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  .feature-card:hover {
-    border-color: rgba(0, 112, 243, 0.4);
-    background: rgba(0, 112, 243, 0.02);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px -10px rgba(0, 112, 243, 0.15);
-  }
-  
-  .dark .feature-card:hover {
-    background: rgba(0, 112, 243, 0.04);
-  }
-
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  
+
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .orb-animate-1,
-  .orb-animate-2,
-  .premium-button-gradient,
-  .button-glow-ring {
-    animation: none !important;
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
   }
 
-  .faq-accordion-panel {
-    transition: none !important;
+  100% {
+    background-position: -200% 0;
   }
-}
-
-details > summary {
-  list-style: none;
-}
-
-details > summary::-webkit-details-marker {
-  display: none;
 }

@@ -6,23 +6,13 @@ import { landingPages } from "@/app/landingPagesData";
 const data = landingPages["hls-m3u8-stream-player"];
 
 export const metadata: Metadata = {
-  title: "HLS M3U8 Stream Player — Adaptive Bitrate Streaming in Browser | FluxPlays",
-  description:
-    "The best online M3U8 player. Stream HLS video playlists directly in your browser with adaptive bitrate. Paste your .m3u8 link for fast, buffer-free playback.",
+  title: "Free HLS M3U8 Player Online — Test & Play Streams in Browser",
+  description: "Play any M3U8 or HLS stream instantly in your browser. Free online HLS player — no install, no signup. Supports live streams, IPTV, and VOD.",
   keywords: [
-    "M3U8 player",
-    "HLS stream player",
-    "online HLS player",
-    "M3U8 online",
-    "HLS video streaming",
-    "adaptive bitrate streaming",
-    "stream M3U8 files",
-    "play HLS streams",
-    "web-based video player",
-    "browser video player",
-    "IPTV M3U8",
-    "live stream player",
-    "hls.js player",
+    "hls player online free", "m3u8 player online",
+    "play m3u8 in browser", "hls stream tester",
+    "test hls stream online", "m3u8 link player",
+    "iptv m3u8 player online", "http live streaming player browser",
   ],
   robots: {
     index: true,

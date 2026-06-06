@@ -2,33 +2,38 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
-import { Geist, JetBrains_Mono } from "next/font/google";
+import { Footer } from "@/components/Footer";
+import DevToolsProtection from "@/components/DevToolsProtection";
+import { Sora, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import ThirdPartyLoader from "@/components/ThirdPartyLoader";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
   display: "swap",
-  preload: true,
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://fluxplays.live"),
   title: {
-    default: "FluxPlays – Modern Movie & Video Streaming Web App",
+    default: "FluxPlays – Watch Movies Free Online | No Signup, No Ads",
     template: "%s | FluxPlays",
   },
-  description:
-    "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
+  description: "Watch movies online free by IMDb ID, browse 500K+ titles, or paste any video URL. Stream instantly in your browser — no signup, no downloads, no ads.",
   keywords: [
     "fluxplays",
     "fluxplays.live",
@@ -51,7 +56,34 @@ export const metadata: Metadata = {
     "direct mp4 player online",
     "free web video player",
     "how to stream videos without downloading",
-    "progressive video stream player"
+    "progressive video stream player",
+    // Brand
+    "fluxplays", "fluxplays.live",
+
+    // Casual audience (HIGH PRIORITY — missing right now)
+    "watch movies online free", "stream movies browser",
+    "watch movies without downloading", "free movie streaming no signup",
+    "online movie player no account", "watch movies free 2026",
+    "stream movies instantly", "free video streaming website",
+
+    // Tool audience
+    "browser video player", "online video streaming",
+    "stream direct video links", "paste and stream",
+    "HLS streaming", "m3u8 player online",
+    "HLS stream player web", "direct mp4 player online",
+    "free web video player",
+
+    // Players
+    "Google Drive video player", "google drive video player online",
+    "telegram video player browser", "stream telegram video online",
+
+    // IMDb specific (HIGH PRIORITY — big gap in market)
+    "imdb id movie player", "stream movie by imdb id",
+    "watch movie using imdb id", "imdb id player online free",
+
+    // Converter
+    "imdb to tmdb converter", "imdb id to tmdb id",
+    "convert imdb to tmdb online", "movie id converter online",
   ],
   authors: [{ name: "fluxplays.live" }],
   creator: "fluxplays.live",
@@ -66,9 +98,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://fluxplays.live",
     siteName: "FluxPlays",
-    title: "FluxPlays – Modern Movie & Video Streaming Web App",
-    description:
-      "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
+    title: "FluxPlays – Watch Movies Free Online | No Signup, No Ads",
+    description: "Watch movies online free by IMDb ID, browse 500K+ titles, or paste any video URL. Stream instantly in your browser — no signup, no downloads, no ads.",
     images: [
       {
         url: "/og-image.png",
@@ -80,9 +111,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FluxPlays – Modern Movie & Video Streaming Web App",
-    description:
-      "FluxPlays is a fast and modern video streaming web app built for discovering and watching movies, shows, and entertainment content online.",
+    title: "FluxPlays – Watch Movies Free Online | No Signup, No Ads",
+    description: "Watch movies online free by IMDb ID, browse 500K+ titles, or paste any video URL. Stream instantly in your browser — no signup, no downloads, no ads.",
     images: ["/og-image.png"],
     creator: "@fluxplays",
   },
@@ -93,7 +123,6 @@ export const metadata: Metadata = {
     google: "KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI",
   },
   other: {
-    "google-adsense-account": "ca-pub-3111082445226249",
     "msvalidate.01": "34F600811BDD9E429D675B2E52369FA0",
   },
 };
@@ -107,24 +136,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Preconnect to critical third-party origins */}
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.clarity.ms" />
-        <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
-        <link rel="preconnect" href="https://ep1.adtrafficquality.google" />
-        
+
         {/* DNS Prefetch for secondary origins */}
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
-        
-        {/* Theme init — must run before paint to avoid flash */}
-        <script
-          id="theme-init"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
-          }}
-        />
 
         {/* Structured Data — WebApplication */}
         <script
@@ -175,8 +192,16 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className={`${geistSans.variable} ${jetbrainsMono.variable} bg-surface font-body-md text-on-surface antialiased transition-colors duration-300`}>
+      <body suppressHydrationWarning className={`${sora.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+          (function() {
+            const t = localStorage.getItem('fx-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+          })();
+        `}} />
         <ThemeProvider>
+          <DevToolsProtection />
           <Navbar />
           {/* Google Tag Manager (noscript) */}
           <noscript>
@@ -188,8 +213,9 @@ export default function RootLayout({
             />
           </noscript>
           {children}
-        <Analytics />
-        <ThirdPartyLoader />
+          <Footer />
+          <Analytics />
+          <ThirdPartyLoader />
         </ThemeProvider>
       </body>
     </html>

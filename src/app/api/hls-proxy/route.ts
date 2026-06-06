@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStreamReferer } from "@/lib/scraper";
 
 export const runtime = "nodejs";
 
@@ -54,7 +53,7 @@ async function fetchUpstream(req: NextRequest) {
     headers: {
       "User-Agent": UA,
       Accept: "*/*",
-      Referer: getStreamReferer(imdbId),
+      Referer: `https://brightpathsignals.com/embed/movie/${imdbId}`,
       Origin: "https://brightpathsignals.com",
       ...(range ? { Range: range } : {}),
     },

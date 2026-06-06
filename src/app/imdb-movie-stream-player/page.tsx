@@ -1,22 +1,18 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import ImdbPlayerClient from "@/components/ImdbPlayerClient";
 import { landingPages } from "@/app/landingPagesData";
 
 const data = landingPages["imdb-movie-stream-player"];
 
 export const metadata: Metadata = {
-  title: "Stream Movies via IMDb ID Instantly | FluxPlays",
-  description:
-    "Paste any valid IMDb ID to find and stream your favorite movies directly in your browser without downloads or sign-ups.",
+  title: "IMDb ID Movie Player — Stream Any Movie by IMDb ID Free FluxPlays",
+  description: "Paste any IMDb ID like tt0111161 and watch the movie instantly in your browser. Free IMDb movie stream player — no signup, no downloads.",
   keywords: [
-    "IMDb movie player",
-    "stream IMDb movies",
-    "watch movies online",
-    "IMDb ID streaming",
-    "movie streaming",
-    "online movie player",
-    "free movie streaming",
-    "browser video player",
+    "imdb id movie player", "stream movie by imdb id",
+    "watch movie using imdb id", "imdb id player online free",
+    "paste imdb id watch movie", "tt0111161 watch online",
+    "imdb movie stream player", "watch movie by imdb code",
   ],
   robots: {
     index: true,
@@ -25,16 +21,16 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: data.canonicalUrl },
   openGraph: {
-    title: "Stream Movies via IMDb ID Instantly | FluxPlays",
-    description: "Paste any valid IMDb ID (like tt0111161) to find and stream movies directly in your browser.",
+    title: "IMDb ID Movie Player — Stream Any Movie by IMDb ID Free FluxPlays",
+    description: "Paste any IMDb ID like tt0111161 and watch the movie instantly in your browser. Free IMDb movie stream player — no signup, no downloads.",
     url: data.canonicalUrl,
     type: "website",
     siteName: "FluxPlays",
   },
   twitter: {
     card: "summary_large_image",
-    title: "IMDb Movie Streaming Player | FluxPlays",
-    description: "Stream movies using IMDb IDs instantly.",
+    title: "IMDb ID Movie Player — Stream Any Movie by IMDb ID Free FluxPlays",
+    description: "Paste any IMDb ID like tt0111161 and watch the movie instantly in your browser. Free IMDb movie stream player — no signup, no downloads.",
   },
 };
 
@@ -74,7 +70,9 @@ export default function ImdbMovieStreamPlayerPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolSchema) }}
       />
-      <ImdbPlayerClient data={data} />
+      <Suspense fallback={<div className="min-h-screen bg-[#080810] flex items-center justify-center">Loading player...</div>}>
+        <ImdbPlayerClient data={data} />
+      </Suspense>
     </>
   );
 }

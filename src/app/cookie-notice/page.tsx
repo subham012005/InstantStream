@@ -26,13 +26,12 @@ export default function CookieNoticePage() {
         <h2>Why FluxPlays uses cookies</h2>
         <ul>
           <li>Analytics: We use cookies to understand how visitors use FluxPlays and to improve performance.</li>
-          <li>Advertising: When Google Ads or advertising services are present, cookies help deliver relevant ads and measure campaign performance.</li>
           <li>Service integrity: Cookies can be used to enable essential site features and security checks.</li>
         </ul>
 
         <h2>Third-party cookies</h2>
         <p>
-          FluxPlays may load third-party scripts such as Google Analytics, Google Tag Manager, and Microsoft Clarity. These services may set cookies on your browser for analytics, optimization, and advertising purposes.
+          FluxPlays may load third-party scripts such as Google Analytics, Google Tag Manager, and Microsoft Clarity. These services may set cookies on your browser for analytics and optimization purposes.
         </p>
 
         <h2>How to manage cookies</h2>

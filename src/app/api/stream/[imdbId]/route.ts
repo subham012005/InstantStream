@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchVideoSource } from "@/lib/scraper";
 
 interface StreamMeta {
   title?: string;
@@ -14,28 +13,6 @@ interface StreamResult {
   meta?: StreamMeta;
 }
 
-async function tryStreamEngine(imdbId: string): Promise<StreamResult | null> {
-  try {
-    const result = await fetchVideoSource(imdbId, "movie");
-    if (!result?.streams?.length) return null;
-
-    const stream = result.streams[0];
-    const isHls = stream.url.includes(".m3u8") || !stream.url.includes(".mp4");
-    const url =
-      isHls && stream.proxyable
-        ? `/api/hls-proxy?url=${encodeURIComponent(stream.url)}&imdbId=${encodeURIComponent(imdbId)}`
-        : stream.url;
-
-    return {
-      url,
-      type: isHls ? "hls" : "mp4",
-      provider: "StreamIMDb",
-      meta: stream.meta,
-    };
-  } catch {
-    return null;
-  }
-}
 
 async function tryVidsrcCC(imdbId: string): Promise<string | null> {
   try {
@@ -92,10 +69,55 @@ async function tryVidsrcXYZ(imdbId: string): Promise<string | null> {
   }
 }
 
-async function resolveStream(imdbId: string): Promise<StreamResult | null> {
-  const engine = await tryStreamEngine(imdbId);
-  if (engine) return engine;
+function parseIpFromHeaders(request: NextRequest): string | null {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0].trim();
+  return forwarded || request.headers.get("x-real-ip") || request.headers.get("x-client-ip") || null;
+}
 
+function isPrivateIp(ip: string): boolean {
+  return (
+    /^127\./.test(ip) ||
+    /^10\./.test(ip) ||
+    /^192\.168\./.test(ip) ||
+    /^169\.254\./.test(ip) ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip) ||
+    /^::1$/.test(ip) ||
+    /^fc00:/i.test(ip) ||
+    /^fe80:/i.test(ip)
+  );
+}
+
+async function lookupCountryFromIp(ip: string): Promise<string | null> {
+  try {
+    const res = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/country/`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return null;
+    return (await res.text()).trim().toUpperCase() || null;
+  } catch {
+    return null;
+  }
+}
+
+async function getCountryFromRequest(request: NextRequest): Promise<string | null> {
+  const geoCountry = (request as any).geo?.country;
+  const headerCountry =
+    geoCountry ||
+    request.headers.get("x-vercel-country") ||
+    request.headers.get("cf-ipcountry") ||
+    request.headers.get("x-country") ||
+    request.headers.get("x-nf-country") ||
+    request.headers.get("x-appengine-country");
+
+  if (headerCountry) return headerCountry.toString().toUpperCase();
+
+  const ip = parseIpFromHeaders(request);
+  if (!ip || isPrivateIp(ip)) return null;
+
+  return await lookupCountryFromIp(ip);
+}
+
+async function resolveStream(imdbId: string): Promise<StreamResult | null> {
   const cc = await tryVidsrcCC(imdbId);
   if (cc) return { url: cc, type: cc.includes(".m3u8") ? "hls" : "mp4", provider: "VidSrc.cc" };
 
@@ -108,19 +130,26 @@ async function resolveStream(imdbId: string): Promise<StreamResult | null> {
   return null;
 }
 
-function buildMovieMeta(rawMeta: StreamMeta | undefined, imdbId: string) {
-  if (!rawMeta?.title) return null;
+async function fetchOmdbMeta(imdbId: string) {
+  try {
+    const API_KEY = process.env.OMDB_API_KEY || "fb8a128f";
+    const res = await fetch(`https://www.omdbapi.com/?i=${encodeURIComponent(imdbId)}&apikey=${API_KEY}`, {
+      signal: AbortSignal.timeout(6000)
+    });
+    const data = await res.json();
+    
+    if (data.Response === "False") return null;
 
-  const yearMatch = rawMeta.title.match(/(\d{4})/);
-  const cleanTitle = rawMeta.title.replace(/\s*\(?\d{4}\)?.*$/, "").trim() || imdbId;
-
-  return {
-    title: cleanTitle,
-    year: yearMatch ? yearMatch[1] : "",
-    poster: rawMeta.backdrop || null,
-    rating: "",
-    overview: rawMeta.file_name || "",
-  };
+    return {
+      title: data.Title,
+      year: data.Year,
+      poster: data.Poster !== "N/A" ? data.Poster : null,
+      rating: data.imdbRating !== "N/A" ? data.imdbRating : "",
+      overview: data.Plot !== "N/A" ? data.Plot : "",
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function GET(
@@ -137,12 +166,30 @@ export async function GET(
     );
   }
 
+  // Use OMDb to fetch precise movie metadata independent of stream availability
+  const movieMeta = await fetchOmdbMeta(imdbId);
+  
+  // Resolve streaming providers
   const stream = await resolveStream(imdbId);
+  
+  const countryCode = await getCountryFromRequest(_req);
+  const playerSource = "Gemma";
+  const playerUrl = playerSource === "Gemma"
+    ? `https://gemma416okl.com/play/${imdbId}`
+    : `https://vixsrc.to/movie/${imdbId}`;
 
   if (!stream) {
     return NextResponse.json(
-      { error: "No stream source could be found for this title right now. Try again later." },
-      { status: 404 }
+      {
+        imdbId,
+        url: "",
+        type: "hls",
+        provider: "Player Embed",
+        movie: movieMeta, // return rich OMDB meta even if no native stream found
+        playerUrl,
+        playerSource,
+      },
+      { status: 200 }
     );
   }
 
@@ -151,6 +198,8 @@ export async function GET(
     url: stream.url,
     type: stream.type,
     provider: stream.provider,
-    movie: buildMovieMeta(stream.meta, imdbId),
+    movie: movieMeta,
+    playerUrl,
+    playerSource,
   });
 }
