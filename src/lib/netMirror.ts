@@ -1,7 +1,7 @@
 // ─── Net Mirror Shared Utilities ─────────────────────────────────────────────
 // Mirrors the logic from netflix-server.js but as Next.js-compatible helpers.
 
-const COOKIE = `user_token=1b8771d4552c859e7f6dd08c25b95a7d; SE81313283=81702845; 81702845=474%3A3189; t_hash_p=d4a4a377e8f47ebd03242c8d280aca9%3A%3A8179b9d01f91ea2b6a9ff46c74ffb310%3A%3A1780564205%3A%3Ani%3A%3Ap; recentplay=82698051-SE81313283; cf_clearance=OAeqqdD6ZbT76IGiSSuGEhvwL1FIngTgShxuiyq.Oy8-1780564203-1.2.1.1-LcD0En5lRChlCYoYWX6q_XiQ3cRqSoOlqBMSZ2bEtstEXlnS.9vxMsis1BkSNsg4RB1.akQBtxJuZnhy72x_kMMNCS.okR_JkzGhYkc.wugAdFWIClr.A30yGhbLuAw.fZTerBRBMcDZpSv82WflKO1IySsnAnVeDha0b9ignwHFEKHbz3ueE0NTiZDs4rMa9ufNu_Pq43Xq.sUuTFvGiBtfPpskM7UtUJSmarqrac4sRT9ad57cEdsc7lDnc0KbQuVxZl8cQt.7YmujoInqMVW2aqM_RhvIoSdGnmbRQtEEEFOrL4PPT8JCgjY5fvOhVLO3cWzmjN4Jm2UzMA146oOOq53N_Fd5Grgrv6OBjcV63i5ypNuyhtBUpI6rNmG4rrcUfPpk8Cp_fa.FEkctTo2W8xd2bDJzKn29H0ZMdo8; t_hash_p=d4a4a377e8f417ebd03242c8d280aca9%3A%3A8179b9d01f91ea2b6a9ff46c74ffb310%3A%3A1780564205%3A%3Ani%3A%3Ap; recentplay=82698051-SE81313283; t_hash=22141276f60a94343e8e567f1367c0ea%3A%3A1780577035%3A%3Ani`;
+const COOKIE = `user_token=1b8771d4552c859e7f6dd08c25b95a7d; SE81313283=81702845; 81702845=474%3A3189; ott=nf; 82813816=4689%3A12339; recentplay=82813021-82813816-82698051-SE81313283; t_hash=3085cbee7f35574e827ea0d7d71ee74b%3A%3A1780825333%3A%3Ani; cf_clearance=oPiuwm2u0lKYqeEMu5kSNUHWOcMPZBsbZGbIlY1QFw4-1780825408-1.2.1.1-arefU6CII51YOQVt6oBdK8HDyAC7arzXr_a0cC5.DX8mf7gjCsYMQRhuVhM9Zs3xpgja4j7lzJ18rD4DM3vHfkDFf87P.M3Ju2XrBzXzrHx3DadC3wzYGioyuBRS4X1hvp8SzhUHCEus2dij0omxlf95ZY5NvFKphbncX6iRtAQKxs2yH3E.5Vo_aDOO_c.Or.0wlRXt0lxH74lBZCb1480XT.KNnSt1rbtslAoMucrGbBFvJjbXnjo_m96S5Tdb31nc4PiYe6PKfV2OAuCBaUEXo65IrdSN_R3gC9uzUPBMMWedsazytxZPCYB7b7TQdznTkAWG89Gta8_T5uqYYZOOjgG_Ft12u0dvcvbb6QYrjdsYPpDBbxtlfvnsfppY4T3HJJpV.EuVWxZ4l3LJeie1LWsIGr5YWRYBq1icl2Y; t_hash_p=7e0941e808b8e8809aeb54da663deb03%3A%3Abaaf43abc5b92eddde0f395b1c05c6a4%3A%3A1780825448%3A%3Ani%3A%3Ap`;
 
 export function headers(extra: Record<string, string> = {}): Record<string, string> {
   return {
@@ -77,6 +77,15 @@ export async function getPostData(videoId: string): Promise<PostData> {
       "X-Requested-With": "XMLHttpRequest"
     })
   });
+
+  if (!res.ok) {
+    throw new Error(JSON.stringify({
+      error: "Upstream request failed",
+      status: res.status,
+      provider: "net11",
+      message: "net11 rejected the request"
+    }));
+  }
 
   const data: PostData = await res.json();
 

@@ -12,6 +12,14 @@ export async function GET(
     const data = await getNet52Hls(id);
     return NextResponse.json(data);
   } catch (err: any) {
+    try {
+      const parsedErr = JSON.parse(err.message);
+      if (parsedErr.provider === "net11") {
+        return NextResponse.json(parsedErr, { status: 502 });
+      }
+    } catch (_) {
+      // not a JSON error, fallback
+    }
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
