@@ -56,29 +56,6 @@ export interface ScrapedGenre {
   note: string | null;
 }
 
-export interface ScrapedTop10Item {
-  rank: number;
-  title: string | null;
-  type: "movie" | "series";
-  week: string | null;
-  category: string;
-  hoursViewed: number | null;
-  runtime: number | null;
-  id: string | null;
-  poster: string | null;
-  backdrop: string | null;
-  description: string | null;
-}
-
-export interface ScrapedTop10 {
-  source: string;
-  type: string;
-  category: string;
-  week: string | null;
-  totalFound: number;
-  items: ScrapedTop10Item[];
-  note: string;
-}
 
 /* ─────────────────────────────────────────────
    HTML helpers
@@ -223,80 +200,6 @@ export const scrapeGenre = unstable_cache(
   { revalidate: CACHE_TTL_SECONDS }
 );
 
-/** Fetch Netflix Top 10 from the official public XLSX */
-export const scrapeTop10 = unstable_cache(
-  async (type: "movies" | "tv" | "nonEnglishMovies" | "nonEnglishTv" = "movies"): Promise<ScrapedTop10> => {
-    // Dynamic import xlsx only on server
-    const XLSX = await import("xlsx");
-    const url = "https://www.netflix.com/tudum/top10/data/all-weeks-global.xlsx";
-
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      },
-    });
-
-    if (!res.ok) throw new Error(`Top 10 XLSX fetch failed: ${res.status}`);
-
-    const buffer = Buffer.from(await res.arrayBuffer());
-    const workbook = XLSX.read(buffer, { type: "buffer" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows: any[] = XLSX.utils.sheet_to_json(sheet);
-
-    const categoryMap: Record<string, string> = {
-      movies: "Films (English)",
-      tv: "TV (English)",
-      nonEnglishMovies: "Films (Non-English)",
-      nonEnglishTv: "TV (Non-English)",
-    };
-
-    const category = categoryMap[type];
-
-    const latestWeek = rows
-      .filter((r) => (r.category || r.Category) === category)
-      .map((r) => r.week || r.Week)
-      .sort()
-      .pop() || null;
-
-    const filtered = rows
-      .filter((r) =>
-        (r.category || r.Category) === category &&
-        (r.week || r.Week) === latestWeek
-      )
-      .sort((a, b) =>
-        Number(a.weekly_rank || a["Weekly Rank"] || 0) -
-        Number(b.weekly_rank || b["Weekly Rank"] || 0)
-      )
-      .slice(0, 10);
-
-    const items: ScrapedTop10Item[] = filtered.map((row, index) => ({
-      rank: Number(row.weekly_rank || row["Weekly Rank"] || index + 1),
-      title: row.show_title || row["Show Title"] || row.title || row.Title || null,
-      type: category.includes("TV") ? "series" : "movie",
-      week: latestWeek,
-      category,
-      hoursViewed: row.weekly_hours_viewed || row["Weekly Hours Viewed"] || null,
-      runtime: row.runtime || row.Runtime || null,
-      id: null,
-      poster: null,
-      backdrop: null,
-      description: null,
-    }));
-
-    return {
-      source: "Netflix Tudum Top 10 public XLSX",
-      type,
-      category,
-      week: latestWeek,
-      totalFound: items.length,
-      items,
-      note: "Top 10 XLSX gives titles/stats but not Netflix IDs — IDs resolved separately.",
-    };
-  },
-  ["netflix-top10"],
-  { revalidate: CACHE_TTL_SECONDS }
-);
 
 /** Search across all scraped titles (genres cache) */
 export async function searchScrapedTitles(query: string): Promise<ScrapedTitle[]> {

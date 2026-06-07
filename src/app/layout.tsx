@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Navbar } from "@/components/Navbar";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
 import { Footer } from "@/components/Footer";
 import DevToolsProtection from "@/components/DevToolsProtection";
 import { Sora, DM_Sans, JetBrains_Mono } from "next/font/google";
@@ -202,7 +202,7 @@ export default function RootLayout({
         `}} />
         <ThemeProvider>
           <DevToolsProtection />
-          <Navbar />
+          <ConditionalNavbar />
           {/* Google Tag Manager (noscript) */}
           <noscript>
             <iframe

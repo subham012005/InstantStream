@@ -48,19 +48,6 @@ const TRENDING: CatalogItem[] = [
   { id: "70136120", title: "Breaking Bad",        posterUrl: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGxs.jpg", matchScore: "99%", year: "2008", rating: "TV-MA", duration: "5 Seasons",  categories: ["Crime","Drama"], isSeries: true },
 ];
 
-const TOP10: CatalogItem[] = [
-  { id: "81040344", title: "Squid Game",          posterUrl: "https://image.tmdb.org/t/p/w500/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg", rank: 1, year: "2021", rating: "TV-MA", isSeries: true },
-  { id: "81231974", title: "Wednesday",           posterUrl: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczAjs.jpg", rank: 2, year: "2022", rating: "TV-14", isSeries: true },
-  { id: "80057281", title: "Stranger Things",     posterUrl: "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg", rank: 3, year: "2016", rating: "TV-14", isSeries: true },
-  { id: "80192098", title: "Money Heist",         posterUrl: "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg", rank: 4, year: "2017", rating: "TV-MA", isSeries: true },
-  { id: "81435684", title: "Arcane",              posterUrl: "https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg", rank: 5, year: "2021", rating: "TV-14", isSeries: true },
-  { id: "70136120", title: "Breaking Bad",        posterUrl: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGxs.jpg", rank: 6, year: "2008", rating: "TV-MA", isSeries: true },
-  { id: "80002479", title: "Peaky Blinders",      posterUrl: "https://image.tmdb.org/t/p/w500/vUUqzWa2LnHIVqkaKVlVGkVcZIW.jpg", rank: 7, year: "2013", rating: "TV-MA", isSeries: true },
-  { id: "80115328", title: "Ozark",               posterUrl: "https://image.tmdb.org/t/p/w500/m73bD8VRIBJilJ8XoJv4W23XqK2.jpg", rank: 8, year: "2017", rating: "TV-MA", isSeries: true },
-  { id: "80025172", title: "Narcos",              posterUrl: "https://image.tmdb.org/t/p/w500/rTmal9fDbwhEEzBp3DA6huYXg4e.jpg", rank: 9, year: "2015", rating: "TV-MA", isSeries: true },
-  { id: "70264888", title: "Black Mirror",        posterUrl: "https://image.tmdb.org/t/p/w500/5UaYsGZ44xZ51m9UqFfB1bLhQ1L.jpg", rank: 10, year: "2011", rating: "TV-MA", isSeries: true },
-];
-
 const MOVIES: CatalogItem[] = [
   { id: "81103141", title: "Extraction",          posterUrl: "https://image.tmdb.org/t/p/w500/qhWse2mCOAAgQOGCBR9JKBMpFPo.jpg", year: "2020", rating: "TV-MA", duration: "1h 56m", categories: ["Action","Thriller"] },
   { id: "80186864", title: "Bird Box",            posterUrl: "https://image.tmdb.org/t/p/w500/AkJQpZp9WoNdj7pLYSj1L0RcMMN.jpg", year: "2018", rating: "R",     duration: "2h 4m",  categories: ["Horror","Sci-Fi"] },
@@ -129,10 +116,6 @@ export class DemoCatalogProvider implements NetflixCatalogProvider {
     return this.delay(80, TRENDING);
   }
 
-  async getTop10(): Promise<CatalogItem[]> {
-    return this.delay(80, TOP10);
-  }
-
   async getMovies(_genre?: string): Promise<CatalogItem[]> {
     return this.delay(80, MOVIES);
   }
@@ -155,16 +138,14 @@ export class DemoCatalogProvider implements NetflixCatalogProvider {
   }
 
   async getHomepage(): Promise<CatalogHomepage> {
-    const [trending, top10, movies, series] = await Promise.all([
+    const [trending, movies, series] = await Promise.all([
       this.getTrending(),
-      this.getTop10(),
       this.getMovies(),
       this.getSeries(),
     ]);
 
     const rows: CatalogRow[] = [
       { title: "Trending Now",      items: trending,     variant: "default" },
-      { title: "Netflix Top 10",    items: top10,        variant: "top10"   },
       { title: "Popular Movies",    items: movies,       variant: "default" },
       { title: "Popular Series",    items: series,       variant: "default" },
       { title: "Action & Adventure",items: ACTION,       variant: "default" },

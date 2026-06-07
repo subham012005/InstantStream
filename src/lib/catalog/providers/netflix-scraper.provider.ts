@@ -3,7 +3,7 @@
  *
  * Live catalog provider backed by the Netflix public scraper.
  * Calls the Next.js API routes at /api/netflix/* — which in turn
- * hit Netflix genre pages, the Tudum Top-10 XLSX, and title pages.
+ * hit Netflix genre pages and title pages.
  *
  * All caching is handled server-side by Next.js unstable_cache (7-day TTL).
  * This class is purely a thin HTTP client from the browser perspective.
@@ -41,25 +41,6 @@ function adaptItem(raw: any, rank?: number): CatalogItem {
   };
 }
 
-function adaptTop10Item(raw: any): CatalogItem {
-  return {
-    // Top-10 items from the XLSX have no Netflix ID — use title as fallback key
-    id:          String(raw.id || ""),
-    title:       raw.title       || "Untitled",
-    posterUrl:   raw.poster      || "/placeholder-poster.svg",
-    backdropUrl: raw.backdrop    || raw.poster || "",
-    description: raw.description || raw.hoursViewed
-      ? `${(Number(raw.hoursViewed) / 1_000_000).toFixed(1)}M hours viewed this week`
-      : "",
-    year:        raw.year        || "",
-    rating:      raw.rating      || "",
-    duration:    raw.runtime     ? `${raw.runtime} min` : "",
-    isSeries:    raw.type === "series",
-    categories:  [],
-    rank:        raw.rank,
-  };
-}
-
 /* ─────────────────────────────────────────────
    Provider
 ───────────────────────────────────────────── */
@@ -85,23 +66,6 @@ export class NetflixScraperProvider implements NetflixCatalogProvider {
     try {
       const data = await this.get<{ items: any[] }>("/api/netflix/genre?code=839338&limit=12");
       return (data.items || []).filter((i) => i.id).map((i) => adaptItem(i));
-    } catch {
-      return [];
-    }
-  }
-
-  async getTop10(): Promise<CatalogItem[]> {
-    try {
-      const [movies, tv] = await Promise.allSettled([
-        this.get<{ items: any[] }>("/api/netflix/top10/movies"),
-        this.get<{ items: any[] }>("/api/netflix/top10/tv"),
-      ]);
-      const movieItems = movies.status === "fulfilled"
-        ? (movies.value.items || []).map(adaptTop10Item) : [];
-      const tvItems = tv.status === "fulfilled"
-        ? (tv.value.items || []).map(adaptTop10Item) : [];
-      // Interleave so the row feels diverse
-      return [...movieItems.slice(0, 5), ...tvItems.slice(0, 5)];
     } catch {
       return [];
     }
@@ -161,10 +125,8 @@ export class NetflixScraperProvider implements NetflixCatalogProvider {
         .filter((r) => (r.items || []).some((i: any) => i.id || i.title))
         .map((r) => ({
           title:   r.title,
-          variant: r.variant || "default",
-          items:   (r.items || []).map((i: any) =>
-            r.variant === "top10" ? adaptTop10Item(i) : adaptItem(i)
-          ),
+          variant: r.variant || "landscape",
+          items:   (r.items || []).map((i: any) => adaptItem(i)),
         }));
 
       return { hero, rows };

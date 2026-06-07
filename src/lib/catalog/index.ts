@@ -10,7 +10,7 @@
  * ── PROVIDERS AVAILABLE ─────────────────────────────────────────────────────
  *
  *   NetflixScraperProvider  ← ACTIVE
- *     Calls /api/netflix/* which scrape Netflix genre pages + Tudum Top-10 XLSX.
+ *     Calls /api/netflix/* which scrape Netflix genre pages.
  *     7-day server-side cache. Falls back to demo on error.
  *
  *   DemoCatalogProvider

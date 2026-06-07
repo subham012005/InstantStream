@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { GENRES } from "@/lib/catalog/netflix-scraper";
+import { NextResponse } from 'next/server';
+import { GENRES } from '@/lib/netflixscraper';
 
-export const runtime = "nodejs";
+export const runtime = 'nodejs';
 
-export async function GET() {
+export function GET() {
   return NextResponse.json({ total: GENRES.length, genres: GENRES });
 }

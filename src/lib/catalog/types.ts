@@ -35,7 +35,6 @@ export interface CatalogItem {
 ───────────────────────────────────────────── */
 export type RowVariant =
   | "default"       // standard poster cards
-  | "top10"         // large rank-number overlay
   | "continue"      // progress-bar cards (watch history)
   | "landscape";    // wide 16:9 cards
 
@@ -91,9 +90,6 @@ export interface NetflixCatalogProvider {
 
   /** Currently trending titles (row data) */
   getTrending(): Promise<CatalogItem[]>;
-
-  /** Netflix / provider Top-10 list */
-  getTop10(): Promise<CatalogItem[]>;
 
   /** Movies catalog */
   getMovies(genre?: string): Promise<CatalogItem[]>;

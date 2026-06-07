@@ -27,22 +27,23 @@ interface NetflixHomepageProps {
 /* ─────────────────────────────────────────────
    Continue-Watching (localStorage)
 ───────────────────────────────────────────── */
-const CW_KEY = "netmirror:continueWatching";
+const CW_KEY = "netflixplays:continueWatching";
 
-function getContinueWatching(): CatalogItem[] {
+function getContinueWatchingIds(): string[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(localStorage.getItem(CW_KEY) || "[]");
+    const raw = JSON.parse(localStorage.getItem(CW_KEY) || "[]");
+    return raw.map((x: any) => typeof x === 'string' ? x : x.id).filter(Boolean);
   } catch {
     return [];
   }
 }
 
-export function recordContinueWatching(item: CatalogItem): void {
-  if (typeof window === "undefined") return;
+export function recordContinueWatching(id: string): void {
+  if (typeof window === "undefined" || !id) return;
   try {
-    const existing = getContinueWatching().filter((i) => i.id !== item.id);
-    localStorage.setItem(CW_KEY, JSON.stringify([item, ...existing].slice(0, 12)));
+    const existing = getContinueWatchingIds().filter((i) => i !== id);
+    localStorage.setItem(CW_KEY, JSON.stringify([id, ...existing].slice(0, 12)));
   } catch {/* silent */}
 }
 
@@ -136,8 +137,7 @@ function PosterCard({ item, variant = "default", onSelectMovie }: {
     setHovered(false);
   };
 
-  const isTop10 = variant === "top10" && item.rank != null;
-  const isLandscape = variant === "landscape" || variant === "continue";
+  const isLandscape = true;
 
   const handleCardClick = async () => {
     if (item.id) {
@@ -174,19 +174,18 @@ function PosterCard({ item, variant = "default", onSelectMovie }: {
         onClick={isResolving ? undefined : handleCardClick}
         className={`relative cursor-pointer rounded-md overflow-hidden bg-[#222] shadow-lg
           ${isLandscape
-            ? "w-[220px] sm:w-[280px] md:w-[320px] aspect-video"
-            : "w-[130px] sm:w-[160px] md:w-[200px] aspect-[2/3]"
+            ? "w-[320px] sm:w-[380px] md:w-[440px] aspect-video"
+            : "w-[320px] sm:w-[380px] md:w-[440px] aspect-video"
           }
-          ${isTop10 ? "w-[110px] sm:w-[150px] md:w-[190px]" : ""}
         `}
       >
         {item.posterUrl && !item.posterUrl.includes("placeholder") ? (
           <img
-            src={isLandscape ? (item.backdropUrl || item.posterUrl) : item.posterUrl}
+            src={item.backdropUrl || item.posterUrl}
             alt={item.title}
             loading="lazy"
             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-center"
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] to-[#111] flex items-end p-3">
@@ -196,18 +195,6 @@ function PosterCard({ item, variant = "default", onSelectMovie }: {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
         {/* Top-10 rank number */}
-        {isTop10 && (
-          <div
-            className="absolute -left-3 bottom-1 font-black leading-none select-none"
-            style={{
-              fontSize: "clamp(4rem, 10vw, 7rem)",
-              WebkitTextStroke: "2px #555",
-              color: "#141414",
-            }}
-          >
-            {item.rank}
-          </div>
-        )}
 
         {/* Play icon / Loading icon on hover */}
         <AnimatePresence>
@@ -458,7 +445,32 @@ export default function NetflixHomepage({
 
   /* continue watching */
   useEffect(() => {
-    setContinueWatching(getContinueWatching());
+    const loadWatchHistory = async () => {
+      const ids = getContinueWatchingIds();
+      if (!ids.length) return;
+      const hydrated = await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const res = await fetch(`/api/net/meta/${id}`);
+            const data = await res.json();
+            if (data && data.title) {
+              return {
+                id: data.seriesId || id,
+                title: data.title,
+                isSeries: data.isSeries,
+                type: data.type,
+                posterUrl: data.raw?.posterUrl || data.raw?.poster || data.raw?.image || "",
+                backdropUrl: data.raw?.backdropUrl || data.raw?.backdrop || data.raw?.image || "",
+                description: data.raw?.description || ""
+              } as CatalogItem;
+            }
+          } catch(e) {}
+          return null;
+        })
+      );
+      setContinueWatching(hydrated.filter(Boolean) as CatalogItem[]);
+    };
+    loadWatchHistory();
   }, []);
 
   /* keyboard shortcut to open search */
@@ -476,14 +488,10 @@ export default function NetflixHomepage({
   const handleSelectMovie = useCallback(
     (id: string) => {
       // Record to continue watching
-      const item =
-        catalog?.hero.id === id
-          ? catalog.hero
-          : catalog?.rows.flatMap((r) => r.items).find((i) => i.id === id);
-      if (item) recordContinueWatching(item);
+      recordContinueWatching(id);
       onSelectMovie(id);
     },
-    [catalog, onSelectMovie]
+    [onSelectMovie]
   );
 
   /* Loading state */
@@ -492,7 +500,7 @@ export default function NetflixHomepage({
       <div className="min-h-screen bg-[#141414] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <span className="text-[#E50914] font-black text-3xl tracking-tight" style={{ fontFamily: "var(--font-sora, sans-serif)" }}>
-            NETMIRROR
+            NETFLIXPLAYS
           </span>
           <Loader2 className="w-8 h-8 text-white/30 animate-spin" />
         </div>
@@ -532,7 +540,7 @@ export default function NetflixHomepage({
             className="text-[#E50914] font-black text-xl md:text-2xl tracking-tight cursor-pointer"
             style={{ fontFamily: "var(--font-sora, sans-serif)" }}
           >
-            NETMIRROR
+            NETFLIXPLAYS
           </span>
           {/* Nav links */}
           <div className="hidden md:flex items-center gap-5 text-sm">
@@ -577,7 +585,7 @@ export default function NetflixHomepage({
           <img
             src={catalog.hero.backdropUrl || catalog.hero.posterUrl}
             alt={catalog.hero.title}
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/10 to-transparent" />
