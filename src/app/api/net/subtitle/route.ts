@@ -9,30 +9,48 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Missing subtitle url" }, { status: 400 });
     }
 
-    const subRes = await fetch(url, {
-      headers: {
+    const headerCandidates: HeadersInit[] = [
+      {
+        "User-Agent": "Mozilla/5.0",
+        Accept: "*/*",
+        Origin: "https://peachify.top",
+        Referer: "https://peachify.top/"
+      },
+      {
         "User-Agent": "Mozilla/5.0",
         Accept: "*/*",
         Referer: "https://net52.cc/"
+      },
+      {
+        "User-Agent": "Mozilla/5.0",
+        Accept: "*/*"
       }
-    });
+    ];
 
-    if (!subRes.ok) {
-      return NextResponse.json({ error: "Subtitle fetch failed" }, { status: subRes.status });
+    let subRes: Response | null = null;
+    for (const headers of headerCandidates) {
+      subRes = await fetch(url, { headers });
+      if (subRes.ok) break;
     }
 
-    let srt = await subRes.text();
+    if (!subRes?.ok) {
+      return NextResponse.json({ error: "Subtitle fetch failed" }, { status: subRes?.status || 502 });
+    }
 
-    srt = srt
+    let subtitleText = await subRes.text();
+
+    subtitleText = subtitleText
       .replace(/^\uFEFF/, "")
       .replace(/\r/g, "")
       .trim();
 
-    const vtt =
-      "WEBVTT\n\n" +
-      srt
-        .replace(/^\d+\n/gm, "") // remove numeric lines (SRT sequence numbers)
-        .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2"); // modify timestamp delimiter
+    const isVtt = /^WEBVTT/i.test(subtitleText);
+    const vtt = isVtt
+      ? subtitleText
+      : "WEBVTT\n\n" +
+        subtitleText
+          .replace(/^\d+\n/gm, "") // remove numeric lines (SRT sequence numbers)
+          .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2"); // modify timestamp delimiter
 
     return new NextResponse(vtt, {
       headers: {

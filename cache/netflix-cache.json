@@ -1744,7 +1744,22 @@
       }
     }
   },
-  "searches": {},
+  "searches": {
+    "goa": {
+      "cachedAt": 1780903917062,
+      "data": [
+        {
+          "id": "82710848",
+          "netflixUrl": "https://www.netflix.com/in/title/82710848",
+          "title": "Goat",
+          "type": "movie",
+          "poster": "https://occ-0-6246-2164.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABbo_iQL4sjzrG5zrXbtc9kgBMlQS46vjYGiXM_ODRjoy4L65q1dcNbe2qUg0fQWJrhSiSDNQCsycJG39HvaELHL-5ntogOTTxeZK.jpg?r=0fe",
+          "backdrop": "https://occ-0-6246-2164.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABbo_iQL4sjzrG5zrXbtc9kgBMlQS46vjYGiXM_ODRjoy4L65q1dcNbe2qUg0fQWJrhSiSDNQCsycJG39HvaELHL-5ntogOTTxeZK.jpg?r=0fe",
+          "description": "A young goat chases his dream of playing professional roarball as he revitalizes a legendary team and proves his small stature packs a big punch."
+        }
+      ]
+    }
+  },
   "searchStats": {},
   "genreStats": {}
 }
