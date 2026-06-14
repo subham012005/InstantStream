@@ -22,7 +22,9 @@ import {
   Check,
   Volume2,
   VolumeX,
-  Maximize
+  Maximize,
+  RotateCcw,
+  RotateCw
 } from "lucide-react";
 import type { LandingPageData } from "@/app/landingPagesData";
 import { useSearchParams } from "next/navigation";
@@ -91,6 +93,15 @@ const EXAMPLES = ["tt0111161", "tt0468569", "tt1375666", "tt0110912"];
 
 const IMDbYellow = "#F5C518";
 
+// ── HLS.js module cache (preloaded on mount to avoid import delay on first play) ──
+let _hlsCache: any = null;
+const getHls = async (): Promise<any> => {
+  if (_hlsCache !== null) return _hlsCache;
+  const mod = await import("hls.js");
+  _hlsCache = mod.default ?? mod;
+  return _hlsCache;
+};
+
 function fmtTime(seconds: number) {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
   const h = Math.floor(seconds / 3600);
@@ -151,6 +162,43 @@ function dedupeHlsLevels(levels: NativeHlsLevel[]) {
   });
 }
 
+function AnimatedLoaderText({ customPhrases }: { customPhrases?: string[] }) {
+  const [index, setIndex] = useState(0);
+  const defaultPhrases = [
+    "Checking server speeds...",
+    "Finding the highest quality stream...",
+    "Bypassing restrictions...",
+    "Almost there...",
+    "Doing final checks...",
+    "Preparing your movie..."
+  ];
+  const phrases = customPhrases || defaultPhrases;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((i) => (i + 1) % phrases.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="mt-4 h-6 relative w-full flex justify-center items-center">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={index}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className="text-white/80 text-xs font-mono font-bold tracking-wide absolute left-1/2 -translate-x-1/2 whitespace-nowrap"
+        >
+          {phrases[index]}
+        </motion.span>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const searchParams = useSearchParams();
   const initialId = searchParams.get("id");
@@ -182,6 +230,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
         }
       })
       .catch(() => {});
+    // Preload HLS.js in the background so first play is instant
+    getHls().catch(() => {});
   }, []);
 
   // Native Player States
@@ -197,6 +247,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [nativeSettingsOpen, setNativeSettingsOpen] = useState(false);
   const [nativeSettingsTab, setNativeSettingsTab] = useState<NativeSettingsTab>("quality");
   const [nativePlaying, setNativePlaying] = useState(false);
+  const [nativeBuffering, setNativeBuffering] = useState(false);
   const [nativeCurrent, setNativeCurrent] = useState(0);
   const [nativeDuration, setNativeDuration] = useState(0);
   const [nativeVolume, setNativeVolume] = useState(1);
@@ -206,6 +257,14 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [nativeSubtitleRenderKey, setNativeSubtitleRenderKey] = useState(0);
   const [nativeCueText, setNativeCueText] = useState("");
   const [nativeAutoStatus, setNativeAutoStatus] = useState("");
+  const [skipMessage, setSkipMessage] = useState<{ text: string, side: "left" | "right", key: number } | null>(null);
+
+  useEffect(() => {
+    if (skipMessage) {
+      const timer = setTimeout(() => setSkipMessage(null), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [skipMessage]);
   
   const nativePlayerRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<any>(null);
@@ -223,37 +282,33 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     try {
       let resolvedTmdbId = null;
 
-      // 1. Fetch TMDB ID from Wikidata
-      try {
-        const sparqlQuery = `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${id}". ?movie wdt:P4947 ?tmdbId. } LIMIT 1`;
-        const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
-        const wdRes = await fetch(wdUrl, { headers: { 'Accept': 'application/sparql-results+json' } });
-        const wdData = await wdRes.json();
-        const bindings = wdData.results.bindings;
-        if (bindings.length > 0 && bindings[0].tmdbId) {
-          resolvedTmdbId = bindings[0].tmdbId.value;
-          setTmdbId(resolvedTmdbId);
-        }
-      } catch (e) {
-        console.warn("Failed to fetch TMDB ID", e);
+      // Fetch TMDB (Wikidata) + OMDb in parallel — saves 1-3s vs sequential
+      const sparqlQuery = `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${id}". ?movie wdt:P4947 ?tmdbId. } LIMIT 1`;
+      const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
+
+      const [wdResult, omdbResult] = await Promise.allSettled([
+        fetch(wdUrl, { headers: { 'Accept': 'application/sparql-results+json' } }).then(r => r.json()),
+        fetch(`/api/omdb?id=${id}`).then(r => r.ok ? r.json() : null)
+      ]);
+
+      // Parse TMDB
+      if (wdResult.status === 'fulfilled') {
+        try {
+          const bindings = wdResult.value?.results?.bindings;
+          if (bindings?.length > 0 && bindings[0].tmdbId) {
+            resolvedTmdbId = bindings[0].tmdbId.value;
+            setTmdbId(resolvedTmdbId);
+          }
+        } catch (e) { console.warn("Failed to parse TMDB", e); }
       }
 
-      // 2. Fetch OMDb data
+      // Parse OMDb
       let omdbData: any = null;
-      try {
-        const omdbRes = await fetch(`/api/omdb?id=${id}`);
-        if (omdbRes.ok) {
-          const data = await omdbRes.json();
-          if (data.Response !== "False") {
-            omdbData = data;
-          } else {
-            console.warn("OMDb API returned False:", data.Error);
-          }
-        } else {
-          console.warn("OMDb API failed with status:", omdbRes.status);
+      if (omdbResult.status === 'fulfilled' && omdbResult.value) {
+        const data = omdbResult.value;
+        if (data.Response !== "False") {
+          omdbData = data;
         }
-      } catch (err) {
-        console.warn("OMDb fetch exception:", err);
       }
 
       const streamJson: StreamResponse = {
@@ -450,7 +505,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     setSelectedServerId("auto");
     resetNativePlayerState();
     setNativeLoading(true);
-    setNativeAutoStatus("Confirming the fastest sources across Ghost, Skull, Wraith, Demon, and Phantom...");
+    setNativeAutoStatus("Finding the fastest server...");
 
     try {
       const candidates = AUTO_NATIVE_SERVER_ORDER
@@ -463,35 +518,75 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
         return true;
       });
 
-      const results = await Promise.all(
-        usableCandidates.map(async (server, order) => {
-          try {
-            const result = await fetchNativeServerData(server);
-            const hasSources = Boolean(result.data.sources?.length);
-            return {
-              ...result,
-              order,
-              ok: hasSources,
-              score: hasSources ? scoreNativeServerResult(result) - order * 0.01 : -Infinity,
-              error: hasSources ? "" : "no sources"
-            };
-          } catch (err: any) {
-            return { server, data: null, elapsed: Infinity, order, ok: false, score: -Infinity, error: err.message || "failed" };
-          }
-        })
-      );
+      // ── "First good result + 700ms grace" strategy ──────────────────────────
+      // Instead of waiting for ALL servers (slowest wins), we fire all in parallel,
+      // pick the FIRST one that returns valid sources, then wait 700ms more to let
+      // a potentially better server respond. This cuts wait time from worst-server
+      // latency to fastest-server latency + 700ms.
+      const goodResults: Array<{ server: NativeServerOption; data: any; elapsed: number; order: number; score: number }> = [];
+      const failedResults: Array<{ server: NativeServerOption; error: string }> = [];
+      let graceResolved = false;
+      let graceResolve!: () => void;
+      const gracePromise = new Promise<void>(res => { graceResolve = res; });
 
-      const best = results
-        .filter((result) => result.ok)
-        .sort((a, b) => b.score - a.score)[0];
+      const fetchPromises = usableCandidates.map(async (server, order) => {
+        try {
+          const result = await fetchNativeServerData(server);
+          const hasSources = Boolean(result.data.sources?.length);
+          if (hasSources) {
+            // Pre-warm the stream cache in the background!
+            const firstSource = result.data.sources[0];
+            if (firstSource) {
+              const headers = encodeURIComponent(JSON.stringify(firstSource.headers || {}));
+              const isHls = firstSource.type === "hls" || firstSource.url.includes(".m3u8") || firstSource.url.includes("m3u8-proxy");
+              let playUrl = `/api/test-server/mp4-proxy?provider=${firstSource.provider}&url=${encodeURIComponent(firstSource.url)}&headers=${headers}`;
+              if (isHls) {
+                playUrl = `/api/test-server/hls-proxy?provider=${firstSource.provider}&url=${encodeURIComponent(firstSource.url)}&headers=${headers}`;
+              }
+              fetch(playUrl).catch(() => {});
+            }
+
+            goodResults.push({
+              server,
+              data: result.data,
+              elapsed: result.elapsed,
+              order,
+              score: scoreNativeServerResult(result) - order * 0.01
+            });
+            // First good result triggers 700ms grace window then resolves
+            if (!graceResolved) {
+              graceResolved = true;
+              setTimeout(() => graceResolve(), 700);
+            }
+          } else {
+            failedResults.push({ server, error: "no sources" });
+          }
+        } catch (err: any) {
+          failedResults.push({ server, error: err.message || "failed" });
+        }
+      });
+
+      // Resolve as soon as first-good + 700ms grace OR all fetches done
+      await Promise.race([gracePromise, Promise.all(fetchPromises)]);
+
+      const best = goodResults.sort((a, b) => b.score - a.score)[0];
 
       if (!best) {
-        const errors = results.map((result) => `${getNativeServerLabel(result.server.id)}: ${result.error}`).join(" | ");
-        setNativeError(`Auto server failed: ${errors || "No providers available"}`);
+        // Wait for any stragglers if nothing good came yet
+        await Promise.all(fetchPromises);
+        const finalBest = goodResults.sort((a, b) => b.score - a.score)[0];
+        if (!finalBest) {
+          const errors = failedResults.map(f => `${getNativeServerLabel(f.server.id)}: ${f.error}`).join(" | ");
+          setNativeError(`No server found sources: ${errors || "All providers unavailable"}`);
+          return;
+        }
+        const status = `Shadow Auto chose ${getNativeServerLabel(finalBest.server.id)} in ${Math.round(finalBest.elapsed)}ms`;
+        setSelectedServerId(finalBest.server.id);
+        applyNativeServerData(finalBest.server.id, finalBest.data, status);
         return;
       }
 
-      const status = `Shadow Auto chose ${getNativeServerLabel(best.server.id)} in ${Math.round(best.elapsed)}ms`;
+      const status = `Shadow Auto: ${getNativeServerLabel(best.server.id)} in ${Math.round(best.elapsed)}ms`;
       setSelectedServerId(best.server.id);
       applyNativeServerData(best.server.id, best.data, status);
     } finally {
@@ -569,7 +664,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       );
       setNativeQualities(filtered);
       if (filtered.length > 0) {
-        playNativeSource(filtered[0]);
+        // autoplay=true: always start playing when a server resolves sources
+        playNativeSource(filtered[0], true);
       }
     }
   }, [nativeData, nativeLanguage, selectedPlayerUrl]);
@@ -630,9 +726,16 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     setNativeCueText(text);
   };
 
-  const playNativeSource = async (source: any) => {
+  const playNativeSource = async (source: any, autoplay = false) => {
     const player = nativePlayerRef.current;
     if (!player) return;
+
+    // Save current playback position and state before switching source
+    const resumeTime = player.currentTime > 0 ? player.currentTime : 0;
+    const wasPlaying = !player.paused;
+    // Autoplay on initial server selection OR if already playing (e.g. quality switch)
+    const shouldPlay = autoplay || wasPlaying;
+
     setNativeSelectedSource(source);
     setNativeSettingsOpen(false);
     setNativeError("");
@@ -656,15 +759,45 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     }
     player.pause(); player.removeAttribute("src"); player.load();
     setNativePlaying(false);
-    setNativeCurrent(0);
+
+    // Helper: seek to saved position and resume/autoplay once source is ready
+    const onResumeReady = () => {
+      if (resumeTime > 0) {
+        player.currentTime = resumeTime;
+        setNativeCurrent(resumeTime);
+      }
+      if (shouldPlay) {
+        setNativeBuffering(true);
+        player.play().then(() => {
+          setNativePlaying(true);
+          setNativeBuffering(false);
+        }).catch(() => {
+          player.muted = true;
+          setNativeMuted(true);
+          player.play().then(() => {
+            setNativePlaying(true);
+            setNativeBuffering(false);
+          }).catch(() => {
+            setNativeBuffering(false);
+          });
+        });
+      }
+    };
 
     if (source.type === "hls" || playUrl.includes("/hls-proxy")) {
-      const { default: Hls } = await import("hls.js");
+      const Hls = await getHls(); // Uses preloaded/cached module — no import delay
       if (Hls && Hls.isSupported()) {
-        const hls = new Hls({ enableWorker: true, lowLatencyMode: false, debug: false });
+        const hls = new Hls({ 
+          enableWorker: true, 
+          lowLatencyMode: false, 
+          debug: false,
+          startFragPrefetch: true,
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60
+        });
         hlsRef.current = hls;
         hls.loadSource(playUrl); hls.attachMedia(player);
-        hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
+        hls.on(Hls.Events.MANIFEST_PARSED, (_event: any, data: any) => {
           const levels = dedupeHlsLevels((data?.levels || hls.levels || [])
             .map((level: any, index: number) => ({
               level: index,
@@ -677,7 +810,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
           setNativeHlsLevels(levels);
           setNativeHlsLevel(-1);
           hls.currentLevel = -1;
-          player.play().catch(() => {});
+          onResumeReady();
         });
         hls.on(Hls.Events.ERROR, (_: any, data: any) => {
           if (!data?.fatal) return;
@@ -692,16 +825,23 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
             hls.destroy();
           }
         });
-      } else { player.src = playUrl; player.load(); player.play().catch(() => {}); }
+      } else {
+        player.src = playUrl;
+        player.load();
+        player.addEventListener("loadedmetadata", onResumeReady, { once: true });
+      }
     } else {
       setNativeHlsLevels([]);
-      player.src = playUrl; player.load(); player.play().catch(() => {});
+      player.src = playUrl;
+      player.load();
+      player.addEventListener("loadedmetadata", onResumeReady, { once: true });
     }
   };
 
   const nativeProgress = nativeDuration > 0 ? Math.min(100, Math.max(0, (nativeCurrent / nativeDuration) * 100)) : 0;
 
-  const toggleNativePlay = () => {
+  const toggleNativePlay = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const player = nativePlayerRef.current;
     if (!player) return;
     if (player.paused) {
@@ -710,6 +850,20 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       player.pause();
       setNativePlaying(false);
     }
+  };
+
+  const skipNative = (seconds: number, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const player = nativePlayerRef.current;
+    if (!player || !nativeDuration) return;
+    const nextTime = Math.max(0, Math.min(nativeDuration, player.currentTime + seconds));
+    player.currentTime = nextTime;
+    setNativeCurrent(nextTime);
+    setSkipMessage({
+      text: seconds > 0 ? `+${seconds}s` : `${seconds}s`,
+      side: seconds > 0 ? "right" : "left",
+      key: Date.now()
+    });
   };
 
   const seekNative = (value: number) => {
@@ -1026,7 +1180,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 <div className="w-full">
                     
                   {/* Player Title & Rating & Server Selection */}
-                  <div className="flex flex-col gap-5 mb-5">
+                  <div className="relative z-50 flex flex-col gap-5 mb-5">
                     <div>
                       <div className="mb-3 inline-flex items-center gap-2 rounded bg-[#E50914] px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white">
                         IMDb Stream
@@ -1059,7 +1213,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                       ))}
 
                       {/* Existing IFrame Servers */}
-                      <div className="relative z-30">
+                      <div className="relative z-[100]">
                         <button
                           type="button"
                           onClick={() => setThirdPartyOpen((open) => !open)}
@@ -1077,7 +1231,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 6, scale: 0.98 }}
                               transition={{ duration: 0.14 }}
-                              className="absolute right-0 top-full mt-2 min-w-full overflow-hidden rounded-lg border border-white/10 bg-[#050505] py-1 shadow-2xl ring-1 ring-black/60"
+                              className="absolute right-0 top-full z-[200] mt-2 min-w-full overflow-hidden rounded-lg border border-white/10 bg-[#050505] py-1 shadow-2xl ring-1 ring-black/60"
                             >
                               {streamData.playerUrl && (
                                 <button onClick={() => playThirdPartyServer("server1")} className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-mono text-xs font-bold text-white/75 transition hover:bg-[#E50914] hover:text-white">
@@ -1115,7 +1269,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                     <div className="pointer-events-none absolute -inset-3 rounded-[24px] bg-[#E50914]/10 blur-xl" />
                     <div
                       ref={playerRef}
-                      className="relative w-full aspect-video bg-black overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.72)] group/player transition-colors duration-300"
+                      className="relative z-10 w-full aspect-video bg-black overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.72)] group/player transition-colors duration-300"
                     >
                     {selectedPlayerUrl === "native" ? (
                       <div className="w-full h-full relative">
@@ -1130,17 +1284,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                 <p className="mt-4 max-w-sm text-center text-[#E50914] font-mono text-sm font-bold">
                                   {nativeAutoStatus || "Confirming playable sources..."}
                                 </p>
-                                <div className="mt-3 flex gap-1.5">
-                                  {[0, 1, 2].map((dot) => (
-                                    <motion.span
-                                      key={dot}
-                                      animate={{ opacity: [0.25, 1, 0.25], y: [0, -3, 0] }}
-                                      transition={{ duration: 0.9, repeat: Infinity, delay: dot * 0.15 }}
-                                      className="h-1.5 w-1.5 rounded-full bg-white/70"
-                                    />
-                                  ))}
-                                </div>
-                              </motion.div>
+                                  <AnimatedLoaderText />
+                                </motion.div>
                            </div>
                         ) : nativeError ? (
                            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-black">
@@ -1169,16 +1314,27 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                preload="auto"
                                className="h-full w-full bg-black object-contain outline-none"
                                onClick={toggleNativePlay}
+                               onDoubleClick={(e) => {
+                                 const rect = e.currentTarget.getBoundingClientRect();
+                                 const isRight = e.clientX > rect.left + rect.width / 2;
+                                 skipNative(isRight ? 5 : -5, e);
+                               }}
                                onLoadedMetadata={(event) => {
                                  const video = event.currentTarget;
                                  setNativeDuration(video.duration || 0);
                                  setNativeSubtitleIndex((idx) => idx);
                                }}
                                onDurationChange={(event) => setNativeDuration(event.currentTarget.duration || 0)}
-                              onTimeUpdate={(event) => {
-                                setNativeCurrent(event.currentTarget.currentTime || 0);
-                                if (nativeSubtitleIndex >= 0) updateNativeCueText(nativeSubtitleIndex);
-                              }}
+                               onTimeUpdate={(event) => {
+                                 setNativeCurrent(event.currentTarget.currentTime || 0);
+                                 if (nativeSubtitleIndex >= 0) updateNativeCueText(nativeSubtitleIndex);
+                               }}
+                               onWaiting={() => setNativeBuffering(true)}
+                               onPlaying={() => {
+                                 setNativePlaying(true);
+                                 setNativeBuffering(false);
+                               }}
+                               onCanPlay={() => setNativeBuffering(false)}
                                onPlay={() => setNativePlaying(true)}
                                onPause={() => setNativePlaying(false)}
                              >
@@ -1194,6 +1350,24 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                ))}
                              </video>
 
+                             <AnimatePresence>
+                               {skipMessage && (
+                                 <motion.div
+                                   key={skipMessage.key}
+                                   initial={{ opacity: 0, scale: 0.8, x: skipMessage.side === "right" ? 20 : -20 }}
+                                   animate={{ opacity: 1, scale: 1, x: 0 }}
+                                   exit={{ opacity: 0, scale: 1.2 }}
+                                   transition={{ duration: 0.4 }}
+                                   className={`pointer-events-none absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center justify-center rounded-full bg-black/60 p-4 text-white backdrop-blur-sm ${
+                                     skipMessage.side === "right" ? "right-1/4" : "left-1/4"
+                                   }`}
+                                 >
+                                   {skipMessage.side === "right" ? <RotateCw className="mb-1 h-8 w-8" /> : <RotateCcw className="mb-1 h-8 w-8" />}
+                                   <span className="font-mono text-sm font-bold">{skipMessage.text}</span>
+                                 </motion.div>
+                               )}
+                             </AnimatePresence>
+
                              {nativeCueText && (
                                <div className="pointer-events-none absolute inset-x-4 bottom-28 z-20 flex justify-center px-4 text-center md:bottom-32">
                                  <div className="max-w-[85%] whitespace-pre-line rounded bg-black/75 px-3 py-1.5 text-base font-semibold leading-snug text-white shadow-[0_2px_10px_rgba(0,0,0,0.8)] md:text-xl">
@@ -1208,7 +1382,18 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                </div>
                              )}
 
-                             {!nativePlaying && (
+                             {nativeBuffering ? (
+                               <div className="absolute left-1/2 top-1/2 z-10 flex min-w-[240px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-black/40 px-6 pt-5 pb-3 backdrop-blur-md">
+                                 <span className="w-10 h-10 border-4 border-[#E50914]/30 border-t-[#E50914] rounded-full animate-spin" />
+                                 <AnimatedLoaderText customPhrases={[
+                                   "Connecting to stream...",
+                                   "Buffering video chunks...",
+                                   "Optimizing playback...",
+                                   "Almost there...",
+                                   "Starting your movie..."
+                                 ]} />
+                               </div>
+                             ) : !nativePlaying && (
                                <button
                                  onClick={toggleNativePlay}
                                  className="absolute left-1/2 top-1/2 z-10 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20"
@@ -1235,8 +1420,14 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
 
                                <div className="flex items-center justify-between gap-3">
                                  <div className="flex items-center gap-3">
+                                   <button onClick={(e) => skipNative(-5, e)} className="flex h-10 w-10 items-center justify-center text-white transition hover:scale-110" title="Skip Backward 5s">
+                                     <RotateCcw className="h-5 w-5" />
+                                   </button>
                                    <button onClick={toggleNativePlay} className="flex h-10 w-10 items-center justify-center text-white transition hover:scale-110" title={nativePlaying ? "Pause" : "Play"}>
                                      {nativePlaying ? <Pause className="h-7 w-7 fill-white" /> : <Play className="ml-0.5 h-7 w-7 fill-white" />}
+                                   </button>
+                                   <button onClick={(e) => skipNative(5, e)} className="flex h-10 w-10 items-center justify-center text-white transition hover:scale-110" title="Skip Forward 5s">
+                                     <RotateCw className="h-5 w-5" />
                                    </button>
                                    <button onClick={toggleNativeMute} className="flex h-10 w-10 items-center justify-center text-white transition hover:scale-110" title="Volume">
                                      {nativeMuted || nativeVolume === 0 ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}

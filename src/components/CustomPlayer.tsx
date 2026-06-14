@@ -101,7 +101,7 @@ export default function CustomPlayer({ src, onFatalError }: CustomPlayerProps) {
   // Player state machine
   const [playerState, setPlayerState] = useState<PlayerState>("preparing");
   const [bufferProgress, setBufferProgress] = useState(0); // 0-100%
-  const [requiredBufferSeconds] = useState(6); // Start playback after a short smooth-start buffer
+  const [requiredBufferSeconds] = useState(2); // Start playback after a short smooth-start buffer
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);

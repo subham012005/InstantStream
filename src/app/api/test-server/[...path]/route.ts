@@ -552,7 +552,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
       }
 
       headers.set("Access-Control-Allow-Origin", "*");
-      headers.set("Cache-Control", "no-store");
+      headers.set("Cache-Control", "public, max-age=31536000, immutable");
 
       return new NextResponse(response.body as any, {
         status: response.status,
@@ -617,7 +617,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
           if (value) headers.set(h, value);
         }
         headers.set("Access-Control-Allow-Origin", "*");
-        headers.set("Cache-Control", "no-store");
+        headers.set("Cache-Control", "public, max-age=31536000, immutable");
         return new NextResponse(response.body as any, {
           status: response.status,
           headers
@@ -643,7 +643,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
         headers: {
           "Content-Type": "application/vnd.apple.mpegurl",
           "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "no-store"
+          "Cache-Control": "public, max-age=15"
         }
       });
     } catch (err: any) {
