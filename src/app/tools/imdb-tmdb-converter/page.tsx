@@ -95,36 +95,77 @@ export default function ConverterPage() {
       let resolvedTmdbId = mode === 'tmdb-to-imdb' ? inputValue.trim() : null;
       let resolvedImdbId = mode === 'imdb-to-tmdb' ? inputValue.trim() : null;
 
-      // 1. Convert IDs exclusively through Wikidata
-      const sparqlQuery = mode === 'imdb-to-tmdb' 
-        ? `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${resolvedImdbId}". ?movie wdt:P4947 ?tmdbId. } LIMIT 1`
-        : `SELECT ?imdbId WHERE { ?movie wdt:P4947 "${resolvedTmdbId}". ?movie wdt:P345 ?imdbId. } LIMIT 1`;
-
-      const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
-      
-      const wdResponse = await fetch(wdUrl, {
-        headers: {
-          'Accept': 'application/sparql-results+json'
+      // 1. Try TMDB API first
+      let tmdbApiSuccess = false;
+      try {
+        const TMDB_API_KEY = '524c16f6e2a0a13c49ff7b99d27b5efb';
+        if (mode === 'imdb-to-tmdb') {
+          const res = await fetch(`https://api.themoviedb.org/3/find/${resolvedImdbId}?external_source=imdb_id&api_key=${TMDB_API_KEY}`);
+          if (res.ok) {
+            const data = await res.json();
+            const tmdb = data?.movie_results?.[0]?.id || data?.tv_results?.[0]?.id;
+            if (tmdb) {
+               resolvedTmdbId = String(tmdb);
+               tmdbApiSuccess = true;
+            }
+          }
+        } else {
+          // tmdb-to-imdb
+          const res = await fetch(`https://api.themoviedb.org/3/movie/${resolvedTmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.imdb_id) {
+               resolvedImdbId = data.imdb_id;
+               tmdbApiSuccess = true;
+            }
+          }
+          if (!tmdbApiSuccess) {
+            const resTv = await fetch(`https://api.themoviedb.org/3/tv/${resolvedTmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
+            if (resTv.ok) {
+              const dataTv = await resTv.json();
+              if (dataTv?.imdb_id) {
+                 resolvedImdbId = dataTv.imdb_id;
+                 tmdbApiSuccess = true;
+              }
+            }
+          }
         }
-      });
-      
-      if (!wdResponse.ok) {
-        throw new Error('Failed to reach Wikidata for ID conversion');
+      } catch (err) {
+        console.error("TMDB API error:", err);
       }
 
-      const wdData = await wdResponse.json();
-      const bindings = wdData.results.bindings;
+      if (!tmdbApiSuccess) {
+        // 1. Convert IDs exclusively through Wikidata as fallback
+        const sparqlQuery = mode === 'imdb-to-tmdb' 
+          ? `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${resolvedImdbId}". ?movie wdt:P4947 ?tmdbId. } LIMIT 1`
+          : `SELECT ?imdbId WHERE { ?movie wdt:P4947 "${resolvedTmdbId}". ?movie wdt:P345 ?imdbId. } LIMIT 1`;
 
-      if (mode === 'imdb-to-tmdb') {
-         if (bindings.length > 0 && bindings[0].tmdbId) {
-             resolvedTmdbId = bindings[0].tmdbId.value;
-         }
-      } else {
-         if (bindings.length > 0 && bindings[0].imdbId) {
-             resolvedImdbId = bindings[0].imdbId.value;
-         } else {
-             throw new Error('No corresponding IMDb ID found in Wikidata for this TMDB ID.');
-         }
+        const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
+        
+        const wdResponse = await fetch(wdUrl, {
+          headers: {
+            'Accept': 'application/sparql-results+json'
+          }
+        });
+        
+        if (!wdResponse.ok) {
+          throw new Error('Failed to reach Wikidata for ID conversion');
+        }
+
+        const wdData = await wdResponse.json();
+        const bindings = wdData.results.bindings;
+
+        if (mode === 'imdb-to-tmdb') {
+           if (bindings.length > 0 && bindings[0].tmdbId) {
+               resolvedTmdbId = bindings[0].tmdbId.value;
+           }
+        } else {
+           if (bindings.length > 0 && bindings[0].imdbId) {
+               resolvedImdbId = bindings[0].imdbId.value;
+           } else {
+               throw new Error('No corresponding IMDb ID found in Wikidata or TMDB for this TMDB ID.');
+           }
+        }
       }
 
       if (!resolvedImdbId) {

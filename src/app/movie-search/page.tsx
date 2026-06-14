@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Loader2, Play, ArrowLeft, Star, Clock, Calendar, Globe, Film } from "lucide-react";
 
 interface OMDBSearchResult {
@@ -40,39 +41,50 @@ const DEFAULT_IMDB_IDS = [
   'tt0137523', 'tt0816692', 'tt0245429', 'tt4154796'
 ];
 
-function MovieCard({ item, onClick }: { item: OMDBSearchResult; onClick: () => void }) {
+function MovieCard({ item, onClick, index = 0 }: { item: OMDBSearchResult; onClick: () => void; index?: number }) {
   return (
-    <button onClick={onClick} className="flex flex-col text-left group">
-      <div className="w-full aspect-[2/3] bg-[var(--bg-elevated)] rounded-[10px] overflow-hidden relative border border-[var(--border)] transition-transform duration-300">
+    <motion.button 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick} 
+      className="flex flex-col text-left group relative"
+    >
+      <div className="w-full aspect-[2/3] bg-[var(--bg-elevated)] rounded-[14px] overflow-hidden relative shadow-lg shadow-black/20 border border-white/5 transition-all duration-500 group-hover:shadow-[var(--accent)]/20 group-hover:shadow-2xl group-hover:border-white/10">
         {item.Poster && item.Poster !== 'N/A' ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item.Poster}
             alt={item.Title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Film className="w-8 h-8 text-[var(--border)]" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-surface)]">
+            <Film className="w-8 h-8 text-white/20" />
           </div>
         )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <div className="w-12 h-12 rounded-full bg-[var(--accent)] flex items-center justify-center">
-            <Play className="w-5 h-5 text-white fill-white ml-1" />
+        
+        {/* Glassmorphic Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4">
+          <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex justify-between items-end">
+            <div className="flex flex-col gap-1">
+               <span className="text-white font-bold text-xs bg-white/20 backdrop-blur-md px-2 py-0.5 rounded w-fit">{item.Year}</span>
+               <span className="text-white/80 font-bold text-[10px] uppercase tracking-wider">{item.Type}</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/90 backdrop-blur-sm flex items-center justify-center shadow-[0_0_15px_rgba(229,9,20,0.5)]">
+              <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+            </div>
           </div>
         </div>
       </div>
-      <div className="mt-2 flex flex-col">
-        <h3 className="font-[family-name:var(--font-dm-sans)] font-bold text-[14px] text-[var(--text-primary)] truncate group-hover:text-[var(--accent)] transition-colors">
+      <div className="mt-3 flex flex-col px-1">
+        <h3 className="font-[family-name:var(--font-sora)] font-semibold text-[15px] leading-tight text-[var(--text-primary)] truncate w-full group-hover:text-[var(--accent)] transition-colors">
           {item.Title}
         </h3>
-        <div className="flex items-center gap-2 mt-0.5 text-[12px] text-[var(--text-muted)] font-[family-name:var(--font-dm-sans)]">
-          <span>{item.Year}</span>
-          <span>·</span>
-          <span className="uppercase">{item.Type}</span>
-        </div>
       </div>
-    </button>
+    </motion.button>
   );
 }
 
@@ -100,6 +112,8 @@ function MovieSearchContent() {
   const [selectedMovie, setSelectedMovie] = useState<OMDBMovieDetail | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
+  const [backdropUrl, setBackdropUrl] = useState<string | null>(null);
+  const [tmdbDetails, setTmdbDetails] = useState<any>(null);
 
   const [activeGenre, setActiveGenre] = useState("Trending");
   const searchParams = useSearchParams();
@@ -122,7 +136,7 @@ function MovieSearchContent() {
         setErrorDetails(null);
 
         try {
-          let res = await fetch(`/api/imdb-search?q=${encodeURIComponent(q)}`);
+          let res = await fetch(`/api/tmdb-search?q=${encodeURIComponent(q)}`);
           let data = await res.json();
 
           if (res.ok && data.Response === 'True' && data.Search?.length > 0) {
@@ -258,6 +272,8 @@ function MovieSearchContent() {
     setLoadingDetails(true);
     setErrorDetails(null);
     setSelectedMovie(null);
+    setBackdropUrl(null);
+    setTmdbDetails(null);
 
     try {
       const res = await fetch(`/api/omdb?id=${encodeURIComponent(imdbID)}`);
@@ -268,6 +284,28 @@ function MovieSearchContent() {
         setErrorDetails(data.Error || "Movie not found");
       } else {
         setSelectedMovie(data);
+        // Also fetch backdrop from TMDB
+        try {
+          const tmdbRes = await fetch(`https://api.themoviedb.org/3/find/${imdbID}?api_key=524c16f6e2a0a13c49ff7b99d27b5efb&external_source=imdb_id`);
+          if (tmdbRes.ok) {
+            const tmdbData = await tmdbRes.json();
+            const result = tmdbData.movie_results?.[0] || tmdbData.tv_results?.[0];
+            const type = tmdbData.movie_results?.length > 0 ? "movie" : "tv";
+            if (result) {
+              if (result.backdrop_path) {
+                setBackdropUrl(`https://image.tmdb.org/t/p/original${result.backdrop_path}`);
+              }
+              // Fetch extended details
+              const detailsRes = await fetch(`https://api.themoviedb.org/3/${type}/${result.id}?api_key=524c16f6e2a0a13c49ff7b99d27b5efb&append_to_response=credits,reviews`);
+              if (detailsRes.ok) {
+                const details = await detailsRes.json();
+                setTmdbDetails(details);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Failed to fetch backdrop", e);
+        }
       }
     } catch (err: any) {
       setErrorDetails(err.message || 'An error occurred fetching details.');
@@ -297,143 +335,127 @@ function MovieSearchContent() {
 
   // 2. Render Detail View (Cinematic Screen)
   if (selectedMovie) {
-    const hasPoster = selectedMovie.Poster && selectedMovie.Poster !== "N/A";
+    const hasPoster = backdropUrl || (selectedMovie.Poster && selectedMovie.Poster !== "N/A");
+    const displayImage = backdropUrl || selectedMovie.Poster;
 
     return (
-      <main className="min-h-screen relative pt-[80px] pb-16">
-        {/* Massive Blurred Backdrop */}
-        <div className="absolute inset-0 z-0 h-[80vh] overflow-hidden pointer-events-none">
-          {hasPoster && (
-            // eslint-disable-next-line @next/next/no-img-element
+      <motion.main
+        key="preview"
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed inset-0 z-50 bg-[#000000] text-white overflow-hidden"
+      >
+        {/* Full-Screen Hero Section */}
+        <div className="relative w-full h-screen flex flex-col justify-end">
+        {/* Background Image with Gradients */}
+        {hasPoster && (
+          <div className="absolute inset-0 w-full h-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={selectedMovie.Poster}
-              alt="Backdrop"
-              className="w-full h-full object-cover opacity-[0.08] blur-3xl scale-125 saturate-150"
+              src={displayImage}
+              alt={selectedMovie.Title || "Poster"}
+              className={`w-full h-full object-cover saturate-150 contrast-110 ${backdropUrl ? 'object-center' : 'object-top'}`}
             />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/90 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] lg:via-[var(--bg-base)]/80 to-transparent"></div>
-        </div>
+            {/* Subtle overlay to ensure text is readable without killing the image brightness */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/40 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#000000] via-[#000000]/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/60 via-[#000000]/10 to-transparent" />
+          </div>
+        )}
 
-        <div className="relative z-10 px-4 md:px-8 max-w-[1200px] mx-auto flex flex-col">
-          <button
-            onClick={() => setSelectedMovie(null)}
-            className="w-fit mb-8 flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] rounded-full border border-[var(--border)] transition-all text-sm font-semibold group cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span>Back to search results</span>
-          </button>
+        {/* Back Button */}
+        <button
+          onClick={() => setSelectedMovie(null)}
+          className="absolute top-8 left-8 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors"
+        >
+          <ArrowLeft className="w-6 h-6 text-white" />
+        </button>
 
-          {errorDetails && (
-            <div className="mb-8 p-4 bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 text-center font-medium max-w-2xl mx-auto shadow-sm">
-              {errorDetails}
-            </div>
-          )}
+        {/* Content Container */}
+        <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 lg:p-24 z-10 flex flex-col justify-end">
+          <div className="max-w-4xl">
+            {/* Title */}
+            <h1
+              className="font-black text-6xl md:text-8xl lg:text-[100px] text-white mb-6 leading-none tracking-tight drop-shadow-2xl"
+              style={{ fontFamily: "var(--font-sora)" }}
+            >
+              {selectedMovie.Title}
+            </h1>
 
-          <div className="flex flex-col lg:flex-row gap-10 md:gap-16 items-start lg:items-stretch">
-
-            {/* Poster Panel */}
-            <div className="w-full max-w-[320px] lg:w-1/3 shrink-0 mx-auto lg:mx-0">
-              <div className="w-full aspect-[2/3] rounded-[12px] overflow-hidden shadow-2xl relative border border-[var(--border)] group">
-                {hasPoster ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={selectedMovie.Poster} alt={selectedMovie.Title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                ) : (
-                  <div className="w-full h-full bg-[var(--bg-surface)] flex flex-col items-center justify-center text-[var(--text-muted)] gap-3">
-                    <Film className="w-12 h-12 opacity-20" />
-                    <span className="text-sm font-medium">No Poster Found</span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                {selectedMovie.Type && selectedMovie.Type !== "N/A" && (
-                  <span className="absolute top-4 left-4 px-3 py-1 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold rounded-full border border-white/20 uppercase tracking-widest shadow-xl">
-                    {selectedMovie.Type}
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-6 w-full flex item-center justify-center">
-                <Link href={`/imdb-movie-stream-player?id=${selectedMovie.imdbID}`} className="w-full flex justify-center items-center gap-3 bg-[var(--accent)] text-white font-[family-name:var(--font-sora)] font-bold px-6 py-4 rounded-[10px] transition-all transform hover:scale-[1.02] active:scale-[0.98]">
-                  <Play className="w-5 h-5 fill-current" />
-                  <span>Stream Now On FluxPlays</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Details Panel */}
-            <div className="flex-1 flex flex-col w-full">
-              <h1 className="text-4xl md:text-6xl font-[family-name:var(--font-sora)] font-bold tracking-tight text-[var(--text-primary)] mb-4 leading-[1.1] text-center lg:text-left">
-                {selectedMovie.Title}
-                {selectedMovie.Year && selectedMovie.Year !== "N/A" && (
-                  <span className="opacity-50 text-2xl md:text-4xl font-normal ml-3 whitespace-nowrap">({selectedMovie.Year})</span>
-                )}
-              </h1>
-
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-8">
-                {selectedMovie.imdbRating && selectedMovie.imdbRating !== "N/A" && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] shadow-inner">
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    <span>{selectedMovie.imdbRating}</span>
-                  </div>
-                )}
-                {selectedMovie.Runtime && selectedMovie.Runtime !== "N/A" && (
-                  <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {selectedMovie.Runtime}</span>
-                )}
-                {selectedMovie.Released && selectedMovie.Released !== "N/A" && (
-                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {selectedMovie.Released}</span>
-                )}
-                {selectedMovie.Country && selectedMovie.Country !== "N/A" && (
-                  <span className="flex items-center gap-1.5"><Globe className="w-4 h-4" /> {selectedMovie.Country}</span>
-                )}
-                <span className="px-2 py-1 bg-[var(--bg-elevated)] rounded-md border border-[var(--border)] opacity-70">
-                  IMDb: {selectedMovie.imdbID}
+            {/* Metadata Row */}
+            <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-bold text-[#a8a8a8] mb-6">
+              {selectedMovie.imdbRating && selectedMovie.imdbRating !== "N/A" && (
+                <span className="flex items-center gap-1.5 text-[#F5C518]">
+                  <Star className="w-5 h-5 fill-[#F5C518]" />
+                  {Math.round(Number(selectedMovie.imdbRating) * 10) || selectedMovie.imdbRating}% Match
                 </span>
-              </div>
-
-              {selectedMovie.Plot && selectedMovie.Plot !== "N/A" && (
-                <div className="mb-10 text-center lg:text-left">
-                  <p className="text-[var(--text-primary)] md:text-lg leading-relaxed md:leading-loose font-[family-name:var(--font-dm-sans)]">
-                    {selectedMovie.Plot}
-                  </p>
-                </div>
               )}
+              {selectedMovie.Year && selectedMovie.Year !== "N/A" && (
+                <span className="text-white drop-shadow-md">{selectedMovie.Year}</span>
+              )}
+              <span className="px-2 py-0.5 border border-[#404040] text-xs text-[#a8a8a8] rounded uppercase">
+                {selectedMovie.Type === "series" ? "Series" : "Movie"}
+              </span>
+              <span className="px-2 py-0.5 border border-[#404040] text-xs text-[#a8a8a8] rounded uppercase">
+                HD
+              </span>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full font-[family-name:var(--font-dm-sans)]">
-                <div className="bg-[var(--bg-elevated)] p-6 rounded-[14px] border border-[var(--border)]">
-                  <h4 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-3 border-b border-[var(--border-subtle)] pb-2">The Cast</h4>
-                  <p className="text-[14px] font-medium text-[var(--text-secondary)] leading-loose">
-                    {selectedMovie.Actors && selectedMovie.Actors !== "N/A" ? selectedMovie.Actors : "Not available"}
-                  </p>
-                </div>
+            {/* Overview */}
+            {selectedMovie.Plot && selectedMovie.Plot !== "N/A" && (
+              <p 
+                className="text-base md:text-lg text-white/90 line-clamp-3 leading-relaxed mb-10 max-w-2xl drop-shadow-md font-medium" 
+                style={{ fontFamily: "var(--font-dm-sans)" }}
+              >
+                {selectedMovie.Plot}
+              </p>
+            )}
 
-                <div className="space-y-4">
-                  <div className="bg-[var(--bg-elevated)] p-5 rounded-[14px] border border-[var(--border)]">
-                    <h4 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Director</h4>
-                    <p className="text-[14px] font-medium text-[var(--text-secondary)]">
-                      {selectedMovie.Director && selectedMovie.Director !== "N/A" ? selectedMovie.Director : "Not available"}
-                    </p>
-                  </div>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                href={`/imdb-movie-stream-player?id=${selectedMovie.imdbID}`}
+                className="group relative flex items-center justify-center gap-3 bg-white text-black px-10 md:px-14 py-3 md:py-4 rounded-[4px] font-extrabold text-xl transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:shadow-[0_0_50px_rgba(255,255,255,0.6)]"
+              >
+                {/* Inner Glow Effect */}
+                <div className="absolute inset-0 bg-white/50 rounded-[4px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <Play className="relative z-10 w-7 h-7 fill-black" />
+                <span className="relative z-10">Play</span>
+              </Link>
+            </div>
 
-                  <div className="bg-[var(--bg-elevated)] p-5 rounded-[14px] border border-[var(--border)]">
-                    <h4 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Writer</h4>
-                    <p className="text-[14px] font-medium text-[var(--text-secondary)]">
-                      {selectedMovie.Writer && selectedMovie.Writer !== "N/A" ? selectedMovie.Writer : "Not available"}
-                    </p>
-                  </div>
-
-                  <div className="bg-[var(--bg-elevated)] p-5 rounded-[14px] border border-[var(--border)]">
-                    <h4 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Genres</h4>
-                    <p className="text-[14px] font-medium text-[var(--text-secondary)]">
-                      {selectedMovie.Genre && selectedMovie.Genre !== "N/A" ? selectedMovie.Genre : "Not available"}
-                    </p>
-                  </div>
+            {/* Mini Cast Row */}
+            {tmdbDetails?.credits?.cast?.length > 0 && (
+              <div className="mt-10 flex flex-col gap-3">
+                <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">Starring</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  {tmdbDetails.credits.cast.slice(0, 4).map((actor: any) => (
+                    <div key={actor.id} className="flex items-center gap-3 bg-white/5 pr-4 rounded-full border border-white/10 backdrop-blur-md shadow-lg transition-transform hover:bg-white/10 cursor-default">
+                      {actor.profile_path ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`} alt={actor.name} className="w-10 h-10 rounded-full object-cover shadow-inner" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">{actor.name.charAt(0)}</div>
+                      )}
+                      <div className="flex flex-col py-1">
+                        <span className="text-white/90 text-sm font-bold leading-tight">{actor.name}</span>
+                        <span className="text-white/40 text-[10px] leading-tight truncate max-w-[100px]">{actor.character}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {tmdbDetails.credits.cast.length > 4 && (
+                    <span className="text-white/40 text-xs font-medium ml-2">+{tmdbDetails.credits.cast.length - 4} more</span>
+                  )}
                 </div>
               </div>
-
-            </div>
+            )}
+            
           </div>
         </div>
-      </main>
+        </div>
+      </motion.main>
     );
   }
 
@@ -441,36 +463,44 @@ function MovieSearchContent() {
   return (
     <main className="min-h-screen bg-[var(--bg-base)]">
 
-      {/* Sticky Search Bar area */}
-      <div className="sticky top-[56px] md:top-[60px] z-40 bg-[var(--bg-base)] border-b border-[var(--border-subtle)] py-4">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8">
-          <form onSubmit={handleSearch} className="relative flex items-center">
-            <Search className="absolute left-4 w-5 h-5 text-[var(--text-muted)]" />
+      {/* Premium Hero Section */}
+      <div className="relative pt-[120px] pb-8 px-4 md:px-8 max-w-[1200px] mx-auto text-center">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-[family-name:var(--font-sora)] font-extrabold tracking-tight text-[var(--text-primary)] mb-4">
+          Discover Cinematic <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent)] to-[#ff7e67]">Masterpieces</span>
+        </h1>
+        <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto font-[family-name:var(--font-dm-sans)] mb-10">
+          Explore thousands of premium movies and TV shows. Search by title, IMDb ID, or browse our curated trending collections.
+        </p>
+        
+        <div className="max-w-3xl mx-auto">
+          <form onSubmit={handleSearch} className="relative flex items-center group">
+            <div className="absolute inset-0 bg-[var(--accent)]/20 blur-3xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+            <Search className="absolute left-6 w-6 h-6 text-[var(--text-muted)] group-focus-within:text-[var(--accent)] transition-colors z-10" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Find a movie..."
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-[10px] h-[52px] pl-[44px] pr-[120px] font-[family-name:var(--font-jetbrains-mono)] text-[14px] text-[var(--text-primary)] focus:border-[var(--accent)] focus:ring-[3px] focus:ring-[var(--accent)]/15 outline-none transition-all"
+              placeholder="Search movies, TV shows, or paste IMDb ID..."
+              className="w-full bg-[var(--bg-elevated)]/50 backdrop-blur-2xl border border-white/10 rounded-full h-[64px] pl-[60px] pr-[130px] font-[family-name:var(--font-dm-sans)] text-[16px] text-[var(--text-primary)] focus:border-[var(--accent)]/50 focus:bg-white/10 outline-none transition-all shadow-2xl z-0"
             />
             <button
               type="submit"
               disabled={loadingSearch || !query.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--accent)] text-white px-4 h-[36px] rounded-[8px] text-[13px] font-semibold hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 flex items-center justify-center min-w-[80px]"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--accent)] text-white px-6 h-[48px] rounded-full text-[14px] font-bold hover:bg-[var(--accent-hover)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center min-w-[100px] z-10 shadow-[0_0_20px_rgba(229,9,20,0.4)]"
             >
-              {loadingSearch ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
+              {loadingSearch ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
             </button>
           </form>
 
           {/* Genre filter pills */}
-          <div className="flex items-center gap-2 mt-4 overflow-x-auto hide-scrollbar pb-1">
+          <div className="flex items-center justify-center flex-wrap gap-3 mt-8">
             {GENRES.map((genre) => (
               <button
                 key={genre}
                 onClick={() => handleGenreClick(genre)}
-                className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-[family-name:var(--font-dm-sans)] transition-colors border ${activeGenre === genre
-                    ? 'bg-[var(--accent)] border-[var(--accent)] text-white font-semibold'
-                    : 'bg-[var(--bg-elevated)] border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--text-muted)]'
+                className={`px-5 py-2 rounded-full text-[14px] font-[family-name:var(--font-dm-sans)] transition-all duration-300 border backdrop-blur-sm ${activeGenre === genre
+                    ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-[var(--accent)] font-bold shadow-[0_0_15px_rgba(229,9,20,0.15)]'
+                    : 'bg-white/5 border-white/10 text-[var(--text-secondary)] hover:bg-white/10 hover:border-white/20'
                   }`}
               >
                 {genre}
@@ -484,46 +514,34 @@ function MovieSearchContent() {
 
         {/* Skeleton Loaders — searching */}
         {loadingSearch && (
-          <>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '16px' }}>Finding movies...</p>
+          <div className="animate-pulse">
+            <p className="text-[var(--text-muted)] text-[14px] mb-[16px] font-[family-name:var(--font-dm-sans)]">Finding cinematic gems...</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px]">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div style={{
-                    aspectRatio: '2/3',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-surface) 50%, var(--bg-elevated) 75%)',
-                    backgroundSize: '200% 100%',
-                    animation: 'shimmer 1.4s infinite'
-                  }} />
-                  <div style={{ height: '14px', width: '80%', borderRadius: '6px', marginTop: '10px', background: 'var(--bg-elevated)' }} />
-                  <div style={{ height: '12px', width: '40%', borderRadius: '6px', marginTop: '6px', background: 'var(--bg-elevated)' }} />
+                <div key={i} className="flex flex-col">
+                  <div className="w-full aspect-[2/3] rounded-[14px] bg-white/5 border border-white/5 shadow-inner" />
+                  <div className="h-[14px] w-[80%] rounded-[6px] mt-[12px] bg-white/5" />
+                  <div className="h-[12px] w-[40%] rounded-[6px] mt-[8px] bg-white/5" />
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Default popular movies skeleton while loading */}
         {loadingDefault && !loadingSearch && results.length === 0 && (
-          <>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '16px' }}>Finding movies...</p>
+          <div className="animate-pulse">
+            <p className="text-[var(--text-muted)] text-[14px] mb-[16px] font-[family-name:var(--font-dm-sans)]">Curating masterpieces...</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px]">
               {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div style={{
-                    aspectRatio: '2/3',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-surface) 50%, var(--bg-elevated) 75%)',
-                    backgroundSize: '200% 100%',
-                    animation: 'shimmer 1.4s infinite'
-                  }} />
-                  <div style={{ height: '14px', width: '80%', borderRadius: '6px', marginTop: '10px', background: 'var(--bg-elevated)' }} />
-                  <div style={{ height: '12px', width: '40%', borderRadius: '6px', marginTop: '6px', background: 'var(--bg-elevated)' }} />
+                <div key={i} className="flex flex-col">
+                  <div className="w-full aspect-[2/3] rounded-[14px] bg-white/5 border border-white/5 shadow-inner" />
+                  <div className="h-[14px] w-[80%] rounded-[6px] mt-[12px] bg-white/5" />
+                  <div className="h-[12px] w-[40%] rounded-[6px] mt-[8px] bg-white/5" />
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {errorSearch && (
@@ -551,9 +569,11 @@ function MovieSearchContent() {
             ) : null}
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px]">
-              {results.map((item) => (
-                <MovieCard key={item.imdbID} item={item} onClick={() => fetchDetails(item.imdbID)} />
-              ))}
+              <AnimatePresence>
+                {results.map((item, index) => (
+                  <MovieCard key={item.imdbID} item={item} index={index} onClick={() => fetchDetails(item.imdbID)} />
+                ))}
+              </AnimatePresence>
             </div>
           </div>
         )}
@@ -565,9 +585,11 @@ function MovieSearchContent() {
               {errorSearch ? '' : '🔥 Trending Now'}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px]">
-              {defaultMovies.map((item) => (
-                <MovieCard key={item.imdbID} item={item} onClick={() => fetchDetails(item.imdbID)} />
-              ))}
+              <AnimatePresence>
+                {defaultMovies.map((item, index) => (
+                  <MovieCard key={item.imdbID} item={item} index={index} onClick={() => fetchDetails(item.imdbID)} />
+                ))}
+              </AnimatePresence>
             </div>
           </div>
         )}

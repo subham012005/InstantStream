@@ -105,11 +105,26 @@ function normalizeGemmaLanguages(payload: any) {
   return [];
 }
 
-async function fetchGemmaLanguages(p3: any, playUrl: string) {
+function extractGemmaSeriesLanguages(payload: any, season: any, episode: any) {
+  if (!Array.isArray(payload)) return [];
+  if (payload.length > 0 && payload[0].folder) {
+    const seasonFolder = payload.find((s: any) => String(s.id) === String(season) || (s.title && s.title.includes(`Season ${season}`)));
+    if (!seasonFolder || !seasonFolder.folder) return [];
+    
+    const episodeFolder = seasonFolder.folder.find((e: any) => String(e.episode) === String(episode) || String(e.id) === `${season}-${episode}`);
+    if (!episodeFolder || !episodeFolder.folder) return [];
+    
+    return normalizeGemmaLanguages(episodeFolder.folder);
+  }
+  return [];
+}
+
+async function fetchGemmaLanguages(p3: any, playUrl: string, type: string, season: any, episode: any) {
   const attempts = [];
+  const targetFileUrl = p3.file.startsWith("/") ? `${GEMMA_ORIGIN}${p3.file}` : p3.file;
 
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const langRes = await fetch(p3.file, {
+    const langRes = await fetch(targetFileUrl, {
       method: "POST",
       // @ts-ignore
       dispatcher: getProxyDispatcher(),
@@ -131,7 +146,11 @@ async function fetchGemmaLanguages(p3: any, playUrl: string) {
 
     try {
       payload = JSON.parse(text);
-      languages = normalizeGemmaLanguages(payload);
+      if (type === "tv") {
+        languages = extractGemmaSeriesLanguages(payload, season, episode);
+      } else {
+        languages = normalizeGemmaLanguages(payload);
+      }
     } catch (err: any) {
       attempts.push({
         attempt,
@@ -160,11 +179,7 @@ async function fetchGemmaLanguages(p3: any, playUrl: string) {
   return { languages: [], payload: null, attempts };
 }
 
-async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
-  if (type !== "movie") {
-    throw new Error("Gemma currently supports movie only");
-  }
-
+async function fetchGemmaProvider({ type, tmdbId, imdbId, season, episode }: any) {
   if (!imdbId) {
     throw new Error("Gemma requires imdb query");
   }
@@ -180,17 +195,27 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
     }
   }).then(r => r.text());
 
-  const match = html.match(/let\s+p3\s*=\s*({[\s\S]*?});/);
-
-  if (!match) {
-    throw new Error("p3 config not found");
+  let configStr;
+  const p3Match = html.match(/let\s+p3\s*=\s*({[\s\S]*?});/);
+  
+  if (p3Match) {
+    configStr = p3Match[1];
+  } else {
+    const hdvbMatch = html.match(/new\s+HDVBPlayer\s*\(\s*({[\s\S]*?})\s*\)/);
+    if (hdvbMatch) {
+      configStr = hdvbMatch[1];
+    }
   }
 
-  const p3 = JSON.parse(match[1]);
+  if (!configStr) {
+    throw new Error("Gemma config not found");
+  }
+
+  const p3 = JSON.parse(configStr);
 
   const sources: any[] = [];
   const debugGemma: any[] = [];
-  const { languages, payload: langPayload, attempts } = await fetchGemmaLanguages(p3, playUrl);
+  const { languages, payload: langPayload, attempts } = await fetchGemmaLanguages(p3, playUrl, type, season, episode);
   debugGemma.push(...attempts);
 
   if (!languages.length) {
@@ -209,7 +234,7 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
     };
   }
 
-  for (const lang of languages) {
+  await Promise.all(languages.map(async (lang: any) => {
     try {
       const cleanFile = String(lang.file || "").startsWith("~")
         ? String(lang.file).slice(1)
@@ -217,7 +242,7 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
 
       if (!cleanFile) {
         debugGemma.push({ lang, error: "missing file" });
-        continue;
+        return;
       }
 
       const finalRes = await fetch(
@@ -248,7 +273,7 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
         finalUrl
       });
 
-      if (!finalRes.ok || !finalUrl) continue;
+      if (!finalRes.ok || !finalUrl) return;
 
       sources.push({
         provider: "gemma",
@@ -267,7 +292,7 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
         error: err.message
       });
     }
-  }
+  }));
 
   return {
     provider: "gemma",
@@ -285,7 +310,7 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
 
 async function fetchFromProvider({ providerKey, type, tmdbId, season, episode, imdbId }: any) {
   if (providerKey === "gemma") {
-    return fetchGemmaProvider({ type, tmdbId, imdbId });
+    return fetchGemmaProvider({ type, tmdbId, imdbId, season, episode });
   }
   const provider = PROVIDERS[providerKey];
   if (!provider) throw new Error(`Unknown provider: ${providerKey}`);
@@ -300,6 +325,7 @@ async function fetchFromProvider({ providerKey, type, tmdbId, season, episode, i
   const response = await fetch(apiUrl, {
     // @ts-ignore
     dispatcher: getProxyDispatcher(),
+    signal: AbortSignal.timeout(8000),
     headers: {
       Accept: "*/*",
       Origin: "https://peachify.top",
@@ -339,7 +365,7 @@ async function fetchWithFallback(params: any) {
   if (params.providerKey !== "auto") return fetchFromProvider(params);
 
   const candidates = AUTO_PROVIDER_ORDER.filter((providerKey) => {
-    if (providerKey === "gemma") return params.type === "movie" && Boolean(params.imdbId);
+    if (providerKey === "gemma") return Boolean(params.imdbId);
     return Boolean(params.tmdbId);
   });
 
@@ -516,7 +542,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
         type: "tv",
         tmdbId,
         season,
-        episode
+        episode,
+        imdbId: searchParams.get("imdb")
       });
       return NextResponse.json(result);
     } catch (err: any) {
