@@ -168,6 +168,21 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [selectedPlayerUrl, setSelectedPlayerUrl] = useState<string>("");
   const [selectedServerId, setSelectedServerId] = useState<string>("auto");
   const [thirdPartyOpen, setThirdPartyOpen] = useState(false);
+  const [adminConfig, setAdminConfig] = useState<any>(null);
+  const adminConfigRef = useRef<any>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/settings')
+      .then(res => res.json())
+      .then(data => {
+        setAdminConfig(data);
+        adminConfigRef.current = data;
+        if (data && data.defaultServer && selectedServerId === 'auto') {
+          setSelectedServerId(data.defaultServer);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Native Player States
   const [nativeData, setNativeData] = useState<any>(null);
@@ -265,7 +280,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       };
 
       setStreamData(streamJson);
-      setSelectedServerId("auto");
+      setSelectedServerId(adminConfigRef.current?.defaultServer || "auto");
       return true;
     } catch {
       setError("Failed to fetch movie details. Please try again.");
@@ -1033,7 +1048,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                     
                     {/* Server Selection */}
                     <div className="flex flex-wrap gap-2 rounded-xl border border-white/10 bg-black/35 p-2 backdrop-blur">
-                      {NATIVE_SERVER_OPTIONS.map((server) => (
+                      {NATIVE_SERVER_OPTIONS.filter(s => adminConfigRef.current?.showAdFree !== false).map((server) => (
                         <button
                           key={server.id}
                           onClick={() => loadNativeServer(server.id, server.reqTmdb, server.reqImdb)}

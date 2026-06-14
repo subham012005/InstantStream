@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
+import { getProxyDispatcher } from "@/lib/settings";
 
 const AES_KEY_HEX =
   "a8f2a1b5e9c470814f6b2c3a5d8e7f9c1a2b3c4d5e3f7a8b8cad1e2d0a4d5c5b";
@@ -110,6 +111,8 @@ async function fetchGemmaLanguages(p3: any, playUrl: string) {
   for (let attempt = 1; attempt <= 3; attempt++) {
     const langRes = await fetch(p3.file, {
       method: "POST",
+      // @ts-ignore
+      dispatcher: getProxyDispatcher(),
       headers: {
         Accept: "application/json, text/plain, */*",
         Origin: GEMMA_ORIGIN,
@@ -169,6 +172,8 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
   const playUrl = `${GEMMA_ORIGIN}/play/${imdbId}`;
 
   const html = await fetch(playUrl, {
+    // @ts-ignore
+    dispatcher: getProxyDispatcher(),
     headers: {
       "User-Agent": "Mozilla/5.0",
       Referer: `${GEMMA_ORIGIN}/`
@@ -219,6 +224,8 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId }: any) {
         `https://keymi417exx.com/playlist/${cleanFile}.txt`,
         {
           method: "POST",
+          // @ts-ignore
+          dispatcher: getProxyDispatcher(),
           headers: {
             Accept: "*/*",
             Origin: GEMMA_ORIGIN,
@@ -291,6 +298,8 @@ async function fetchFromProvider({ providerKey, type, tmdbId, season, episode, i
   console.log("Provider API:", apiUrl);
 
   const response = await fetch(apiUrl, {
+    // @ts-ignore
+    dispatcher: getProxyDispatcher(),
     headers: {
       Accept: "*/*",
       Origin: "https://peachify.top",
@@ -456,6 +465,8 @@ async function fetchWithHeaderFallback(url: string, provider: string, customHead
 
     const response = await fetch(url, {
       headers,
+      // @ts-ignore
+      dispatcher: getProxyDispatcher(),
       redirect: "follow"
     });
 
@@ -574,6 +585,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
 
         response = await fetch(fileUrl, {
           headers: streamHeaders,
+          // @ts-ignore
+          dispatcher: getProxyDispatcher(),
           redirect: "manual"
         });
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers, normalizeEpisodes } from '@/lib/netMirror';
+import { getProxyDispatcher } from '@/lib/settings';
 
 export const runtime = 'nodejs';
 
@@ -13,7 +14,11 @@ export async function GET(
   try {
     const res = await fetch(
       `https://net11.cc/episodes.php?s=${seasonId}&series=${seriesId}&t=${t}`,
-      { headers: headers({ Referer: 'https://net11.cc/home', 'X-Requested-With': 'XMLHttpRequest' }) }
+      { 
+        // @ts-ignore
+        dispatcher: getProxyDispatcher(),
+        headers: headers({ Referer: 'https://net11.cc/home', 'X-Requested-With': 'XMLHttpRequest' }) 
+      }
     );
     const data = await res.json();
     return NextResponse.json({ title: data.title || 'Season', episodes: normalizeEpisodes(data), raw: data });

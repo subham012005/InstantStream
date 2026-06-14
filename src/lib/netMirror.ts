@@ -3,6 +3,8 @@
 
 const COOKIE = `user_token=1b8771d4552c859e7f6dd08c25b95a7d; SE81313283=81702845; 81702845=474%3A3189; ott=nf; 82813816=4689%3A12339; recentplay=82813021-82813816-82698051-SE81313283; t_hash=3085cbee7f35574e827ea0d7d71ee74b%3A%3A1780825333%3A%3Ani; cf_clearance=oPiuwm2u0lKYqeEMu5kSNUHWOcMPZBsbZGbIlY1QFw4-1780825408-1.2.1.1-arefU6CII51YOQVt6oBdK8HDyAC7arzXr_a0cC5.DX8mf7gjCsYMQRhuVhM9Zs3xpgja4j7lzJ18rD4DM3vHfkDFf87P.M3Ju2XrBzXzrHx3DadC3wzYGioyuBRS4X1hvp8SzhUHCEus2dij0omxlf95ZY5NvFKphbncX6iRtAQKxs2yH3E.5Vo_aDOO_c.Or.0wlRXt0lxH74lBZCb1480XT.KNnSt1rbtslAoMucrGbBFvJjbXnjo_m96S5Tdb31nc4PiYe6PKfV2OAuCBaUEXo65IrdSN_R3gC9uzUPBMMWedsazytxZPCYB7b7TQdznTkAWG89Gta8_T5uqYYZOOjgG_Ft12u0dvcvbb6QYrjdsYPpDBbxtlfvnsfppY4T3HJJpV.EuVWxZ4l3LJeie1LWsIGr5YWRYBq1icl2Y; t_hash_p=7e0941e808b8e8809aeb54da663deb03%3A%3Abaaf43abc5b92eddde0f395b1c05c6a4%3A%3A1780825448%3A%3Ani%3A%3Ap`;
 
+import { getProxyDispatcher } from '@/lib/settings';
+
 export function headers(extra: Record<string, string> = {}): Record<string, string> {
   return {
     "User-Agent": "Mozilla/5.0",
@@ -72,6 +74,8 @@ export async function getPostData(videoId: string): Promise<PostData> {
   const t = Math.floor(Date.now() / 1000);
 
   const res = await fetch(`https://net11.cc/post.php?id=${videoId}&t=${t}`, {
+    // @ts-ignore
+    dispatcher: getProxyDispatcher(),
     headers: headers({
       Referer: "https://net11.cc/home",
       "X-Requested-With": "XMLHttpRequest"
@@ -101,6 +105,8 @@ export async function getNet52Hls(videoId: string) {
 
   const hashRes = await fetch("https://net11.cc/play.php", {
     method: "POST",
+    // @ts-ignore
+    dispatcher: getProxyDispatcher(),
     headers: headers({
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       "X-Requested-With": "XMLHttpRequest",
@@ -119,6 +125,8 @@ export async function getNet52Hls(videoId: string) {
   const playUrl = `https://net52.cc/play.php?id=${videoId}&${hashData.h}`;
 
   const playRes = await fetch(playUrl, {
+    // @ts-ignore
+    dispatcher: getProxyDispatcher(),
     headers: headers({
       Referer: "https://net11.cc/home"
     })
@@ -144,6 +152,8 @@ export async function getNet52Hls(videoId: string) {
     `&h=${encodeURIComponent(h)}`;
 
   const playlistRes = await fetch(playlistUrl, {
+    // @ts-ignore
+    dispatcher: getProxyDispatcher(),
     headers: headers({
       Referer: playUrl
     })
