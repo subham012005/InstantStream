@@ -6,6 +6,7 @@ export default function AdminSettingsPage() {
   const [proxyUrl, setProxyUrl] = useState("");
   const [showAdFree, setShowAdFree] = useState(true);
   const [defaultServer, setDefaultServer] = useState("auto");
+  const [disabledServers, setDisabledServers] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -29,6 +30,7 @@ export default function AdminSettingsPage() {
         setProxyUrl(data.proxyUrl || "");
         setShowAdFree(data.showAdFree ?? true);
         setDefaultServer(data.defaultServer || "auto");
+        setDisabledServers(data.disabledServers || {});
         setLoading(false);
       })
       .catch((err) => {
@@ -44,7 +46,7 @@ export default function AdminSettingsPage() {
       const res = await fetch("/api/admin/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proxyUrl, showAdFree, defaultServer }),
+        body: JSON.stringify({ proxyUrl, showAdFree, defaultServer, disabledServers }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -119,6 +121,43 @@ export default function AdminSettingsPage() {
               </div>
               <p className="mt-1 text-xs text-white/40">
                 If the proxy fails, toggle this OFF to hide all Ad-Free custom servers and fallback strictly to third-party ad-based providers.
+              </p>
+            </div>
+
+            {/* Individual Server Status */}
+            <div>
+              <label className="block text-sm font-bold text-white/70 tracking-wider uppercase mb-4">
+                Individual Server Kill-Switch
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {NATIVE_SERVER_OPTIONS.filter((opt) => opt.id !== "auto").map((server) => {
+                  const isEnabled = !disabledServers[server.id];
+                  return (
+                    <div key={server.id} className="flex items-center justify-between bg-black/30 p-3 rounded-xl border border-white/10">
+                      <span className="text-sm font-medium text-white/90">{server.label}</span>
+                      <button
+                        onClick={() => {
+                          setDisabledServers((prev) => ({
+                            ...prev,
+                            [server.id]: isEnabled,
+                          }));
+                        }}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                          isEnabled ? "bg-[#E50914]" : "bg-white/20"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                            isEnabled ? "translate-x-5" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-xs text-white/40">
+                Toggle individual servers ON (red) or OFF (grey) to dynamically remove them from the player and shadow auto rotation.
               </p>
             </div>
 

@@ -196,7 +196,7 @@ function AnimatedLoaderText({ customPhrases }: { customPhrases?: string[] }) {
   }, []);
 
   return (
-    <div className="mt-4 h-6 relative w-full flex justify-center items-center">
+    <div className="mt-4 relative w-full flex justify-center items-center h-[40px] sm:h-6">
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
@@ -204,7 +204,7 @@ function AnimatedLoaderText({ customPhrases }: { customPhrases?: string[] }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="text-white/80 text-xs font-mono font-bold tracking-wide absolute left-1/2 -translate-x-1/2 whitespace-nowrap"
+          className="text-white/80 text-[10px] sm:text-xs font-mono font-bold tracking-wide absolute left-1/2 -translate-x-1/2 text-center w-full px-2"
         >
           {phrases[index]}
         </motion.span>
@@ -661,6 +661,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       const usableCandidates = candidates.filter((server) => {
         if (server.reqTmdb && !tmdbId) return false;
         if (server.reqImdb && !streamData?.imdbId) return false;
+        if (adminConfigRef.current?.disabledServers?.[server.id]) return false;
         return true;
       });
 
@@ -1070,13 +1071,20 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     const player = nativePlayerRef.current;
     if (!player) return;
     if (player.paused) {
+      setNativeBuffering(true);
       player
         .play()
-        .then(() => setNativePlaying(true))
-        .catch(() => {});
+        .then(() => {
+          setNativePlaying(true);
+          setNativeBuffering(false);
+        })
+        .catch(() => {
+          setNativeBuffering(false);
+        });
     } else {
       player.pause();
       setNativePlaying(false);
+      setNativeBuffering(false);
     }
   };
 
@@ -1249,7 +1257,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 Pro Stream
               </motion.div>
               <h1
-                className="font-bold text-[56px] md:text-[72px] leading-[1.1] tracking-tight text-[var(--text-primary)] mb-6 transition-colors duration-300"
+                className="font-bold text-[40px] sm:text-[56px] md:text-[72px] leading-[1.1] tracking-tight text-[var(--text-primary)] mb-6 transition-colors duration-300"
                 style={{ fontFamily: "var(--font-sora)" }}
               >
                 Watch from <span className="text-[#F5C518]">IMDb</span>
@@ -1270,13 +1278,13 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
             >
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#F5C518]/50 to-[#F5C518]/10 rounded-[16px] blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
-                <div className="relative flex flex-col sm:flex-row gap-3 w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-[16px] overflow-hidden p-2 shadow-2xl transition-colors duration-300">
-                  <div className="relative flex items-center flex-1 ml-2">
-                    <Search className="w-6 h-6 text-[var(--text-muted)] shrink-0" />
+                <div className="relative flex flex-col sm:flex-row gap-2 sm:gap-3 w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-[16px] overflow-hidden p-2 shadow-2xl transition-colors duration-300">
+                  <div className="relative flex items-center flex-1 ml-1 sm:ml-2">
+                    <Search className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-muted)] shrink-0" />
                     <input
                       ref={inputRef}
                       type="text"
-                      className="flex-1 bg-transparent border-none outline-none focus:ring-0 shadow-none px-4 py-4 md:py-5 font-mono text-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] w-full transition-colors duration-300"
+                      className="flex-1 bg-transparent border-none outline-none focus:ring-0 shadow-none px-2 sm:px-4 py-3 sm:py-4 md:py-5 font-mono text-lg sm:text-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] w-full min-w-0 transition-colors duration-300"
                       placeholder="e.g. tt0111161"
                       value={imdbId}
                       onChange={(e) => {
@@ -1398,7 +1406,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                 {/* Right Column: Details */}
                 <div className="flex-1 flex flex-col py-2">
                   <h1
-                    className="font-black text-4xl md:text-5xl lg:text-6xl text-white mb-2 tracking-tight"
+                    className="font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-2 tracking-tight"
                     style={{ fontFamily: "var(--font-sora)" }}
                   >
                     {streamData.movie?.title ?? streamData.imdbId}
@@ -1523,7 +1531,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                 repeat: Infinity,
                                 ease: "easeInOut",
                               }}
-                              className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.03] px-8 py-7 shadow-2xl backdrop-blur"
+                              className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 sm:px-8 py-7 shadow-2xl backdrop-blur w-[90%] max-w-sm mx-auto text-center"
                             >
                               <span className="w-10 h-10 border-4 border-[#E50914]/25 border-t-[#E50914] rounded-full animate-spin" />
                               <p className="mt-4 max-w-sm text-center text-[#E50914] font-mono text-sm font-bold">
@@ -1601,8 +1609,15 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                 setNativeBuffering(false);
                               }}
                               onCanPlay={() => setNativeBuffering(false)}
-                              onPlay={() => setNativePlaying(true)}
-                              onPause={() => setNativePlaying(false)}
+                              onCanPlayThrough={() => setNativeBuffering(false)}
+                              onPlay={() => {
+                                setNativePlaying(true);
+                                setNativeBuffering(false);
+                              }}
+                              onPause={() => {
+                                setNativePlaying(false);
+                                setNativeBuffering(false);
+                              }}
                             >
                               {nativeSubtitles.map((track, index) => (
                                 <track
@@ -1665,7 +1680,10 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                             )}
 
                             {nativeBuffering ? (
-                              <div className="absolute left-1/2 top-1/2 z-10 flex min-w-[240px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-black/40 px-6 pt-5 pb-6 backdrop-blur-md">
+                              <div 
+                                className="absolute left-1/2 top-1/2 z-10 flex w-[90%] max-w-[320px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-black/40 px-4 sm:px-6 pt-5 pb-6 backdrop-blur-md cursor-pointer"
+                                onClick={toggleNativePlay}
+                              >
                                 <span className="w-10 h-10 border-4 border-[#E50914]/30 border-t-[#E50914] rounded-full animate-spin mb-2" />
                                 <AnimatedLoaderText
                                   customPhrases={[
@@ -1718,8 +1736,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                 </span>
                               </div>
 
-                              <div className="flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-3">
+                              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
+                                <div className="flex items-center gap-1 sm:gap-3">
                                   <button
                                     onClick={(e) => skipNative(-5, e)}
                                     className="flex h-10 w-10 items-center justify-center text-white transition hover:scale-110"
@@ -1810,7 +1828,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                           scale: 0.96,
                                         }}
                                         transition={{ duration: 0.15 }}
-                                        className="absolute bottom-12 right-0 w-[min(20rem,calc(100vw-3rem))] overflow-hidden rounded-xl border border-white/10 bg-black/95 text-white shadow-2xl backdrop-blur-md"
+                                        className="absolute bottom-12 right-0 w-[min(20rem,calc(100vw-2rem))] sm:w-[20rem] overflow-hidden rounded-xl border border-white/10 bg-black/95 text-white shadow-2xl backdrop-blur-md"
                                       >
                                         <div className="flex border-b border-white/10">
                                           {(
@@ -2063,7 +2081,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                     <div className="flex flex-wrap gap-2">
                       {NATIVE_SERVER_OPTIONS.filter(
                         (s) => adminConfigRef.current?.showAdFree !== false,
-                      ).map((server) => (
+                      ).filter((s) => !adminConfigRef.current?.disabledServers?.[s.id]).map((server) => (
                         <button
                           key={server.id}
                           onClick={() =>
@@ -2084,7 +2102,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                         <button
                           type="button"
                           onClick={() => setThirdPartyOpen((open) => !open)}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-[4px] font-sans text-sm font-bold transition-all outline-none ${["server1", "server2", "server3"].includes(selectedServerId) ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-[4px] font-sans text-xs sm:text-sm font-bold transition-all outline-none ${["server1", "server2", "server3"].includes(selectedServerId) ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
                           title="Third party server contain ads"
                         >
                           <span>{thirdPartyServerLabel}</span>
@@ -2102,7 +2120,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                               transition={{ duration: 0.14 }}
                               className="absolute left-0 top-full z-[200] mt-2 min-w-[200px] overflow-hidden rounded-[4px] border border-[#333333] bg-[#141414] py-1 shadow-2xl"
                             >
-                              {streamData.playerUrl && (
+                              {streamData.playerUrl && !adminConfigRef.current?.disabledServers?.["server1"] && (
                                 <button
                                   onClick={() =>
                                     playThirdPartyServer("server1")
@@ -2112,7 +2130,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                   Server 1
                                 </button>
                               )}
-                              {alternatePlayerUrl && (
+                              {alternatePlayerUrl && !adminConfigRef.current?.disabledServers?.["server2"] && (
                                 <button
                                   onClick={() =>
                                     playThirdPartyServer("server2")
@@ -2122,7 +2140,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                   Server 2
                                 </button>
                               )}
-                              {tmdbId && (
+                              {tmdbId && !adminConfigRef.current?.disabledServers?.["server3"] && (
                                 <button
                                   onClick={() =>
                                     playThirdPartyServer("server3")

@@ -3,12 +3,13 @@ import { ProxyAgent } from 'undici';
 let defaultConfig = {
   proxyUrl: "http://37.49.224.15:3128",
   showAdFree: true,
-  defaultServer: "auto"
+  defaultServer: "auto",
+  disabledServers: {} as Record<string, boolean>
 };
 
 export function getAdminConfig() {
   if (!(globalThis as any).adminConfig) {
-    (globalThis as any).adminConfig = { ...defaultConfig };
+    (globalThis as any).adminConfig = { ...defaultConfig, disabledServers: { ...defaultConfig.disabledServers } };
   }
   return (globalThis as any).adminConfig;
 }
