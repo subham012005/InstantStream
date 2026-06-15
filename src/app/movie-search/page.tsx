@@ -136,23 +136,25 @@ function MovieSearchContent() {
         setErrorDetails(null);
 
         try {
-          let res = await fetch(`/api/tmdb-search?q=${encodeURIComponent(q)}`);
-          let data = await res.json();
+          const fetchTMDB = fetch(`/api/tmdb-search?q=${encodeURIComponent(q)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.Response === 'True' && data.Search?.length > 0) return data;
+              throw new Error('TMDB no results');
+            });
 
-          if (res.ok && data.Response === 'True' && data.Search?.length > 0) {
-            setResults(data.Search);
-            if (data.CorrectedQuery) setCorrectedQuery(data.CorrectedQuery);
-          } else {
-            res = await fetch(`/api/omdb?search=${encodeURIComponent(q)}`);
-            data = await res.json();
-            if (data.Response === 'True' && data.Search) {
-              setResults(data.Search);
-            } else {
-              setErrorSearch('No movies found');
-            }
-          }
+          const fetchOMDB = fetch(`/api/omdb?search=${encodeURIComponent(q)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.Response === 'True' && data.Search?.length > 0) return data;
+              throw new Error('OMDB no results');
+            });
+
+          const data = await Promise.any([fetchTMDB, fetchOMDB]);
+          setResults(data.Search);
+          if (data.CorrectedQuery) setCorrectedQuery(data.CorrectedQuery);
         } catch {
-          setErrorSearch('An error occurred during search.');
+          setErrorSearch('No movies found');
         } finally {
           setLoadingSearch(false);
         }

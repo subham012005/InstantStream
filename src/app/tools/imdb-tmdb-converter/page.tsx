@@ -95,77 +95,60 @@ export default function ConverterPage() {
       let resolvedTmdbId = mode === 'tmdb-to-imdb' ? inputValue.trim() : null;
       let resolvedImdbId = mode === 'imdb-to-tmdb' ? inputValue.trim() : null;
 
-      // 1. Try TMDB API first
-      let tmdbApiSuccess = false;
-      try {
-        const TMDB_API_KEY = '524c16f6e2a0a13c49ff7b99d27b5efb';
+      const TMDB_API_KEY = '524c16f6e2a0a13c49ff7b99d27b5efb';
+
+      const fetchFromTmdb = async () => {
         if (mode === 'imdb-to-tmdb') {
           const res = await fetch(`https://api.themoviedb.org/3/find/${resolvedImdbId}?external_source=imdb_id&api_key=${TMDB_API_KEY}`);
-          if (res.ok) {
-            const data = await res.json();
-            const tmdb = data?.movie_results?.[0]?.id || data?.tv_results?.[0]?.id;
-            if (tmdb) {
-               resolvedTmdbId = String(tmdb);
-               tmdbApiSuccess = true;
-            }
-          }
+          if (!res.ok) throw new Error('TMDB failed');
+          const data = await res.json();
+          const tmdb = data?.movie_results?.[0]?.id || data?.tv_results?.[0]?.id;
+          if (tmdb) return { tmdbId: String(tmdb), imdbId: resolvedImdbId };
+          throw new Error('Not found in TMDB');
         } else {
-          // tmdb-to-imdb
-          const res = await fetch(`https://api.themoviedb.org/3/movie/${resolvedTmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
+          let res = await fetch(`https://api.themoviedb.org/3/movie/${resolvedTmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
           if (res.ok) {
             const data = await res.json();
-            if (data?.imdb_id) {
-               resolvedImdbId = data.imdb_id;
-               tmdbApiSuccess = true;
-            }
+            if (data?.imdb_id) return { tmdbId: resolvedTmdbId, imdbId: data.imdb_id };
           }
-          if (!tmdbApiSuccess) {
-            const resTv = await fetch(`https://api.themoviedb.org/3/tv/${resolvedTmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
-            if (resTv.ok) {
-              const dataTv = await resTv.json();
-              if (dataTv?.imdb_id) {
-                 resolvedImdbId = dataTv.imdb_id;
-                 tmdbApiSuccess = true;
-              }
-            }
+          const resTv = await fetch(`https://api.themoviedb.org/3/tv/${resolvedTmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
+          if (resTv.ok) {
+            const dataTv = await resTv.json();
+            if (dataTv?.imdb_id) return { tmdbId: resolvedTmdbId, imdbId: dataTv.imdb_id };
           }
+          throw new Error('Not found in TMDB');
         }
-      } catch (err) {
-        console.error("TMDB API error:", err);
-      }
+      };
 
-      if (!tmdbApiSuccess) {
-        // 1. Convert IDs exclusively through Wikidata as fallback
+      const fetchFromWikidata = async () => {
         const sparqlQuery = mode === 'imdb-to-tmdb' 
           ? `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${resolvedImdbId}". ?movie wdt:P4947 ?tmdbId. } LIMIT 1`
           : `SELECT ?imdbId WHERE { ?movie wdt:P4947 "${resolvedTmdbId}". ?movie wdt:P345 ?imdbId. } LIMIT 1`;
 
         const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
-        
-        const wdResponse = await fetch(wdUrl, {
-          headers: {
-            'Accept': 'application/sparql-results+json'
-          }
-        });
-        
-        if (!wdResponse.ok) {
-          throw new Error('Failed to reach Wikidata for ID conversion');
-        }
-
+        const wdResponse = await fetch(wdUrl, { headers: { 'Accept': 'application/sparql-results+json' } });
+        if (!wdResponse.ok) throw new Error('Wikidata failed');
         const wdData = await wdResponse.json();
         const bindings = wdData.results.bindings;
 
         if (mode === 'imdb-to-tmdb') {
            if (bindings.length > 0 && bindings[0].tmdbId) {
-               resolvedTmdbId = bindings[0].tmdbId.value;
+               return { tmdbId: bindings[0].tmdbId.value, imdbId: resolvedImdbId };
            }
         } else {
            if (bindings.length > 0 && bindings[0].imdbId) {
-               resolvedImdbId = bindings[0].imdbId.value;
-           } else {
-               throw new Error('No corresponding IMDb ID found in Wikidata or TMDB for this TMDB ID.');
+               return { tmdbId: resolvedTmdbId, imdbId: bindings[0].imdbId.value };
            }
         }
+        throw new Error('Not found in Wikidata');
+      };
+
+      try {
+        const result = await Promise.any([fetchFromTmdb(), fetchFromWikidata()]);
+        resolvedTmdbId = result.tmdbId;
+        resolvedImdbId = result.imdbId;
+      } catch (err) {
+        throw new Error('Failed to resolve IDs from all sources (TMDB & Wikidata).');
       }
 
       if (!resolvedImdbId) {
