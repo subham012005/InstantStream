@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminConfig, updateAdminConfig } from "@/lib/settings";
 
 export const runtime = "nodejs"; // ensure we can use globalThis reliably if needed, though edge can sometimes too.
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const config = getAdminConfig();

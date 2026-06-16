@@ -239,7 +239,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [episodeCount, setEpisodeCount] = useState<number>(0);
 
   useEffect(() => {
-    fetch("/api/admin/settings")
+    fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         setAdminConfig(data);
@@ -2080,8 +2080,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {NATIVE_SERVER_OPTIONS.filter(
-                        (s) => adminConfigRef.current?.showAdFree !== false,
-                      ).filter((s) => !adminConfigRef.current?.disabledServers?.[s.id]).map((server) => (
+                        (s) => adminConfig?.showAdFree !== false,
+                      ).filter((s) => !adminConfig?.disabledServers?.[s.id]).map((server) => (
                         <button
                           key={server.id}
                           onClick={() =>
@@ -2120,7 +2120,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                               transition={{ duration: 0.14 }}
                               className="absolute left-0 top-full z-[200] mt-2 min-w-[200px] overflow-hidden rounded-[4px] border border-[#333333] bg-[#141414] py-1 shadow-2xl"
                             >
-                              {streamData.playerUrl && !adminConfigRef.current?.disabledServers?.["server1"] && (
+                              {streamData.playerUrl && !adminConfig?.disabledServers?.["server1"] && (
                                 <button
                                   onClick={() =>
                                     playThirdPartyServer("server1")
@@ -2130,7 +2130,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                   Server 1
                                 </button>
                               )}
-                              {alternatePlayerUrl && !adminConfigRef.current?.disabledServers?.["server2"] && (
+                              {alternatePlayerUrl && !adminConfig?.disabledServers?.["server2"] && (
                                 <button
                                   onClick={() =>
                                     playThirdPartyServer("server2")
@@ -2140,7 +2140,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                                   Server 2
                                 </button>
                               )}
-                              {tmdbId && !adminConfigRef.current?.disabledServers?.["server3"] && (
+                              {tmdbId && !adminConfig?.disabledServers?.["server3"] && (
                                 <button
                                   onClick={() =>
                                     playThirdPartyServer("server3")

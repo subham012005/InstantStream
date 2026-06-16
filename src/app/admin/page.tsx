@@ -24,7 +24,7 @@ export default function AdminSettingsPage() {
   ];
 
   useEffect(() => {
-    fetch("/api/admin/settings")
+    fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         setProxyUrl(data.proxyUrl || "");
