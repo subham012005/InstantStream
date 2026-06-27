@@ -54,8 +54,9 @@ export default function QuickAccessButtons() {
           {/* A second light ray for extra glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_180deg,transparent_0_280deg,#00A8E1_360deg)] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
           
-          <button
-            onClick={(e) => { e.preventDefault(); alert('Amazon Prime integration is coming soon!'); }}
+          <a
+            href="https://amazon.fluxplays.live"
+            target="_blank" rel="noopener noreferrer"
             className="relative bg-[var(--bg-surface)] rounded-[18px] w-full h-full p-12 flex flex-col items-center justify-center min-h-[220px] overflow-hidden flex-1 text-left"
           >
             {/* Background texture image */}
@@ -72,7 +73,7 @@ export default function QuickAccessButtons() {
             <div className="relative z-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
               <Image src="/logos/prime.svg" alt="Prime Video" width={200} height={60} className="w-auto h-16 drop-shadow-[0_4px_20px_rgba(0,168,225,0.5)]" />
             </div>
-          </button>
+          </a>
         </div>
 
       </div>
