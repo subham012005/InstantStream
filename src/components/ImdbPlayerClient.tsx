@@ -302,61 +302,85 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
 
   const handleSearch = async (id = imdbId.trim()) => {
     if (!id) {
-      setError("Please enter an IMDb ID.");
+      setError("Please enter an ID.");
       triggerShake();
       return false;
     }
-    if (!/^tt\d{7,8}$/.test(id)) {
+    const isImdb = /^tt\d{7,8}$/.test(id);
+    const isTmdb = /^\d+$/.test(id);
+    if (!isImdb && !isTmdb) {
       setError(
-        "Invalid format. Use 'tt' followed by 7–8 digits, e.g. tt0111161",
+        "Invalid format. Use IMDb ID (e.g., tt0111161) or TMDB ID (e.g., 12345).",
       );
       triggerShake();
       return false;
     }
-    setImdbId(id);
+
     setLoading(true);
     setError("");
     setStreamData(null);
     setIsPlaying(false);
     setTmdbId(null);
     try {
-      let resolvedTmdbId = null;
-
-      // Fetch TMDB (Wikidata) + OMDb in parallel — saves 1-3s vs sequential
-      const sparqlQuery = `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${id}". { ?movie wdt:P4947 ?tmdbId. } UNION { ?movie wdt:P4983 ?tmdbId. } } LIMIT 1`;
-      const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
-
-      const [wdResult, omdbResult] = await Promise.allSettled([
-        fetch(wdUrl, {
-          headers: { Accept: "application/sparql-results+json" },
-        }).then((r) => r.json()),
-        fetch(`/api/omdb?id=${id}`).then((r) => (r.ok ? r.json() : null)),
-      ]);
-
-      // Parse TMDB
-      if (wdResult.status === "fulfilled") {
-        try {
-          const bindings = wdResult.value?.results?.bindings;
-          if (bindings?.length > 0 && bindings[0].tmdbId) {
-            resolvedTmdbId = bindings[0].tmdbId.value;
-            setTmdbId(resolvedTmdbId);
-          }
-        } catch (e) {
-          console.warn("Failed to parse TMDB", e);
-        }
-      }
-
-      // Parse OMDb
+      let resolvedTmdbId: string | null = null;
+      let resolvedImdbId: string | null = null;
       let omdbData: any = null;
-      if (omdbResult.status === "fulfilled" && omdbResult.value) {
-        const data = omdbResult.value;
-        if (data.Response !== "False") {
-          omdbData = data;
+
+      if (isImdb) {
+        resolvedImdbId = id;
+        const sparqlQuery = `SELECT ?tmdbId WHERE { ?movie wdt:P345 "${id}". { ?movie wdt:P4947 ?tmdbId. } UNION { ?movie wdt:P4983 ?tmdbId. } } LIMIT 1`;
+        const wdUrl = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparqlQuery)}`;
+        const tmdbFindUrl = `/api/tmdb-proxy?path=/find/${id}&external_source=imdb_id`;
+
+        const [wdResult, tmdbResult, omdbResult] = await Promise.allSettled([
+          fetch(wdUrl, { headers: { Accept: "application/sparql-results+json" } }).then(r => r.json()),
+          fetch(tmdbFindUrl).then(r => r.json()),
+          fetch(`/api/omdb?id=${id}`).then(r => (r.ok ? r.json() : null)),
+        ]);
+
+        if (tmdbResult.status === "fulfilled" && tmdbResult.value) {
+          resolvedTmdbId = tmdbResult.value.movie_results?.[0]?.id || tmdbResult.value.tv_results?.[0]?.id || null;
+        }
+        if (!resolvedTmdbId && wdResult.status === "fulfilled") {
+          resolvedTmdbId = wdResult.value?.results?.bindings?.[0]?.tmdbId?.value || null;
+        }
+        if (omdbResult.status === "fulfilled" && omdbResult.value?.Response !== "False") {
+          omdbData = omdbResult.value;
+        }
+      } else {
+        resolvedTmdbId = id;
+        const movieUrl = `/api/tmdb-proxy?path=/movie/${id}`;
+        const tvUrl = `/api/tmdb-proxy?path=/tv/${id}/external_ids`;
+        
+        const [movieRes, tvRes] = await Promise.allSettled([
+          fetch(movieUrl).then(r => r.json()),
+          fetch(tvUrl).then(r => r.json())
+        ]);
+
+        if (movieRes.status === "fulfilled" && movieRes.value?.imdb_id) {
+          resolvedImdbId = movieRes.value.imdb_id;
+        } else if (tvRes.status === "fulfilled" && tvRes.value?.imdb_id) {
+          resolvedImdbId = tvRes.value.imdb_id;
+        }
+
+        if (resolvedImdbId) {
+           const omdbRes = await fetch(`/api/omdb?id=${resolvedImdbId}`);
+           if (omdbRes.ok) {
+             const data = await omdbRes.json();
+             if (data.Response !== "False") omdbData = data;
+           }
         }
       }
+
+      if (!resolvedImdbId) {
+        throw new Error("Could not resolve IMDb ID for the given input.");
+      }
+
+      setTmdbId(resolvedTmdbId ? String(resolvedTmdbId) : null);
+      setImdbId(resolvedImdbId);
 
       const streamJson: StreamResponse = {
-        imdbId: id,
+        imdbId: resolvedImdbId,
         url: "",
         type: "hls",
         provider: "Frontend",

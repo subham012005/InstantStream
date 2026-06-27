@@ -25,8 +25,134 @@ import {
   Check,
   RefreshCw,
   Layers,
+  Plus,
 } from "lucide-react";
-import NetflixHomepage from "./NetflixHomepage";
+import NetflixHomepage, { PosterCard, SkeletonCard } from "./NetflixHomepage";
+import type { CatalogItem } from "@/lib/catalog";
+
+/* ─────────────────────────────────────────────
+   Suggested Movie Card Component
+───────────────────────────────────────────── */
+function SuggestedMovieCard({ suggest, onSelectMovie }: { suggest: any; onSelectMovie: (id: string) => void }) {
+  const [item, setItem] = useState<CatalogItem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    fetch(`/api/netflix/title/${suggest.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (alive) {
+          setItem({
+            id: data.id || suggest.id,
+            title: data.title || `Title ${suggest.id}`,
+            posterUrl: data.poster || "",
+            backdropUrl: data.backdrop || "",
+            description: suggest.d || data.synopsis,
+            duration: suggest.t,
+            year: suggest.y,
+            rating: suggest.ua,
+            matchScore: suggest.m,
+            isSeries: data.type === "show",
+          });
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (alive) {
+           setItem({
+             id: suggest.id,
+             title: `Netflix ID ${suggest.id}`,
+             posterUrl: "",
+             description: suggest.d,
+             isSeries: false
+           });
+           setLoading(false);
+        }
+      });
+    return () => { alive = false; };
+  }, [suggest.id]);
+
+  if (loading || !item) {
+    return (
+      <div className="flex-none w-[200px] sm:w-[240px] bg-[#2f2f2f] animate-pulse rounded-lg aspect-[3/4]" />
+    );
+  }
+
+  const imageUrl = item.backdropUrl || item.posterUrl;
+
+  return (
+    <div 
+      className="flex-none w-[200px] sm:w-[240px] bg-[#2f2f2f] rounded-lg overflow-hidden flex flex-col snap-start cursor-pointer group transition-transform duration-300 hover:bg-[#3f3f3f]"
+      onClick={() => onSelectMovie(item.id)}
+    >
+      {/* Top Image Section */}
+      <div className="relative w-full aspect-[16/9] bg-[#1a1a1a]">
+        {imageUrl && (
+          <img 
+            src={imageUrl} 
+            alt={item.title} 
+            className="w-full h-full object-cover object-center"
+            loading="lazy"
+          />
+        )}
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+        
+        {/* Play Icon on Hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
+            <Play className="w-5 h-5 fill-black text-black ml-0.5" />
+          </div>
+        </div>
+
+        {/* Duration Badge */}
+        {item.duration && (
+          <div className="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[11px] font-bold text-white tracking-wide">
+            {item.duration}
+          </div>
+        )}
+        
+        {/* Recently Added Badge (fake logic based on year, for realism) */}
+        {item.year && parseInt(item.year) >= new Date().getFullYear() && (
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-[#E50914] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider shadow-lg">
+            Recently added
+          </div>
+        )}
+      </div>
+
+      {/* Info Section */}
+      <div className="p-4 flex-1 flex flex-col gap-3">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-1.5 mt-2">
+            {/* Match, Rating, Year */}
+            <div className="flex items-center gap-2 text-xs font-semibold flex-wrap">
+              {item.matchScore && <span className="text-[#46d369]">{item.matchScore}</span>}
+              {item.rating && (
+                <span className="border border-white/40 px-1 rounded-sm text-white/70">
+                  {item.rating}
+                </span>
+              )}
+              {item.year && <span className="text-white/60">{item.year}</span>}
+            </div>
+          </div>
+          
+          {/* Plus Button */}
+          <button className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-white/40 hover:border-white transition-colors group-hover:bg-white/10 shrink-0">
+            <Plus className="w-5 h-5 text-white" />
+          </button>
+        </div>
+        
+        {/* Title & Description */}
+        <div className="flex flex-col gap-1">
+          <h3 className="text-white text-sm font-bold truncate group-hover:text-white/90">{item.title}</h3>
+          <p className="text-white/50 text-xs line-clamp-4 leading-relaxed font-medium mt-1">
+            {item.description || "No description available."}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ─────────────────────────────────────────────
    Types
@@ -54,6 +180,7 @@ interface MetaData {
   isSeries: boolean;
   seasons: Season[];
   defaultSeason: number | null;
+  raw?: any;
 }
 
 /* ─────────────────────────────────────────────
@@ -209,7 +336,7 @@ function NetflixPlayer({
         const qs = ["Auto", ...hls.levels.map((l, i) => (l.height ? `${l.height}p` : `Level ${i + 1}`))];
         setQualities(qs);
         setCurrentQuality(-1);
-        video.play().then(() => setPlaying(true)).catch(() => {});
+        video.play().then(() => setPlaying(true)).catch(() => { });
       });
 
       hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => {
@@ -231,7 +358,7 @@ function NetflixPlayer({
       });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = masterUrl;
-      video.addEventListener("loadedmetadata", () => { setLoading(false); video.play().then(() => setPlaying(true)).catch(() => {}); });
+      video.addEventListener("loadedmetadata", () => { setLoading(false); video.play().then(() => setPlaying(true)).catch(() => { }); });
     } else {
       setError("HLS is not supported in this browser.");
     }
@@ -290,7 +417,7 @@ function NetflixPlayer({
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showControls]);
 
   const togglePlay = () => {
@@ -382,7 +509,7 @@ function NetflixPlayer({
       <video ref={videoRef} className="w-full h-full object-contain" playsInline crossOrigin="anonymous">
         {extCaptions.map((t, i) => {
           const realUrl = t.file.startsWith("//") ? `https:${t.file}` : t.file;
-          const proxyUrl = `/api/net/subtitle?url=${encodeURIComponent(realUrl)}`;
+          const proxyUrl = `/api/netflix/subtitle?url=${encodeURIComponent(realUrl)}`;
           return (
             <track
               key={i}
@@ -542,54 +669,61 @@ function NetflixPlayer({
                                 </button>
                               );
                             })}
-                            {settingsTab === "audio" && (audioTracks.length > 0 ? audioTracks.map((t, i) => (
-                              <button
-                                key={`audio-${i}`}
-                                onClick={() => changeAudio(i)}
-                                className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentAudio === i ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
-                              >
-                                {currentAudio === i && <Check className="w-3.5 h-3.5 shrink-0" />}
-                                <span className={currentAudio !== i ? "ml-5" : ""}>{t}</span>
-                              </button>
-                            )) : (
-                              <p className="px-4 py-3 text-xs text-white/40">No audio tracks</p>
-                            ))}
-                            {settingsTab === "subtitles" && (totalSubtitles > 0 ? (
-                              <>
-                                <button
-                                  onClick={() => changeSubtitle(-1)}
-                                  className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentSubtitle === -1 ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
-                                >
-                                  {currentSubtitle === -1 && <Check className="w-3.5 h-3.5 shrink-0" />}
-                                  <span className={currentSubtitle !== -1 ? "ml-5" : ""}>Off</span>
-                                </button>
-                                {subtitleTracks.map((t, i) => (
+                            {settingsTab === "audio" && (
+                              audioTracks.length > 0 ? (
+                                audioTracks.map((t, i) => (
                                   <button
-                                    key={`hls-sub-${i}`}
-                                    onClick={() => changeSubtitle(i)}
-                                    className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentSubtitle === i ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
+                                    key={`audio-${i}`}
+                                    onClick={() => changeAudio(i)}
+                                    className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentAudio === i ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
                                   >
-                                    {currentSubtitle === i && <Check className="w-3.5 h-3.5 shrink-0" />}
-                                    <span className={currentSubtitle !== i ? "ml-5" : ""}>{t} (HLS)</span>
+                                    {currentAudio === i && <Check className="w-3.5 h-3.5 shrink-0" />}
+                                    <span className={currentAudio !== i ? "ml-5" : ""}>{t}</span>
                                   </button>
-                                ))}
-                                {extCaptions.map((t, i) => {
-                                  const idx = subtitleTracks.length + i;
-                                  return (
+                                ))
+                              ) : (
+                                <p className="px-4 py-3 text-xs text-white/40">No audio tracks</p>
+                              )
+                            )}
+
+                            {settingsTab === "subtitles" && (
+                              totalSubtitles > 0 ? (
+                                <>
+                                  <button
+                                    onClick={() => changeSubtitle(-1)}
+                                    className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentSubtitle === -1 ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
+                                  >
+                                    {currentSubtitle === -1 && <Check className="w-3.5 h-3.5 shrink-0" />}
+                                    <span className={currentSubtitle !== -1 ? "ml-5" : ""}>Off</span>
+                                  </button>
+                                  {subtitleTracks.map((t, i) => (
                                     <button
-                                      key={`ext-sub-${i}`}
-                                      onClick={() => changeSubtitle(idx)}
-                                      className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentSubtitle === idx ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
+                                      key={`hls-sub-${i}`}
+                                      onClick={() => changeSubtitle(i)}
+                                      className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentSubtitle === i ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
                                     >
-                                      {currentSubtitle === idx && <Check className="w-3.5 h-3.5 shrink-0" />}
-                                      <span className={currentSubtitle !== idx ? "ml-5" : ""}>{t.label || t.language}</span>
+                                      {currentSubtitle === i && <Check className="w-3.5 h-3.5 shrink-0" />}
+                                      <span className={currentSubtitle !== i ? "ml-5" : ""}>{t} (HLS)</span>
                                     </button>
-                                  );
-                                })}
-                              </>
-                            ) : (
-                              <p className="px-4 py-3 text-xs text-white/40">No subtitles available</p>
-                            ))}
+                                  ))}
+                                  {extCaptions.map((t, i) => {
+                                    const idx = subtitleTracks.length + i;
+                                    return (
+                                      <button
+                                        key={`ext-sub-${i}`}
+                                        onClick={() => changeSubtitle(idx)}
+                                        className={`w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors ${currentSubtitle === idx ? "text-[#E50914] bg-white/5 font-bold" : "text-white/70 hover:text-white hover:bg-white/5"}`}
+                                      >
+                                        {currentSubtitle === idx && <Check className="w-3.5 h-3.5 shrink-0" />}
+                                        <span className={currentSubtitle !== idx ? "ml-5" : ""}>{t.label || t.language}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </>
+                              ) : (
+                                <p className="px-4 py-3 text-xs text-white/40">No subtitles available</p>
+                              )
+                            )}
                           </div>
                         </motion.div>
                       )}
@@ -623,6 +757,7 @@ export default function NetflixMirrorClient() {
   const [metaLoading, setMetaLoading] = useState(false);
   const [metaError, setMetaError] = useState("");
   const [meta, setMeta] = useState<MetaData | null>(null);
+  const [details, setDetails] = useState<any>(null);
   const [selectedSeason, setSelectedSeason] = useState<Season | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const [episodesLoading, setEpisodesLoading] = useState(false);
@@ -641,14 +776,25 @@ export default function NetflixMirrorClient() {
     setMetaLoading(true);
     setMetaError("");
     setMeta(null);
+    setDetails(null);
     setSelectedSeason(null);
     setSelectedEpisode(null);
     setStreamError("");
 
     try {
-      const res = await fetch(`/api/net/meta/${id}`);
-      const data = await res.json();
+      const [metaRes, detailsRes] = await Promise.all([
+        fetch(`/api/netflix/meta/${id}`),
+        fetch(`/api/netflix/title/${id}`).catch(() => null)
+      ]);
+
+      const data = await metaRes.json();
       if (data.error) throw new Error(data.error);
+
+      if (detailsRes && detailsRes.ok) {
+        const detailsData = await detailsRes.json();
+        setDetails(detailsData);
+      }
+
       setMeta(data);
       setStage("meta");
 
@@ -673,7 +819,7 @@ export default function NetflixMirrorClient() {
     if (season.episodes?.length) return season;
     setEpisodesLoading(true);
     try {
-      const res = await fetch(`/api/net/season/${seriesId}/${season.seasonId}`);
+      const res = await fetch(`/api/netflix/season/${seriesId}/${season.seasonId}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       const updated = { ...season, episodes: data.episodes || [] };
@@ -709,7 +855,7 @@ export default function NetflixMirrorClient() {
     setStreamError("");
     setNowPlayingTitle(title);
     try {
-      const res = await fetch(`/api/net/play/${videoId}`);
+      const res = await fetch(`/api/netflix/play/${videoId}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setMasterUrl(data.masterUrl);
@@ -745,44 +891,71 @@ export default function NetflixMirrorClient() {
   ═══════════════════════════════════════════ */
   if (stage === "meta" && meta) {
     const episodes = selectedSeason?.episodes || [];
+    const bgImage = details?.backdrop || meta.raw?.backdropUrl || details?.poster || meta.raw?.posterUrl;
+    const titleToDisplay = details?.title || meta.title;
 
     return (
-      <div className="min-h-screen bg-[#141414] text-white">
+      <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden">
         {/* Hero banner */}
-        <div className="relative h-[55vh] flex items-end overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
-          {/* Red shimmer */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#E50914]/20 via-transparent to-black/60" />
-          <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-[#141414] to-transparent" />
+        <div className="relative min-h-[85vh] py-12 flex items-end overflow-hidden bg-black">
+          {/* Background Image */}
+          {(bgImage && bgImage.trim() !== "") ? (
+            <div className="absolute inset-0">
+              <img
+                src={bgImage}
+                alt={titleToDisplay}
+                className="w-full h-full object-cover object-center opacity-70"
+              />
+            </div>
+          ) : (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10">
+              {meta.isSeries ? <Tv className="w-64 h-64 text-[#E50914]" /> : <Film className="w-64 h-64 text-[#E50914]" />}
+            </div>
+          )}
 
-          {/* Big icon */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10">
-            {meta.isSeries ? <Tv className="w-64 h-64 text-[#E50914]" /> : <Film className="w-64 h-64 text-[#E50914]" />}
-          </div>
+          {/* Vignette & Gradients */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/70 to-transparent md:w-[60%]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent" />
 
           {/* Content */}
-          <div className="relative z-10 max-w-6xl mx-auto px-6 pb-8 w-full">
+          <div className="relative z-10 max-w-6xl mx-auto px-6 pb-12 w-full mt-24">
             <button
               onClick={() => { setStage("search"); setMeta(null); }}
-              className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm mb-6 transition-colors"
+              className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-6 transition-colors font-medium bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm w-fit"
             >
               <ChevronLeft className="w-4 h-4" />
               Back to search
             </button>
 
-            <div className="flex items-center gap-3 mb-3">
-              <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-[#E50914] text-white rounded">
-                {meta.isSeries ? "Series" : "Movie"}
-              </span>
-              <span className="text-white/40 text-xs font-mono">{meta.seriesId}</span>
+            {/* N Series / Meta badges */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 bg-[#E50914] rounded-sm flex items-center justify-center font-black text-[11px] text-white">N</div>
+                <span className="text-white/80 tracking-[0.2em] text-xs font-semibold uppercase">{meta.isSeries ? "Series" : "Movie"}</span>
+              </div>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-white drop-shadow-lg mb-4" style={{ fontFamily: "var(--font-sora)" }}>
-              {meta.title}
+
+            <h1 className="text-5xl md:text-7xl font-black text-white drop-shadow-2xl mb-6 leading-tight max-w-3xl" style={{ fontFamily: "var(--font-sora)" }}>
+              {titleToDisplay}
             </h1>
 
-            <div className="flex items-center gap-4 flex-wrap">
+            {/* Detailed metadata row */}
+            <div className="flex items-center gap-4 text-sm font-semibold mb-8 text-white/90 flex-wrap drop-shadow-md">
+              {meta.raw?.m && <span className="text-[#46d369]">{meta.raw.m} Match</span>}
+              {meta.raw?.y && <span>{meta.raw.y}</span>}
+              {(details?.maturityValue || meta.raw?.ua) && (
+                <span className="border border-white/40 px-1.5 py-0.5 rounded-sm text-xs text-white/80">
+                  {details?.maturityValue ? `${details.maturityValue}+` : meta.raw?.ua}
+                </span>
+              )}
+              {meta.raw?.t && <span>{meta.raw.t}</span>}
+              {meta.raw?.hdsd && <span className="border border-white/40 px-1.5 py-0.5 rounded-sm text-[10px] text-white/80 uppercase tracking-wider">{meta.raw.hdsd}</span>}
+            </div>
+
+            <div className="flex items-center gap-4 flex-wrap mb-8">
               {!meta.isSeries && (
                 <button
-                  onClick={() => playVideo(meta.seriesId, meta.title)}
+                  onClick={() => playVideo(meta.seriesId, titleToDisplay)}
                   disabled={streamLoading}
                   className="flex items-center gap-2 px-8 py-3 bg-white hover:bg-white/90 text-black font-bold rounded-lg text-sm transition-all disabled:opacity-60"
                 >
@@ -794,7 +967,7 @@ export default function NetflixMirrorClient() {
                 <button
                   onClick={() => {
                     const ep = selectedSeason.episodes[0];
-                    playVideo(ep.id, `${meta.title} · S${selectedSeason.season} E${ep.episode} – ${ep.title}`);
+                    playVideo(ep.id, `${titleToDisplay} · S${selectedSeason.season} E${ep.episode} – ${ep.title}`);
                   }}
                   disabled={streamLoading}
                   className="flex items-center gap-2 px-8 py-3 bg-white hover:bg-white/90 text-black font-bold rounded-lg text-sm transition-all disabled:opacity-60"
@@ -802,6 +975,46 @@ export default function NetflixMirrorClient() {
                   {streamLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-black" />}
                   {streamLoading ? "Loading…" : "Play S1 E1"}
                 </button>
+              )}
+            </div>
+
+            {/* Meta Info Box */}
+            <div className="mt-8 flex flex-col md:flex-row gap-10">
+              <div className="flex-1">
+                {(details?.synopsis || meta.raw?.description) && (
+                  <p className="text-white/80 text-sm md:text-base max-w-3xl leading-relaxed mb-6 drop-shadow">
+                    {details?.synopsis || meta.raw?.description}
+                  </p>
+                )}
+                {/* Meta details inline */}
+                {(details?.genres || meta.raw?.genres) && (
+                  <div className="flex items-center gap-2 text-sm font-medium flex-wrap text-white/60 mb-4">
+                    <span className="text-white/40">Genres:</span>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {(details?.genres || meta.raw?.genres).map((g: string, i: number, arr: any[]) => (
+                        <span key={g} className="text-white/80">{g}{i < arr.length - 1 ? <span className="text-white/30 ml-1.5">•</span> : ''}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Cast & Crew */}
+              {(details?.actors?.length > 0 || details?.directors?.length > 0 || meta.raw?.actors?.length > 0 || meta.raw?.directors?.length > 0) && (
+                <div className="w-full md:w-1/3 flex flex-col gap-4 text-sm">
+                  {(details?.actors?.length > 0 || meta.raw?.actors?.length > 0) && (
+                    <div>
+                      <span className="text-white/40 mr-2">Cast:</span>
+                      <span className="text-white/80">{(details?.actors || meta.raw?.actors).slice(0, 5).join(', ')}</span>
+                    </div>
+                  )}
+                  {(details?.directors?.length > 0 || meta.raw?.directors?.length > 0) && (
+                    <div>
+                      <span className="text-white/40 mr-2">Creator:</span>
+                      <span className="text-white/80">{(details?.directors || meta.raw?.directors).slice(0, 3).join(', ')}</span>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -894,7 +1107,7 @@ export default function NetflixMirrorClient() {
 
         {/* Movie — no episodes, just play */}
         {!meta.isSeries && (
-          <div className="max-w-6xl mx-auto px-6 pb-16 mt-6">
+          <div className="max-w-6xl mx-auto px-6 pb-8 mt-6">
             <div className="bg-[#1f1f1f] border border-white/5 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1">
                 <div className="text-white/40 text-xs font-bold uppercase tracking-widest mb-1">Movie ID</div>
@@ -908,6 +1121,22 @@ export default function NetflixMirrorClient() {
                 {streamLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-white" />}
                 {streamLoading ? "Fetching stream…" : "Stream Now"}
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Related Movies */}
+        {meta.raw?.suggest && meta.raw.suggest.length > 0 && (
+          <div className="max-w-6xl mx-auto px-6 pb-24 mt-8">
+            <h2 className="text-white text-xl font-bold mb-6">More Like This</h2>
+            <div className="flex gap-4 overflow-x-auto overflow-y-visible snap-x snap-mandatory scroll-smooth pb-8" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+              {meta.raw.suggest.map((s: any) => (
+                <SuggestedMovieCard key={s.id} suggest={s} onSelectMovie={(id) => {
+                   setInputId(id);
+                   loadMeta(id);
+                   window.scrollTo({ top: 0, behavior: 'smooth' });
+                }} />
+              ))}
             </div>
           </div>
         )}

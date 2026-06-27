@@ -7,6 +7,7 @@ import DevToolsProtection from "@/components/DevToolsProtection";
 import { Sora, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import ThirdPartyLoader from "@/components/ThirdPartyLoader";
+import TelegramFloatingButton from "@/components/TelegramFloatingButton";
 import "./globals.css";
 
 const sora = Sora({
@@ -193,7 +194,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className={`${sora.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}>
-        <script dangerouslySetInnerHTML={{
+        <Script id="theme-initializer" dangerouslySetInnerHTML={{
           __html: `
           (function() {
             const t = localStorage.getItem('fx-theme') || 'dark';
@@ -214,6 +215,7 @@ export default function RootLayout({
           </noscript>
           {children}
           <Footer />
+          <TelegramFloatingButton />
           <Analytics />
           <ThirdPartyLoader />
         </ThemeProvider>

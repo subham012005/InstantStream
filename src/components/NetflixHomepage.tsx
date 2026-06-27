@@ -50,9 +50,9 @@ export function recordContinueWatching(id: string): void {
 /* ─────────────────────────────────────────────
    Skeleton card
 ───────────────────────────────────────────── */
-function SkeletonCard({ wide = false }: { wide?: boolean }) {
+export function SkeletonCard({ wide = false }: { wide?: boolean }) {
   return (
-    <div className={`flex-none ${wide ? "w-[260px] md:w-[320px] aspect-video" : "w-[130px] sm:w-[180px] md:w-[220px] aspect-[2/3]"} rounded-md bg-[#2a2a2a] animate-pulse snap-start`} />
+    <div className={`flex-none ${wide ? "w-[320px] sm:w-[380px] md:w-[440px] aspect-video" : "w-[140px] sm:w-[180px] md:w-[220px] aspect-[2/3]"} rounded-md bg-[#2a2a2a] animate-pulse snap-start`} />
   );
 }
 
@@ -71,7 +71,11 @@ function HoverCard({ item, onSelect }: { item: CatalogItem; onSelect: () => void
     >
       {/* Preview thumbnail */}
       <div className="relative w-full aspect-video bg-[#222]">
-        <img src={item.backdropUrl || item.posterUrl} alt={item.title} className="w-full h-full object-cover" />
+        {(item.backdropUrl || item.posterUrl) ? (
+          <img src={item.backdropUrl || item.posterUrl} alt={item.title} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-white/20">No Image</div>
+        )}
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#181818] to-transparent" />
       </div>
       <div className="px-4 py-3 space-y-3">
@@ -120,7 +124,7 @@ function HoverCard({ item, onSelect }: { item: CatalogItem; onSelect: () => void
 /* ─────────────────────────────────────────────
    Poster Card
 ───────────────────────────────────────────── */
-function PosterCard({ item, variant = "default", onSelectMovie }: {
+export function PosterCard({ item, variant = "default", onSelectMovie }: {
   item: CatalogItem;
   variant?: RowVariant;
   onSelectMovie: (id: string) => void;
@@ -137,7 +141,8 @@ function PosterCard({ item, variant = "default", onSelectMovie }: {
     setHovered(false);
   };
 
-  const isLandscape = true;
+  const isLandscape = variant === "landscape";
+  const imageUrl = isLandscape ? (item.backdropUrl || item.posterUrl) : (item.posterUrl || item.backdropUrl);
 
   const handleCardClick = async () => {
     if (item.id) {
@@ -175,13 +180,13 @@ function PosterCard({ item, variant = "default", onSelectMovie }: {
         className={`relative cursor-pointer rounded-md overflow-hidden bg-[#222] shadow-lg
           ${isLandscape
             ? "w-[320px] sm:w-[380px] md:w-[440px] aspect-video"
-            : "w-[320px] sm:w-[380px] md:w-[440px] aspect-video"
+            : "w-[140px] sm:w-[180px] md:w-[220px] aspect-[2/3]"
           }
         `}
       >
-        {item.posterUrl && !item.posterUrl.includes("placeholder") ? (
+        {imageUrl && !imageUrl.includes("placeholder") ? (
           <img
-            src={item.backdropUrl || item.posterUrl}
+            src={imageUrl}
             alt={item.title}
             loading="lazy"
             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
@@ -296,7 +301,7 @@ function CatalogRowView({
         {/* Cards */}
         <div
           ref={scrollRef}
-          className="flex gap-1.5 overflow-x-auto overflow-y-visible snap-x snap-mandatory scroll-smooth py-4"
+          className="flex gap-4 overflow-x-auto overflow-y-visible snap-x snap-mandatory scroll-smooth py-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
         >
           {row.items.map((item, index) => (
@@ -451,7 +456,7 @@ export default function NetflixHomepage({
       const hydrated = await Promise.all(
         ids.map(async (id) => {
           try {
-            const res = await fetch(`/api/net/meta/${id}`);
+            const res = await fetch(`/api/netflix/meta/${id}`);
             const data = await res.json();
             if (data && data.title) {
               return {
@@ -497,12 +502,60 @@ export default function NetflixHomepage({
   /* Loading state */
   if (!catalog) {
     return (
-      <div className="min-h-screen bg-[#141414] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <span className="text-[#E50914] font-black text-3xl tracking-tight" style={{ fontFamily: "var(--font-sora, sans-serif)" }}>
-            NETFLIXPLAYS
-          </span>
-          <Loader2 className="w-8 h-8 text-white/30 animate-spin" />
+      <div className="min-h-screen bg-[#141414] overflow-hidden select-none">
+        {/* Navbar Skeleton */}
+        <nav className="fixed top-0 w-full z-50 flex items-center justify-between px-4 md:px-14 py-3 md:py-4 bg-gradient-to-b from-black/80 to-transparent">
+          <div className="flex items-center gap-6 md:gap-10">
+            <span className="text-[#E50914]/80 font-black text-xl md:text-2xl tracking-tight animate-pulse" style={{ fontFamily: "var(--font-sora, sans-serif)" }}>
+              NETFLIXPLAYS
+            </span>
+            <div className="hidden md:flex items-center gap-5">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-4 w-16 bg-[#2a2a2a] rounded animate-pulse" />
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-4 md:gap-5">
+            <div className="h-6 w-6 bg-[#2a2a2a] rounded-full animate-pulse" />
+            <div className="h-8 w-8 bg-[#2a2a2a] rounded animate-pulse" />
+          </div>
+        </nav>
+
+        {/* Hero Skeleton */}
+        <div className="relative w-full h-[80vh] lg:h-[90vh] bg-[#1a1a1a] flex items-end md:items-center">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
+          
+          <div className="relative z-10 px-4 md:px-14 w-full max-w-2xl mb-16 md:mb-0 mt-16 animate-pulse">
+            <div className="h-16 md:h-24 bg-[#2a2a2a] rounded-xl w-3/4 mb-6"></div>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-4 w-12 bg-[#2a2a2a] rounded"></div>
+              <div className="h-4 w-10 bg-[#2a2a2a] rounded"></div>
+              <div className="h-4 w-16 bg-[#2a2a2a] rounded"></div>
+            </div>
+            <div className="space-y-3 mb-8">
+              <div className="h-4 bg-[#2a2a2a] rounded w-full"></div>
+              <div className="h-4 bg-[#2a2a2a] rounded w-5/6"></div>
+              <div className="h-4 bg-[#2a2a2a] rounded w-4/6"></div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-28 bg-[#2a2a2a] rounded-md"></div>
+              <div className="h-10 w-32 bg-[#2a2a2a] rounded-md"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Rows Skeleton */}
+        <div className="relative z-10 -mt-24 md:-mt-32 px-4 md:px-14 flex flex-col gap-10 pb-24">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="group relative">
+              <div className="h-6 w-40 bg-[#2a2a2a] animate-pulse rounded mb-4" />
+              <div className="flex gap-4 overflow-hidden py-2">
+                {[...Array(5)].map((_, j) => (
+                  <SkeletonCard key={j} wide={true} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

@@ -6,6 +6,7 @@ import {
 import HeroIMDbSearch from "@/components/HeroIMDbSearch";
 import Link from "next/link";
 import { LandingPageStats } from "@/components/LandingPageStats";
+import QuickAccessButtons from "@/components/QuickAccessButtons";
 
 export default function Home() {
   return (
@@ -54,6 +55,9 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
+
+            {/* Premium Mirrors Quick Access */}
+            <QuickAccessButtons />
 
           </div>
 

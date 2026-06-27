@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const config = getAdminConfig();
-  return NextResponse.json(config);
+  const stats = (globalThis as any).proxyStats || [];
+  return NextResponse.json({ ...config, proxyStats: stats });
 }
 
 export async function POST(req: Request) {

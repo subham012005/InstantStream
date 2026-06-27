@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { getProxyDispatcher } from "@/lib/settings";
-
-const AES_KEY_HEX =
-  "a8f2a1b5e9c470814f6b2c3a5d8e7f9c1a2b3c4d5e3f7a8b8cad1e2d0a4d5c5b";
+import { getProxyDispatcher, getAdminConfig } from "@/lib/settings";
+import { fetch as undiciFetch } from "undici";
 
 const PROVIDERS: Record<string, any> = {
   moviebox: { label: "MovieBox", api: "https://uwu.eat-peach.sbs", path: "moviebox" },
@@ -28,9 +26,10 @@ function b64urlDecode(str: string) {
 
 function decryptPayload(data: string) {
   const [ivPart, cipherPart, tagPart] = data.split(".");
+  const aesKey = getAdminConfig().aesKey || "a8f2a1b5e9c470814f6b2c3a5d8e7f9c1a2b3c4d5e3f7a8b8cad1e2d0a4d5c5d";
   const decipher = crypto.createDecipheriv(
     "aes-256-gcm",
-    Buffer.from(AES_KEY_HEX, "hex"),
+    Buffer.from(aesKey, "hex"),
     b64urlDecode(ivPart)
   );
 
@@ -124,9 +123,8 @@ async function fetchGemmaLanguages(p3: any, playUrl: string, type: string, seaso
   const targetFileUrl = p3.file.startsWith("/") ? `${GEMMA_ORIGIN}${p3.file}` : p3.file;
 
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const langRes = await fetch(targetFileUrl, {
+    const langRes = await undiciFetch(targetFileUrl, {
       method: "POST",
-      // @ts-ignore
       dispatcher: getProxyDispatcher(),
       headers: {
         Accept: "application/json, text/plain, */*",
@@ -136,8 +134,7 @@ async function fetchGemmaLanguages(p3: any, playUrl: string, type: string, seaso
         "X-CSRF-TOKEN": p3.key,
         "User-Agent": "Mozilla/5.0"
       },
-      body: "",
-      cache: "no-store"
+      body: ""
     });
 
     const text = await langRes.text();
@@ -186,8 +183,7 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId, season, episode }: any
 
   const playUrl = `${GEMMA_ORIGIN}/play/${imdbId}`;
 
-  const html = await fetch(playUrl, {
-    // @ts-ignore
+  const html = await undiciFetch(playUrl, {
     dispatcher: getProxyDispatcher(),
     headers: {
       "User-Agent": "Mozilla/5.0",
@@ -245,11 +241,10 @@ async function fetchGemmaProvider({ type, tmdbId, imdbId, season, episode }: any
         return;
       }
 
-      const finalRes = await fetch(
+      const finalRes = await undiciFetch(
         `https://keymi417exx.com/playlist/${cleanFile}.txt`,
         {
           method: "POST",
-          // @ts-ignore
           dispatcher: getProxyDispatcher(),
           headers: {
             Accept: "*/*",
@@ -321,26 +316,48 @@ async function fetchFromProvider({ providerKey, type, tmdbId, season, episode, i
       : `${provider.api}/${provider.path}/tv/${tmdbId}/${season}/${episode}`;
 
   console.log("Provider API:", apiUrl);
+  console.log("Active proxy:", getAdminConfig().proxyUrl);
 
-  const response = await fetch(apiUrl, {
-    // @ts-ignore
-    dispatcher: getProxyDispatcher(),
-    signal: AbortSignal.timeout(8000),
-    headers: {
-      Accept: "*/*",
-      Origin: "https://peachify.top",
-      Referer: "https://peachify.top/",
-      "User-Agent": "Mozilla/5.0"
+  let response;
+  let raw;
+  let attempts = 0;
+  let fetchErr;
+
+  while (attempts < 3) {
+    attempts++;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try {
+      response = await undiciFetch(apiUrl, {
+        dispatcher: getProxyDispatcher(),
+        signal: controller.signal,
+        headers: {
+          Accept: "*/*",
+          Origin: "https://peachify.top",
+          Referer: "https://peachify.top/",
+          "User-Agent": "Mozilla/5.0"
+        }
+      });
+      raw = await response.text();
+      clearTimeout(timeout);
+      fetchErr = null;
+      break;
+    } catch (err: any) {
+      clearTimeout(timeout);
+      fetchErr = err;
+      if (attempts === 3) {
+        console.log(`Fetch error for ${providerKey} after 3 attempts:`, err);
+        throw err;
+      }
+      await delay(1000);
     }
-  });
-
-  const raw = await response.text();
-
-  if (!response.ok) {
-    throw new Error(`${provider.label} failed: ${response.status}`);
   }
 
-  let data = JSON.parse(raw);
+  if (!response || !response.ok) {
+    throw new Error(`${provider.label} failed: ${response?.status || fetchErr?.message}`);
+  }
+
+  let data = JSON.parse(raw!);
 
   if (data.isEncrypted && data.data) {
     data = decryptPayload(data.data);
@@ -489,15 +506,18 @@ async function fetchWithHeaderFallback(url: string, provider: string, customHead
       ...extra
     };
 
-    const response = await fetch(url, {
-      headers,
-      // @ts-ignore
-      dispatcher: getProxyDispatcher(),
-      redirect: "follow"
-    });
+    try {
+      const response = await undiciFetch(url, {
+        headers,
+        dispatcher: getProxyDispatcher(),
+        redirect: "follow"
+      });
 
-    if (response.ok) return response;
-    lastResponse = response;
+      if (response.ok) return response;
+      lastResponse = response;
+    } catch (err: any) {
+      console.log(`fetchWithHeaderFallback error for ${url}:`, err.message);
+    }
   }
 
   return lastResponse;
@@ -610,9 +630,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
           "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36"
         };
 
-        response = await fetch(fileUrl, {
+        response = await undiciFetch(fileUrl, {
           headers: streamHeaders,
-          // @ts-ignore
           dispatcher: getProxyDispatcher(),
           redirect: "manual"
         });

@@ -61,13 +61,17 @@ export interface ScrapedGenre {
    HTML helpers
 ───────────────────────────────────────────── */
 function clean(text = ""): string {
-  return String(text)
+  let str = String(text)
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, `"`)
     .replace(/&#x27;/g, `'`)
-    .replace(/\\u0026/g, "&")
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/\\u0026/g, "&");
+    
+  // Decode unicode and hex escapes
+  str = str.replace(/\\x([0-9A-Fa-f]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  str = str.replace(/\\u([0-9A-Fa-f]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  
+  return str.replace(/\s+/g, " ").trim();
 }
 
 async function fetchHtml(url: string): Promise<string> {

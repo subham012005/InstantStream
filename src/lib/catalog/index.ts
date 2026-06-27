@@ -24,10 +24,8 @@
 
 import type { NetflixCatalogProvider } from "./types";
 
-// ── Active provider (change these two lines to swap) ─────────────────────────
 import { NetflixScraperProvider } from "./providers/netflix-scraper.provider";
 const activeProvider: NetflixCatalogProvider = new NetflixScraperProvider();
-// ─────────────────────────────────────────────────────────────────────────────
 
 /** Returns the currently active catalog provider singleton. */
 export function getCatalogProvider(): NetflixCatalogProvider {

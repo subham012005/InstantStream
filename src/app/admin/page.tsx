@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 
 export default function AdminSettingsPage() {
-  const [proxyUrl, setProxyUrl] = useState("");
+  const [proxyList, setProxyList] = useState("");
+  const [proxyStats, setProxyStats] = useState<any[]>([]);
   const [showAdFree, setShowAdFree] = useState(true);
   const [defaultServer, setDefaultServer] = useState("auto");
   const [disabledServers, setDisabledServers] = useState<Record<string, boolean>>({});
+  const [aesKey, setAesKey] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -27,10 +29,12 @@ export default function AdminSettingsPage() {
     fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        setProxyUrl(data.proxyUrl || "");
+        setProxyList(data.proxyList || "");
+        setProxyStats(data.proxyStats || []);
         setShowAdFree(data.showAdFree ?? true);
         setDefaultServer(data.defaultServer || "auto");
         setDisabledServers(data.disabledServers || {});
+        setAesKey(data.aesKey || "a8f2a1b5e9c470814f6b2c3a5d8e7f9c1a2b3c4d5e3f7a8b8cad1e2d0a4d5c5b");
         setLoading(false);
       })
       .catch((err) => {
@@ -46,7 +50,7 @@ export default function AdminSettingsPage() {
       const res = await fetch("/api/admin/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proxyUrl, showAdFree, defaultServer, disabledServers }),
+        body: JSON.stringify({ proxyList, showAdFree, defaultServer, disabledServers, aesKey }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -83,21 +87,68 @@ export default function AdminSettingsPage() {
           </h2>
 
           <div className="space-y-8">
-            {/* Proxy Settings */}
+            {/* AES Key Settings */}
             <div>
               <label className="block text-sm font-bold text-white/70 tracking-wider uppercase mb-2">
-                Proxy URL (HTTP/HTTPS)
+                Decryption AES Key (Hex)
               </label>
               <input
                 type="text"
-                value={proxyUrl}
-                onChange={(e) => setProxyUrl(e.target.value)}
-                placeholder="http://ip:port or empty to bypass"
-                className="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 focus:border-[#E50914] transition-all"
+                value={aesKey}
+                onChange={(e) => setAesKey(e.target.value)}
+                placeholder="Enter 256-bit AES key in hex"
+                className="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 focus:border-[#E50914] transition-all font-mono text-sm"
               />
               <p className="mt-2 text-xs text-white/40">
-                Residential Proxy used for fetch requests to external providers (e.g., MovieBox, Net). Leave blank for default Vercel IP.
+                The AES-256-GCM key used to decrypt test-server payloads. Must be exactly 64 hex characters.
               </p>
+            </div>
+
+            {/* Proxy Settings */}
+            <div>
+              <label className="block text-sm font-bold text-white/70 tracking-wider uppercase mb-2">
+                Dynamic Proxy List
+              </label>
+              <textarea
+                value={proxyList}
+                onChange={(e) => setProxyList(e.target.value)}
+                placeholder="http://ip:port&#10;http://ip2:port"
+                rows={4}
+                className="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 focus:border-[#E50914] transition-all font-mono text-sm"
+              />
+              <p className="mt-2 text-xs text-white/40">
+                Paste proxies here (one per line). The system will test them and route all API traffic through the fastest, active proxy automatically.
+              </p>
+              
+              {/* Proxy Health Table */}
+              {proxyStats && proxyStats.length > 0 && (
+                <div className="mt-4 bg-black/30 rounded-xl border border-white/10 overflow-hidden">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-black/50 text-white/70 text-xs uppercase">
+                      <tr>
+                        <th className="px-4 py-2">Proxy</th>
+                        <th className="px-4 py-2">Status</th>
+                        <th className="px-4 py-2">Latency</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {proxyStats.map((stat, idx) => (
+                        <tr key={idx} className="text-white/90">
+                          <td className="px-4 py-2 font-mono text-xs">{stat.url}</td>
+                          <td className="px-4 py-2">
+                            {stat.status === 'active' && <span className="text-emerald-400">Active</span>}
+                            {stat.status === 'dead' && <span className="text-red-400">Dead</span>}
+                            {stat.status === 'testing' && <span className="text-yellow-400">Testing...</span>}
+                          </td>
+                          <td className="px-4 py-2">
+                            {stat.status === 'active' ? `${stat.latency}ms` : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Ad-Free App Settings */}

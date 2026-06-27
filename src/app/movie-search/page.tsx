@@ -36,6 +36,85 @@ interface OMDBMovieDetail {
 
 const GENRES = ["Trending", "Action", "Comedy", "Drama", "Sci-Fi", "Horror", "Romance", "Thriller"];
 
+const fetchMovieByIdFast = async (id: string): Promise<OMDBSearchResult> => {
+  const fetchOMDB = fetch(`/api/omdb?id=${encodeURIComponent(id)}`)
+    .then(res => {
+      if (!res.ok) throw new Error('OMDB failed');
+      return res.json();
+    })
+    .then(data => {
+      if (data.Response === 'False') throw new Error('OMDB not found');
+      return {
+        Title: data.Title,
+        Year: data.Year,
+        imdbID: data.imdbID,
+        Type: data.Type || 'movie',
+        Poster: data.Poster,
+      } as OMDBSearchResult;
+    });
+
+  const fetchTMDB = fetch(`/api/tmdb-proxy?path=/find/${encodeURIComponent(id)}&external_source=imdb_id`)
+    .then(res => {
+      if (!res.ok) throw new Error('TMDB failed');
+      return res.json();
+    })
+    .then(data => {
+      const result = data.movie_results?.[0] || data.tv_results?.[0];
+      if (!result) throw new Error('TMDB not found');
+      return {
+        Title: result.title || result.name,
+        Year: (result.release_date || result.first_air_date || 'N/A').split('-')[0],
+        imdbID: id,
+        Type: data.movie_results?.length > 0 ? 'movie' : 'series',
+        Poster: result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : 'N/A'
+      } as OMDBSearchResult;
+    });
+
+  return Promise.any([fetchOMDB, fetchTMDB]);
+};
+
+const fetchFullDetailsFast = async (imdbID: string): Promise<OMDBMovieDetail> => {
+  const fetchOMDB = fetch(`/api/omdb?id=${encodeURIComponent(imdbID)}`)
+    .then(res => {
+      if (!res.ok) throw new Error('OMDB failed');
+      return res.json();
+    })
+    .then(data => {
+      if (data.Response === 'False') throw new Error('OMDB not found');
+      return data as OMDBMovieDetail;
+    });
+
+  const fetchTMDB = fetch(`/api/tmdb-proxy?path=/find/${encodeURIComponent(imdbID)}&external_source=imdb_id`)
+    .then(res => {
+      if (!res.ok) throw new Error('TMDB failed');
+      return res.json();
+    })
+    .then(data => {
+      const result = data.movie_results?.[0] || data.tv_results?.[0];
+      if (!result) throw new Error('TMDB not found');
+      return {
+        Title: result.title || result.name,
+        Year: (result.release_date || result.first_air_date || 'N/A').split('-')[0],
+        Released: result.release_date || result.first_air_date || 'N/A',
+        Runtime: 'N/A',
+        Genre: 'N/A',
+        Director: 'N/A',
+        Writer: 'N/A',
+        Actors: 'N/A',
+        Plot: result.overview || 'N/A',
+        Country: 'N/A',
+        imdbRating: result.vote_average ? String(result.vote_average) : 'N/A',
+        imdbVotes: result.vote_count ? String(result.vote_count) : 'N/A',
+        Poster: result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : 'N/A',
+        imdbID: imdbID,
+        Type: data.movie_results?.length > 0 ? 'movie' : 'series',
+        Response: 'True'
+      } as OMDBMovieDetail;
+    });
+
+  return Promise.any([fetchOMDB, fetchTMDB]);
+};
+
 const DEFAULT_IMDB_IDS = [
   'tt0111161', 'tt0468569', 'tt1375666', 'tt0110912',
   'tt0137523', 'tt0816692', 'tt0245429', 'tt4154796'
@@ -186,17 +265,11 @@ function MovieSearchContent() {
 
           const fetched = await Promise.all(
             genreIds.map(async (id) => {
-              const res = await fetch(`/api/omdb?id=${encodeURIComponent(id)}`);
-              if (!res.ok) return null;
-              const data = await res.json();
-              if (data.Response === 'False') return null;
-              return {
-                Title: data.Title,
-                Year: data.Year,
-                imdbID: data.imdbID,
-                Type: data.Type || 'movie',
-                Poster: data.Poster,
-              } as OMDBSearchResult;
+              try {
+                return await fetchMovieByIdFast(id);
+              } catch (e) {
+                return null;
+              }
             })
           );
           setResults(fetched.filter(Boolean) as OMDBSearchResult[]);
@@ -232,17 +305,11 @@ function MovieSearchContent() {
 
         const fetched = await Promise.all(
           defaultIds.map(async (id) => {
-            const res = await fetch(`/api/omdb?id=${encodeURIComponent(id)}`);
-            if (!res.ok) return null;
-            const data = await res.json();
-            if (data.Response === 'False') return null;
-            return {
-              Title: data.Title,
-              Year: data.Year,
-              imdbID: data.imdbID,
-              Type: data.Type || 'movie',
-              Poster: data.Poster,
-            } as OMDBSearchResult;
+            try {
+              return await fetchMovieByIdFast(id);
+            } catch (e) {
+              return null;
+            }
           })
         );
         setDefaultMovies(fetched.filter(Boolean) as OMDBSearchResult[]);
@@ -278,17 +345,11 @@ function MovieSearchContent() {
     setTmdbDetails(null);
 
     try {
-      const res = await fetch(`/api/omdb?id=${encodeURIComponent(imdbID)}`);
-      if (!res.ok) throw new Error('Failed to fetch movie details');
-      const data = await res.json();
-
-      if (data.Response === "False") {
-        setErrorDetails(data.Error || "Movie not found");
-      } else {
-        setSelectedMovie(data);
-        // Also fetch backdrop from TMDB
+      const data = await fetchFullDetailsFast(imdbID);
+      setSelectedMovie(data);
+      // Also fetch backdrop from TMDB
         try {
-          const tmdbRes = await fetch(`https://api.themoviedb.org/3/find/${imdbID}?api_key=524c16f6e2a0a13c49ff7b99d27b5efb&external_source=imdb_id`);
+          const tmdbRes = await fetch(`/api/tmdb-proxy?path=/find/${imdbID}&external_source=imdb_id`);
           if (tmdbRes.ok) {
             const tmdbData = await tmdbRes.json();
             const result = tmdbData.movie_results?.[0] || tmdbData.tv_results?.[0];
@@ -298,7 +359,7 @@ function MovieSearchContent() {
                 setBackdropUrl(`https://image.tmdb.org/t/p/original${result.backdrop_path}`);
               }
               // Fetch extended details
-              const detailsRes = await fetch(`https://api.themoviedb.org/3/${type}/${result.id}?api_key=524c16f6e2a0a13c49ff7b99d27b5efb&append_to_response=credits,reviews`);
+              const detailsRes = await fetch(`/api/tmdb-proxy?path=/${type}/${result.id}&append_to_response=credits,reviews`);
               if (detailsRes.ok) {
                 const details = await detailsRes.json();
                 setTmdbDetails(details);
@@ -308,7 +369,6 @@ function MovieSearchContent() {
         } catch (e) {
           console.error("Failed to fetch backdrop", e);
         }
-      }
     } catch (err: any) {
       setErrorDetails(err.message || 'An error occurred fetching details.');
     } finally {
