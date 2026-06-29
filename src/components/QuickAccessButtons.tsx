@@ -1,9 +1,12 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Sparkles, Heart, X, AlertCircle } from "lucide-react";
 import Image from "next/image";
 
 export default function QuickAccessButtons() {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="w-full max-w-[900px] mx-auto z-20 mt-12 mb-8">
       {/* "NEW" Label */}
@@ -27,6 +30,7 @@ export default function QuickAccessButtons() {
           
           <a
             href="https://netmirror.fluxplays.live"
+            onClick={(e) => { e.preventDefault(); setShowModal(true); }}
             target="_blank" rel="noopener noreferrer"
             className="relative bg-[var(--bg-surface)] rounded-[18px] w-full h-full p-12 flex flex-col items-center justify-center min-h-[220px] overflow-hidden flex-1"
           >
@@ -56,6 +60,7 @@ export default function QuickAccessButtons() {
           
           <a
             href="https://amazon.fluxplays.live"
+            onClick={(e) => { e.preventDefault(); setShowModal(true); }}
             target="_blank" rel="noopener noreferrer"
             className="relative bg-[var(--bg-surface)] rounded-[18px] w-full h-full p-12 flex flex-col items-center justify-center min-h-[220px] overflow-hidden flex-1 text-left"
           >
@@ -77,6 +82,57 @@ export default function QuickAccessButtons() {
         </div>
 
       </div>
+
+      {/* ───── TIP BUTTON ───── */}
+      <div className="mt-12 flex justify-center">
+        <a
+          href="https://ko-fi.com/fluxplays"
+          target="_blank" rel="noopener noreferrer"
+          className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-yellow-400 to-amber-600 rounded-[18px] overflow-hidden hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(245,158,11,0.5)]"
+        >
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-[200%] transition-transform duration-1000" />
+          <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+          <span>Support on Ko-fi</span>
+        </a>
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-md bg-[var(--bg-surface)] border border-white/10 rounded-2xl shadow-2xl p-6 text-center overflow-hidden">
+            {/* Background effects */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-500/20 blur-[50px] rounded-full pointer-events-none" />
+            
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-red-500/20 rounded-full text-red-400">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-2">Service Unavailable</h3>
+            <p className="text-white/70 mb-6 text-sm leading-relaxed">
+              Due to a lack of funds to purchase a premium proxy, Netflix and Amazon Prime Video are currently not working. If you'd like to help bring these services back, please consider supporting the project!
+            </p>
+
+            <a
+              href="https://ko-fi.com/fluxplays"
+              target="_blank" rel="noopener noreferrer"
+              className="group relative inline-flex w-full items-center justify-center gap-2 px-6 py-3 font-bold text-white transition-all duration-300 bg-gradient-to-r from-yellow-400 to-amber-600 rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+            >
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-[200%] transition-transform duration-1000" />
+              <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+              <span>Support on Ko-fi</span>
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
