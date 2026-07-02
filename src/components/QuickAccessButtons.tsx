@@ -33,7 +33,7 @@ export default function QuickAccessButtons() {
         <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[var(--accent)]/50"></span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full text-left">
         
         {/* ───── NETFLIX CARD ───── */}
         <div className="relative group rounded-[20px] overflow-hidden p-[2px] transition-transform duration-500 hover:-translate-y-3 hover:shadow-[0_28px_70px_rgba(229,9,20,0.3)] cursor-pointer">
@@ -95,7 +95,7 @@ export default function QuickAccessButtons() {
           </a>
         </div>
 
-        {/* ───── FLUXPLAYS DOWNLOAD CARD ───── */}
+        {/* ───── FLUXPLAYS DOWNLOAD CARD (INDIAN) ───── */}
         <div className="relative group rounded-[20px] overflow-hidden p-[2px] transition-transform duration-500 hover:-translate-y-3 hover:shadow-[0_28px_70px_rgba(34,197,94,0.3)] cursor-pointer">
           {/* Always-on Spinning Light Ray */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_280deg,#22c55e_360deg)] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
@@ -103,7 +103,7 @@ export default function QuickAccessButtons() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_180deg,transparent_0_280deg,#22c55e_360deg)] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
           
           <a
-            href="https://download.fluxplays.live"
+            href="https://download2.fluxplays.live/"
             target="_blank" rel="noopener noreferrer"
             className="relative bg-[var(--bg-surface)] rounded-[18px] w-full h-full p-8 flex flex-col items-center justify-center min-h-[220px] overflow-hidden flex-1 text-center gap-4"
           >
@@ -121,9 +121,42 @@ export default function QuickAccessButtons() {
             <div className="relative z-10 flex flex-col items-center justify-center group-hover:scale-110 transition-transform duration-500">
               <div className="flex flex-col items-center gap-1 text-[#22c55e] mb-2">
                 <Download className="w-10 h-10 drop-shadow-[0_4px_20px_rgba(34,197,94,0.6)] mb-1" />
-                <span className="text-2xl font-black tracking-wider uppercase drop-shadow-[0_4px_20px_rgba(34,197,94,0.6)] text-center leading-tight">Fluxplays<br/>Download</span>
+                <span className="text-xl font-black tracking-wider uppercase drop-shadow-[0_4px_20px_rgba(34,197,94,0.6)] text-center leading-tight">Indian<br/>Download</span>
               </div>
-              <span className="text-xs font-bold tracking-widest text-green-400/80 uppercase bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">Free Downloads</span>
+              <span className="text-[10px] font-bold tracking-widest text-green-400/80 uppercase bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">Hindi Audio</span>
+            </div>
+          </a>
+        </div>
+
+        {/* ───── FLUXPLAYS DOWNLOAD CARD (ORIGINAL) ───── */}
+        <div className="relative group rounded-[20px] overflow-hidden p-[2px] transition-transform duration-500 hover:-translate-y-3 hover:shadow-[0_28px_70px_rgba(168,85,247,0.3)] cursor-pointer">
+          {/* Always-on Spinning Light Ray */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_280deg,#a855f7_360deg)] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* A second light ray for extra glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_180deg,transparent_0_280deg,#a855f7_360deg)] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <a
+            href="https://download.fluxplays.live"
+            target="_blank" rel="noopener noreferrer"
+            className="relative bg-[var(--bg-surface)] rounded-[18px] w-full h-full p-8 flex flex-col items-center justify-center min-h-[220px] overflow-hidden flex-1 text-center gap-4"
+          >
+            {/* Background texture image */}
+            <div className="absolute inset-0 z-0">
+              {/* Dark gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--bg-surface)] via-[var(--bg-surface)]/95 to-[#a855f7]/15" />
+            </div>
+
+            {/* Ambient inner glows */}
+            <div className="absolute -bottom-10 -right-10 z-0 w-44 h-44 rounded-full bg-[#a855f7]/20 blur-[60px] opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="absolute -top-10 -left-10 z-0 w-32 h-32 rounded-full bg-[#a855f7]/10 blur-[45px] opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center justify-center group-hover:scale-110 transition-transform duration-500">
+              <div className="flex flex-col items-center gap-1 text-[#a855f7] mb-2">
+                <Download className="w-10 h-10 drop-shadow-[0_4px_20px_rgba(168,85,247,0.6)] mb-1" />
+                <span className="text-xl font-black tracking-wider uppercase drop-shadow-[0_4px_20px_rgba(168,85,247,0.6)] text-center leading-tight">Original<br/>Download</span>
+              </div>
+              <span className="text-[10px] font-bold tracking-widest text-purple-400/80 uppercase bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">Global Audio</span>
             </div>
           </a>
         </div>
