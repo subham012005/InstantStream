@@ -30,7 +30,7 @@ export default function AboutPage() {
         <h2>Our Mission</h2>
         <p>Our mission is to bring zero-latency, high-performance video streaming back to the open web. By leveraging HLS capabilities, progressive chunking, and Edge computing via Vercel, we have engineered a player that can stream almost any valid video URL instantly in your browser.</p>
         <h2>The Team</h2>
-        <p>FluxPlays is developed by Subham Sharma, an engineer passionate about web performance and frontend architectures. View our <Link href="/creators">Creators page</Link> for more information.</p>
+        <p>FluxPlays is maintained by a team of open-source contributors passionate about web performance and frontend architectures. View our <Link href="/creators">Creators page</Link> for more information.</p>
       </main>
     </div>
   );

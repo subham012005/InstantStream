@@ -10,11 +10,11 @@ export default function DevToolsProtection() {
   useEffect(() => {
     // ── Owner backdoor ──────────────────────────────────────────────────────
     try {
-      Object.defineProperty(window, "imsubham", {
+      Object.defineProperty(window, "ownerbypass", {
         get() {
           try { localStorage.setItem("allow_devtools", "true"); } catch (e) {}
           setTimeout(() => window.location.reload(), 300);
-          return "✅ Access granted, boss! Reloading...";
+          return "✅ Access granted. Reloading...";
         },
         configurable: true,
       });

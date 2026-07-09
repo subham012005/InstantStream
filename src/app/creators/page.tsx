@@ -1,5 +1,3 @@
-import Link from "next/link";
-import Logo from "@/components/Logo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,13 +11,9 @@ export default function CreatorsPage() {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
     "mainEntity": {
-      "@type": "Person",
-      "name": "Subham Sharma",
-      "jobTitle": "Lead Developer",
-      "url": "https://fluxplays.live/creators",
-      "sameAs": [
-        "https://github.com/subham012005"
-      ]
+      "@type": "Organization",
+      "name": "FluxPlays Team",
+      "url": "https://fluxplays.live/about"
     }
   };
 
@@ -28,12 +22,11 @@ export default function CreatorsPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <main className="max-w-[720px] mx-auto px-6 pt-24 pb-16 prose dark:prose-invert">
         <h1>Authors & Creators</h1>
-        <p>FluxPlays is built and maintained by individuals deeply embedded in the React and open-source ecosystems.</p>
+        <p>FluxPlays is built and maintained by a team of developers passionate about building modern web application architectures and open-source video streaming tools.</p>
         <div className="border border-black/10 dark:border-white/10 p-6 rounded-xl mt-8">
-          <h2>Subham Sharma</h2>
-          <p className="text-sm uppercase tracking-widest text-primary font-bold">Creator & Lead Engineer</p>
-          <p>Full-stack developer focusing on Next.js performance optimization and streaming architectures.</p>
-          <a href="https://github.com/subham012005" target="_blank" className="text-primary hover:underline">GitHub Profile</a>
+          <h2>FluxPlays Team</h2>
+          <p className="text-sm uppercase tracking-widest text-primary font-bold">Open Source Contributors</p>
+          <p>We are a group of developers focusing on Next.js performance optimization and streaming architectures.</p>
         </div>
       </main>
     </div>

@@ -9,7 +9,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Reviews",
     date: "May 2026",
     readTime: "7 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "The streaming landscape has structurally shifted in 2026. The initial promise of cord-cutting—saving money by moving away from cable television—has largely evaporated as massive media conglomerates fragmented their catalogs into a dozen different $15/month subscriptions. This subscription fatigue has catalyzed a massive migration toward alternative streaming architectures. In this guide, we evaluate the best streaming platforms available today, categorizing them not just by their content libraries, but by their underlying technology, privacy commitments, and ad-insertion strategies.",
     sections: [
       { 
@@ -40,7 +40,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Development",
     date: "May 2026",
     readTime: "8 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "Building a video streaming application using React and Next.js has become the industry standard for modern web development. The challenge lies in state management during playback, handling Cross-Origin Resource Sharing (CORS) when fetching manifests, and wrapping complex vanilla JavaScript video engines (like video.js or hls.js) into declarative React components. This technical overview breaks down the best React streaming apps currently in production and highlights the architectural patterns that make them successful.",
     sections: [
       { 
@@ -67,7 +67,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Design",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "User interface design for movie streaming platforms is uniquely challenging. It requires balancing dense metadata (cast, genre, runtime, ratings) with visually dominant poster art, all while minimizing cognitive load so the user can quickly make a viewing decision. Furthermore, a streaming UI must seamlessly transition from a 2-foot mobile phone experience to a 10-foot television interface. This article dissects the design patterns used by the best movie streaming UIs in 2026.",
     sections: [
       { 
@@ -94,7 +94,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "7 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "As proprietary streaming services consolidate and enforce stricter DRM protocols, the demand for free and open-source software (FOSS) streaming platforms has skyrocketed. Open-source solutions give users absolute sovereignty over their data, ensuring that no corporate entity tracks viewing habits or suddenly revokes access to purchased media. This guide covers the best open-source streaming platforms, highlighting their architecture, self-hosting requirements, and active developer communities.",
     sections: [
       { 
@@ -121,7 +121,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Development",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "Building a Netflix clone is a rite of passage for many frontend developers. It challenges a developer to handle complex CSS layouts, consume massive third-party REST APIs (like TMDB), and implement advanced React state management. However, many clones fall short when it comes to actual video streaming. In this breakdown, we examine the best Netflix clone architectures available on GitHub, exploring how they tackle UI replication and media playback.",
     sections: [
       { 
@@ -148,7 +148,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "6 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "HTTP Live Streaming (HLS) is the absolute backbone of modern video delivery. Originally developed by Apple, it has become the universal standard for adapting video quality to user bandwidth dynamically. However, serving HLS streams at massive scale with low latency requires specialized infrastructure. This guide covers the best HLS streaming tools in 2026 for packaging, delivering, and playing fragmented media.",
     sections: [
       { 
@@ -175,7 +175,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Technical",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "While HLS is excellent for recorded video, its inherent chunking mechanism introduces latency (often 5 to 15 seconds). For real-time applications like live auctions, sports broadcasts, and interactive gaming streams, that latency is unacceptable. WebRTC (Web Real-Time Communication) solves this, operating at sub-500ms latencies. Here we analyze the best WebRTC streaming tools available for developers.",
     sections: [
       { 
@@ -202,7 +202,7 @@ export const seoClusterArticles: Article[] = [
     tag: "UX Design",
     date: "May 2026",
     readTime: "4 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "It is easy to build a basic streaming website, but creating one that users return to requires prioritizing specific UX features. Many platforms add bloated social features that no one uses, while ignoring the core mechanics of video playback. This article examines the best streaming website features that drive user retention and satisfaction.",
     sections: [
       { 
@@ -229,7 +229,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Development",
     date: "May 2026",
     readTime: "5 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "While HTML5 provides a native `<video>` element, relying on it directly across different browsers leads to wildly inconsistent UIs and severely limited format support (goodbye HLS). To build a modern streaming platform, developers must wrap the `<video>` tag with a robust library. Here are the best video player libraries available for web applications in 2026.",
     sections: [
       { 
@@ -256,7 +256,7 @@ export const seoClusterArticles: Article[] = [
     tag: "Design",
     date: "May 2026",
     readTime: "4 min read",
-    author: { name: "Subham Sharma", url: "https://fluxplays.live/creators" },
+    author: { name: "FluxPlays Team", url: "https://fluxplays.live/about" },
     intro: "Designing an entertainment application requires distinct UI patterns that prioritize content vibrancy. generic SaaS dashboards rely on white backgrounds and gray text, but streaming platforms must evoke emotion. This overview covers the best entertainment app UI ideas guiding top designers in 2026.",
     sections: [
       { 

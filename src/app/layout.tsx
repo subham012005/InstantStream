@@ -160,7 +160,7 @@ export default function RootLayout({
                 "FluxPlays is a modern video streaming web app for discovering and watching movies, shows, and entertainment content online.",
               applicationCategory: "EntertainmentApplication",
               operatingSystem: "Web",
-              creator: { "@type": "Person", name: "Subham Sharma" },
+              creator: { "@type": "Organization", name: "FluxPlays" },
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: "4.9",

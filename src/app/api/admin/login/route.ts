@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ADMIN_USER = "whoissubham";
-const ADMIN_PASS = "idk";
+const ADMIN_USER = process.env.ADMIN_USER || "admin";
+const ADMIN_PASS = process.env.ADMIN_PASSWORD || "admin123";
 const COOKIE_NAME = "admin_session";
 const COOKIE_VALUE = "authenticated";
 
