@@ -840,7 +840,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       selectedPlayerUrl !== "native" &&
       !nativeLoading &&
       !nativeData &&
-      !nativeError
+      !nativeError &&
+      adminConfig
     ) {
       loadAutoNativeServer();
     }
@@ -853,6 +854,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     selectedPlayerUrl,
     selectedSeason,
     selectedEpisode,
+    adminConfig,
   ]);
 
   const normalizeSubtitleTracks = (tracks: any[]): NativeSubtitleTrack[] => {
