@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Heart, X, AlertCircle, Download, Search, Film } from "lucide-react";
+import { Sparkles, Heart, X, AlertCircle, Download, Search, Film, Smartphone, Tv } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 
@@ -10,14 +10,14 @@ export default function QuickAccessButtons() {
   const [showFeatureIntro, setShowFeatureIntro] = useState(false);
 
   useEffect(() => {
-    const hasSeenFeature = localStorage.getItem("hasSeenFluxplaysDownloadFeature");
+    const hasSeenFeature = localStorage.getItem("hasSeenFluxplaysAndroidAppRelease");
     if (!hasSeenFeature) {
       setShowFeatureIntro(true);
     }
   }, []);
 
   const closeFeatureIntro = () => {
-    localStorage.setItem("hasSeenFluxplaysDownloadFeature", "true");
+    localStorage.setItem("hasSeenFluxplaysAndroidAppRelease", "true");
     setShowFeatureIntro(false);
   };
 
@@ -185,7 +185,7 @@ export default function QuickAccessButtons() {
             
             <button 
               onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors z-50"
             >
               <X className="w-5 h-5" />
             </button>
@@ -214,62 +214,67 @@ export default function QuickAccessButtons() {
         </div>
       )}
 
-      {/* New Feature Intro Modal */}
+      {/* Android App Release Modal */}
       {showFeatureIntro && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative w-full max-w-lg bg-[var(--bg-surface)] border border-green-500/30 rounded-2xl shadow-[0_0_50px_rgba(34,197,94,0.15)] p-8 text-center overflow-hidden">
+          <div className="relative w-full max-w-lg bg-[var(--bg-surface)] border border-red-500/30 rounded-2xl shadow-[0_0_50px_rgba(230,59,46,0.15)] p-8 text-center overflow-hidden">
             {/* Background effects */}
-            <div className="absolute -top-20 -right-20 w-60 h-60 bg-green-500/20 blur-[60px] rounded-full pointer-events-none" />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-emerald-500/20 blur-[60px] rounded-full pointer-events-none" />
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-red-500/10 blur-[60px] rounded-full pointer-events-none" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-amber-500/10 blur-[60px] rounded-full pointer-events-none" />
             
             <button 
               onClick={closeFeatureIntro}
-              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors cursor-pointer z-50"
             >
               <X className="w-6 h-6" />
             </button>
 
             <div className="flex justify-center mb-6 relative">
-              <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full scale-150" />
-              <div className="p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full text-green-400 relative border border-green-500/30">
-                <Sparkles className="w-10 h-10 animate-pulse" />
+              <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full scale-150" />
+              <div className="p-4 bg-gradient-to-br from-red-500/20 to-amber-500/20 rounded-full text-red-400 relative border border-red-500/30">
+                <Smartphone className="w-10 h-10 animate-pulse" />
               </div>
             </div>
 
-            <h3 className="text-2xl font-black text-white mb-3 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-300">
-              New Feature Unlocked!
+            <h3 className="text-2xl font-black text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-amber-300">
+              Android App is Live!
             </h3>
+            <p className="text-[12px] font-[family-name:var(--font-jetbrains-mono)] text-amber-400/80 mb-5 uppercase tracking-widest font-bold">
+              v1.0.0 Stable Release
+            </p>
             
             <div className="space-y-4 mb-8 text-left">
               <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
-                <div className="p-2 bg-green-500/20 rounded-lg text-green-400 mt-0.5">
-                  <Search className="w-5 h-5" />
+                <div className="p-2 bg-red-500/25 rounded-lg text-red-400 mt-0.5">
+                  <Smartphone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-white mb-1">Direct Search</h4>
-                  <p className="text-white/70 text-sm">Find any movie or TV show instantly with our powerful new search engine.</p>
+                  <h4 className="font-bold text-white mb-1">Optimized Mobile Player</h4>
+                  <p className="text-white/70 text-sm">Enjoy a fast, lightweight native player built for seamless movie streaming.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
-                <div className="p-2 bg-green-500/20 rounded-lg text-green-400 mt-0.5">
-                  <Download className="w-5 h-5" />
+                <div className="p-2 bg-red-500/25 rounded-lg text-red-400 mt-0.5">
+                  <Tv className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-white mb-1">Free Downloads</h4>
-                  <p className="text-white/70 text-sm">Download your favorites directly. No ads, completely free, zero hassle.</p>
+                  <h4 className="font-bold text-white mb-1">No Ads & Chromecast Casting</h4>
+                  <p className="text-white/70 text-sm">100% ad-free playback, background Picture-in-Picture mode, and Smart TV casting.</p>
                 </div>
               </div>
             </div>
 
-            <button
+            <a
+              href="https://expo.dev/artifacts/eas/daxowQ0Bl8asvwZOyQ70OjLU5y0giS9A0n3Z-V_lTq8.apk"
+              download="FluxPlays.apk"
               onClick={closeFeatureIntro}
-              className="group relative inline-flex w-full items-center justify-center gap-2 px-6 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(34,197,94,0.4)]"
+              className="group relative inline-flex w-full items-center justify-center gap-2.5 px-6 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-red-500 to-amber-600 rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(230,59,46,0.4)]"
             >
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-[200%] transition-transform duration-1000" />
-              <Film className="w-5 h-5" />
-              <span>Try it out now!</span>
-            </button>
+              <Download className="w-5 h-5" />
+              <span>Download APK File</span>
+            </a>
           </div>
         </div>
       )}

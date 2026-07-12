@@ -1,12 +1,13 @@
 import Script from "next/script";
 import Image from "next/image";
 import {
-  Film, Code, Search, ArrowRight, PlaySquare, Clapperboard, MonitorPlay, Link2, Sparkles, Star, Zap, RefreshCw
+  Film, Code, Search, ArrowRight, PlaySquare, Clapperboard, MonitorPlay, Link2, Sparkles, Star, Zap, RefreshCw, Smartphone, Download
 } from "lucide-react";
 import HeroIMDbSearch from "@/components/HeroIMDbSearch";
 import Link from "next/link";
 import { LandingPageStats } from "@/components/LandingPageStats";
 import QuickAccessButtons from "@/components/QuickAccessButtons";
+import AndroidAppBanner from "@/components/AndroidAppBanner";
 
 export default function Home() {
   return (
@@ -42,18 +43,34 @@ export default function Home() {
               <HeroIMDbSearch />
             </div>
 
-            {/* IMDb Player CTA */}
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-[12px] text-[var(--text-muted)] font-[family-name:var(--font-dm-sans)]">
-                Already have an IMDb ID?
-              </span>
-              <Link
-                href="/imdb-movie-stream-player"
-                className="flex items-center justify-center gap-2 bg-[#f5c518] hover:bg-[#e6b800] text-black rounded-[12px] px-[32px] py-[16px] text-[16px] font-bold transition-all hover:scale-[1.03] shadow-[0_8px_32px_rgba(245,197,24,0.3)]"
-              >
-                <span> Stream by IMDb ID</span>
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+            {/* IMDb Player CTA & Android App CTA */}
+            <div className="flex flex-col sm:flex-row items-center gap-6 justify-center w-full max-w-[640px] mx-auto mt-2">
+              <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
+                <span className="text-[12px] text-[var(--text-muted)] font-[family-name:var(--font-dm-sans)]">
+                  Already have an IMDb ID?
+                </span>
+                <Link
+                  href="/imdb-movie-stream-player"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#f5c518] hover:bg-[#e6b800] text-black rounded-[12px] px-[28px] py-[14px] text-[15px] font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_8px_24px_rgba(245,197,24,0.15)]"
+                >
+                  <span>Stream by IMDb ID</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
+                <span className="text-[12px] text-[var(--text-muted)] font-[family-name:var(--font-dm-sans)]">
+                  Prefer a mobile app?
+                </span>
+                <a
+                  href="https://expo.dev/artifacts/eas/daxowQ0Bl8asvwZOyQ70OjLU5y0giS9A0n3Z-V_lTq8.apk"
+                  download="FluxPlays.apk"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-[12px] px-[28px] py-[14px] text-[15px] font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_8px_24px_rgba(230,59,46,0.15)] border border-[rgba(230,59,46,0.2)]"
+                >
+                  <Smartphone className="w-4 h-4" />
+                  <span>Download Android App</span>
+                </a>
+              </div>
             </div>
 
             {/* Premium Mirrors Quick Access */}
@@ -65,6 +82,9 @@ export default function Home() {
             <span className="text-[var(--text-muted)]">▼</span>
           </div>
         </section>
+
+        {/* MOBILE APP RELEASE BANNER */}
+        <AndroidAppBanner />
 
         {/* SECTION 2: PICK YOUR INTENT */}
         <section className="py-24 px-4 md:px-8 max-w-[1200px] mx-auto">
