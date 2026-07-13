@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, PlaySquare, Film, RefreshCw, MonitorPlay, Cloud, Send, Type } from "lucide-react";
+import { ArrowRight, PlaySquare, Film, RefreshCw, MonitorPlay, Cloud, Send, Type, List, Activity, FileText } from "lucide-react";
 
 export const metadata = {
   title: "Free Tools | FluxPlays",
@@ -34,6 +34,27 @@ const toolsList = [
     href: "/hls-m3u8-stream-player",
     icon: MonitorPlay,
     tags: ["Developer", "Live Stream", "HLS"]
+  },
+  {
+    name: "IPTV Playlist Validator",
+    desc: "Validate, parse, and verify M3U playlists and channels.",
+    href: "/tools/iptv-playlist-validator",
+    icon: List,
+    tags: ["Utility", "IPTV", "M3U"]
+  },
+  {
+    name: "HLS Latency Tester",
+    desc: "Measure connection response latency and verify HLS stream configs.",
+    href: "/tools/hls-latency-tester",
+    icon: Activity,
+    tags: ["Developer", "Latency", "HLS"]
+  },
+  {
+    name: "Subtitle Converter",
+    desc: "Convert SRT subtitle files to WebVTT (.vtt) format online instantly.",
+    href: "/tools/srt-to-vtt-converter",
+    icon: FileText,
+    tags: ["Free", "WebVTT", "SRT"]
   },
   {
     name: "Google Drive Player",

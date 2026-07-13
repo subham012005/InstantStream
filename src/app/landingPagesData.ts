@@ -531,11 +531,11 @@ export const landingPages: Record<string, LandingPageData> = {
     slug: "imdb-movie-stream-player",
     canonicalUrl: `${BASE}/imdb-movie-stream-player`,
     badge: "IMDb ID Streaming",
-    headlinePart1: "Stream Movies via",
-    headlinePart2: "IMDb ID Instantly",
+    headlinePart1: "IMDbPlayer Free:",
+    headlinePart2: "Watch Movies using IMDb ID",
     subheadline:
-      "Paste any valid IMDb ID to find and stream your favorite movies directly in your browser without downloads or sign-ups.",
-    ctaText: "Stream using IMDb ID →",
+      "Looking for an IMDb player free of ads? FluxPlays is the ultimate IMDb movie viewer. Paste any movie or show's IMDb ID (e.g. tt0111161) to begin progressive video streaming online instantly in our browser player. No signups, no downloads — it just works.",
+    ctaText: "Open IMDb Player Free →",
     accentColor: "#f5c518",
     secondaryColor: "#eab308",
     features: [

@@ -8,6 +8,15 @@ import Link from "next/link";
 import { LandingPageStats } from "@/components/LandingPageStats";
 import QuickAccessButtons from "@/components/QuickAccessButtons";
 import AndroidAppBanner from "@/components/AndroidAppBanner";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "FluxPlays – Watch Movies Free Online | IMDb Player Free & Stream Player",
+  description: "Watch movies online free using IMDb ID, browse 500K+ titles, or stream any direct URL. FluxPlays is the ultimate IMDb movie viewer and progressive stream player.",
+  keywords: [
+    "fluxplays", "fluxplays.live", "flux plays", "imdb player", "imdbplayer", "imdb player free", "watch movies using imdb id", "imdb movie viewer", "pantyflix", "pantyflix alternative", "flyflix", "flyflix alternative", "redflix", "progressive video streaming", "stream movies free online"
+  ],
+};
 
 export default function Home() {
   return (
@@ -358,6 +367,64 @@ export default function Home() {
             <Link href="/blog" className="text-[var(--text-primary)] font-[family-name:var(--font-dm-sans)] font-semibold hover:text-[var(--accent)] transition-colors">
               View all articles →
             </Link>
+          </div>
+        </section>
+
+        {/* SECTION 6: SEO CLUSTER CONTENT */}
+        <section className="py-20 px-4 md:px-8 max-w-[1200px] mx-auto border-t border-[var(--border-subtle)]">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h2 className="font-[family-name:var(--font-sora)] font-bold text-[28px] text-[var(--text-primary)] mb-4">
+              A Modern, Safe Alternative to Legacy Streaming Sites
+            </h2>
+            <p className="font-[family-name:var(--font-dm-sans)] text-[15px] text-[var(--text-secondary)] leading-relaxed">
+              Tired of invasive ads, redirects, and broken links on sites like Pantyflix, Flyflix, or Redflix? FluxPlays is built with a different philosophy: zero ads, zero tracking, and a serverless architecture that puts you in control.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[16px] p-6 hover:border-[var(--accent)] transition-all">
+              <h3 className="font-[family-name:var(--font-sora)] font-bold text-[18px] text-[var(--text-primary)] mb-3">
+                Free IMDb Player & Movie Viewer
+              </h3>
+              <p className="font-[family-name:var(--font-dm-sans)] text-[14px] text-[var(--text-secondary)] leading-relaxed">
+                If you have an IMDb ID, FluxPlays is the best movie site where you can play movie by IMDb ID instantly. Simply search by title or paste codes like <code className="text-[var(--accent)] bg-[var(--accent)]/5 px-1 py-0.5 rounded font-mono">tt0111161</code>. Our engine resolves the media to bring you buffer-free streaming in our premium browser video player with no signups.
+              </p>
+            </div>
+
+            <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[16px] p-6 hover:border-[var(--accent)] transition-all">
+              <h3 className="font-[family-name:var(--font-sora)] font-bold text-[18px] text-[var(--text-primary)] mb-3">
+                Progressive Video Streaming & CDN Players
+              </h3>
+              <p className="font-[family-name:var(--font-dm-sans)] text-[14px] text-[var(--text-secondary)] leading-relaxed">
+                FluxPlays supports direct video links, Google Drive shares, and Telegram CDN media. With advanced HLS (.m3u8) decoding, adaptive quality selection, and local subtitle uploads (SRT/WebVTT), we optimize your playback natively. Watch movies online free without downloading or saving anything to your device.
+              </p>
+            </div>
+          </div>
+
+          {/* Quick links to comparison pages */}
+          <div className="text-center">
+            <span className="font-[family-name:var(--font-dm-sans)] text-[13px] text-[var(--text-muted)] block mb-4">
+              Compare us to other platforms:
+            </span>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {[
+                { name: "vs Pantyflix", href: "/compare/fluxplays-vs-pantyflix" },
+                { name: "vs Flyflix", href: "/compare/fluxplays-vs-flyflix" },
+                { name: "vs Redflix", href: "/compare/fluxplays-vs-redflix" },
+                { name: "vs Reelzone", href: "/compare/fluxplays-vs-reelzone" },
+                { name: "vs Netflix", href: "/compare/fluxplays-vs-netflix" },
+                { name: "vs Plex", href: "/compare/fluxplays-vs-plex" },
+                { name: "vs Jellyfin", href: "/compare/fluxplays-vs-jellyfin" }
+              ].map(link => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="px-3.5 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[12px] text-[var(--text-secondary)] font-[family-name:var(--font-dm-sans)] hover:border-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       </main>

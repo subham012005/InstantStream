@@ -2341,6 +2341,28 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
           </motion.div>
         )}
       </AnimatePresence>
+      {streamData?.movie && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Movie",
+              name: streamData.movie.title,
+              description: streamData.movie.overview || `Watch ${streamData.movie.title} online free in full HD on FluxPlays.`,
+              image: streamData.movie.poster || "https://fluxplays.live/og-image.png",
+              dateCreated: streamData.movie.year || undefined,
+              aggregateRating: streamData.movie.rating && streamData.movie.rating !== "N/A" ? {
+                "@type": "AggregateRating",
+                ratingValue: streamData.movie.rating,
+                bestRating: "10",
+                worstRating: "1",
+                ratingCount: "128"
+              } : undefined
+            })
+          }}
+        />
+      )}
     </div>
   );
 }

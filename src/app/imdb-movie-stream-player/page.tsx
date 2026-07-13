@@ -6,13 +6,20 @@ import { landingPages } from "@/app/landingPagesData";
 const data = landingPages["imdb-movie-stream-player"];
 
 export const metadata: Metadata = {
-  title: "IMDb ID Movie Player — Stream Any Movie by IMDb ID Free FluxPlays",
-  description: "Paste any IMDb ID like tt0111161 and watch the movie instantly in your browser. Free IMDb movie stream player — no signup, no downloads.",
+  title: "IMDbPlayer Free — Watch Movies Using IMDb ID | FluxPlays",
+  description: "Looking for an IMDb player free of ads? FluxPlays is the ultimate IMDb movie viewer where you can play movies by IMDb ID (e.g. tt0111161) online instantly.",
   keywords: [
-    "imdb id movie player", "stream movie by imdb id",
-    "watch movie using imdb id", "imdb id player online free",
-    "paste imdb id watch movie", "tt0111161 watch online",
-    "imdb movie stream player", "watch movie by imdb code",
+    "imdbplayer",
+    "imdb player free",
+    "imdb player",
+    "imdp player",
+    "watch movies using imdb id",
+    "a movie site where you can play movie by imdb id",
+    "imdb movie viewer",
+    "imdb id movie player",
+    "stream movie by imdb id",
+    "imdb id player online free",
+    "tt0111161 watch online"
   ],
   robots: {
     index: true,
@@ -21,16 +28,16 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: data.canonicalUrl },
   openGraph: {
-    title: "IMDb ID Movie Player — Stream Any Movie by IMDb ID Free FluxPlays",
-    description: "Paste any IMDb ID like tt0111161 and watch the movie instantly in your browser. Free IMDb movie stream player — no signup, no downloads.",
+    title: "IMDbPlayer Free — Watch Movies Using IMDb ID | FluxPlays",
+    description: "Looking for an IMDb player free of ads? FluxPlays is the ultimate IMDb movie viewer where you can play movies by IMDb ID online instantly.",
     url: data.canonicalUrl,
     type: "website",
     siteName: "FluxPlays",
   },
   twitter: {
     card: "summary_large_image",
-    title: "IMDb ID Movie Player — Stream Any Movie by IMDb ID Free FluxPlays",
-    description: "Paste any IMDb ID like tt0111161 and watch the movie instantly in your browser. Free IMDb movie stream player — no signup, no downloads.",
+    title: "IMDbPlayer Free — Watch Movies Using IMDb ID",
+    description: "Free online IMDb movie viewer and player.",
   },
 };
 
