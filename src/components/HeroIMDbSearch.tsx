@@ -30,8 +30,8 @@ export default function HeroIMDbSearch() {
   return (
     <div className="w-full flex flex-col items-center gap-4">
       {/* Label */}
-      <p className="text-[13px] text-[var(--text-muted)] font-[family-name:var(--font-dm-sans)] flex items-center gap-1.5">
-        <Sparkles className="w-3 h-3 text-[var(--accent)]" />
+      <p className="text-[14px] text-[var(--text-muted)] font-[family-name:var(--font-dm-sans)] flex items-center gap-2">
+        <Sparkles className="w-4 h-4 text-[var(--accent)] animate-pulse" />
         Search and stream — no account needed
       </p>
 
@@ -39,19 +39,19 @@ export default function HeroIMDbSearch() {
       <motion.div
         animate={shake ? { x: [-8, 8, -6, 6, -4, 4, 0] } : {}}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-[520px]"
+        className="w-full max-w-[700px]"
       >
         <div
-          className={`relative flex items-center rounded-[14px] border transition-all duration-300 overflow-hidden bg-[var(--bg-surface)] ${
+          className={`relative flex items-center rounded-[18px] border transition-all duration-300 overflow-hidden bg-[var(--bg-surface)] ${
             focused
-              ? "border-[var(--accent)]/60 shadow-[0_0_0_3px_rgba(230,59,46,0.08),0_8px_32px_rgba(230,59,46,0.08)]"
-              : "border-[var(--border)] shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+              ? "border-[var(--accent)]/60 shadow-[0_0_0_4px_rgba(230,59,46,0.1),0_12px_40px_rgba(230,59,46,0.12)]"
+              : "border-[var(--border)] shadow-[0_6px_30px_rgba(0,0,0,0.4)]"
           }`}
         >
           {/* Left icon */}
-          <div className="pl-4 pr-2 flex items-center shrink-0">
+          <div className="pl-5 pr-3 flex items-center shrink-0">
             <Search
-              className={`w-4 h-4 transition-colors duration-200 ${
+              className={`w-5.5 h-5.5 transition-colors duration-200 ${
                 focused ? "text-[var(--accent)]" : "text-[var(--text-muted)]"
               }`}
             />
@@ -66,8 +66,8 @@ export default function HeroIMDbSearch() {
             onKeyDown={handleKey}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder="Search movies, TV shows…"
-            className="flex-1 bg-transparent border-none outline-none shadow-none ring-0 py-3.5 font-[family-name:var(--font-dm-sans)] text-[15px] text-[var(--text-primary)] placeholder-[var(--text-muted)]/50 min-w-0"
+            placeholder="Search movies, TV shows by title or keyword..."
+            className="flex-1 bg-transparent border-none outline-none shadow-none ring-0 py-[18px] font-[family-name:var(--font-dm-sans)] text-[17px] text-[var(--text-primary)] placeholder-[var(--text-muted)]/50 min-w-0"
             style={{ border: "none", background: "transparent", boxShadow: "none" }}
             aria-label="Search movies"
             id="hero-movie-search"
@@ -84,11 +84,11 @@ export default function HeroIMDbSearch() {
                 exit={{ opacity: 0, scale: 0.7 }}
                 transition={{ duration: 0.15 }}
                 onClick={() => { setQuery(""); inputRef.current?.focus(); }}
-                className="p-1.5 mr-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors rounded-full hover:bg-[var(--bg-elevated)]"
+                className="p-2 mr-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors rounded-full hover:bg-[var(--bg-elevated)]"
                 tabIndex={-1}
                 aria-label="Clear"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </motion.button>
             )}
           </AnimatePresence>
@@ -96,11 +96,11 @@ export default function HeroIMDbSearch() {
           {/* Submit button */}
           <button
             onClick={handleSubmit}
-            className="shrink-0 m-1.5 px-5 py-2.5 rounded-[10px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-95 text-white font-[family-name:var(--font-sora)] font-bold text-[13px] transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
+            className="shrink-0 m-2 px-7 py-3.5 rounded-[12px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-95 text-white font-[family-name:var(--font-sora)] font-bold text-[15px] transition-all duration-200 flex items-center gap-2 whitespace-nowrap cursor-pointer"
             aria-label="Search movies"
           >
             Search
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </motion.div>

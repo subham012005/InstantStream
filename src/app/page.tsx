@@ -48,7 +48,7 @@ export default function Home() {
             </p>
 
             {/* Movie search bar */}
-            <div className="w-full max-w-[540px] mb-12">
+            <div className="w-full max-w-[720px] mb-12">
               <HeroIMDbSearch />
             </div>
 
