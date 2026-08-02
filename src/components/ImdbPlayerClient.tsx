@@ -27,6 +27,8 @@ import {
 import type { LandingPageData } from "@/app/landingPagesData";
 import { useSearchParams } from "next/navigation";
 
+const HIDE_NATIVE_SERVERS = true; // Temporary flag to hide our native servers and show third-party servers as main
+
 interface MovieMeta {
   title: string;
   year: string;
@@ -229,7 +231,9 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const [selectedPlayerUrl, setSelectedPlayerUrl] = useState<string>("");
-  const [selectedServerId, setSelectedServerId] = useState<string>("auto");
+  const [selectedServerId, setSelectedServerId] = useState<string>(
+    HIDE_NATIVE_SERVERS ? "server1" : "auto"
+  );
   const [thirdPartyOpen, setThirdPartyOpen] = useState(false);
   const [adminConfig, setAdminConfig] = useState<any>(null);
   const adminConfigRef = useRef<any>(null);
@@ -244,8 +248,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       .then((data) => {
         setAdminConfig(data);
         adminConfigRef.current = data;
-        if (data && data.defaultServer && selectedServerId === "auto") {
-          setSelectedServerId(data.defaultServer);
+        if (data && data.defaultServer && selectedServerId === (HIDE_NATIVE_SERVERS ? "server1" : "auto")) {
+          setSelectedServerId(HIDE_NATIVE_SERVERS ? "server1" : data.defaultServer);
         }
       })
       .catch(() => {});
@@ -436,7 +440,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
       };
 
       setStreamData(streamJson);
-      setSelectedServerId(adminConfigRef.current?.defaultServer || "auto");
+      setSelectedServerId(HIDE_NATIVE_SERVERS ? "server1" : (adminConfigRef.current?.defaultServer || "auto"));
       return true;
     } catch {
       setError("Failed to fetch movie details. Please try again.");
@@ -834,6 +838,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
 
   useEffect(() => {
     if (
+      !HIDE_NATIVE_SERVERS &&
       isPlaying &&
       streamData?.imdbId &&
       selectedServerId === "auto" &&
@@ -856,6 +861,12 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     selectedEpisode,
     adminConfig,
   ]);
+
+  useEffect(() => {
+    if (HIDE_NATIVE_SERVERS && isPlaying && streamData && ["server1", "server2", "server3"].includes(selectedServerId) && !selectedPlayerUrl) {
+      playThirdPartyServer(selectedServerId);
+    }
+  }, [isPlaying, streamData, selectedServerId]);
 
   const normalizeSubtitleTracks = (tracks: any[]): NativeSubtitleTrack[] => {
     return tracks
@@ -1419,7 +1430,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
 
                   <button
                     onClick={() => {
-                      setSelectedServerId("auto");
+                      setSelectedServerId(HIDE_NATIVE_SERVERS ? "server1" : "auto");
                       setIsPlaying(true);
                     }}
                     className="w-full flex items-center justify-center gap-3 bg-[#E50914] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-[#b80710] hover:scale-[1.02] transition-all shadow-[0_0_30px_rgba(229,9,20,0.3)]"
@@ -2105,7 +2116,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                       Select Server
                     </span>
                     <div className="flex flex-wrap gap-2">
-                      {NATIVE_SERVER_OPTIONS.filter(
+                      {!HIDE_NATIVE_SERVERS && NATIVE_SERVER_OPTIONS.filter(
                         (s) => adminConfig?.showAdFree !== false,
                       ).filter((s) => !adminConfig?.disabledServers?.[s.id]).map((server) => (
                         <button
@@ -2124,62 +2135,91 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                         </button>
                       ))}
 
-                      <div className="relative z-[100]">
+                      {HIDE_NATIVE_SERVERS && streamData?.playerUrl && !adminConfig?.disabledServers?.["server1"] && (
                         <button
-                          type="button"
-                          onClick={() => setThirdPartyOpen((open) => !open)}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-[4px] font-sans text-xs sm:text-sm font-bold transition-all outline-none ${["server1", "server2", "server3"].includes(selectedServerId) ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
-                          title="Third party server contain ads"
+                          onClick={() => playThirdPartyServer("server1")}
+                          className={`px-4 py-2 rounded-[4px] font-sans text-sm font-bold transition-all ${selectedServerId === "server1" ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
                         >
-                          <span>{thirdPartyServerLabel}</span>
-                          <ChevronDown
-                            className={`h-3.5 w-3.5 opacity-70 transition-transform ${thirdPartyOpen ? "rotate-180" : "rotate-0"}`}
-                          />
+                          Server 1 {selectedServerId === "server1" && "• Active"}
                         </button>
+                      )}
 
-                        <AnimatePresence>
-                          {thirdPartyOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 6, scale: 0.98 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                              transition={{ duration: 0.14 }}
-                              className="absolute left-0 top-full z-[200] mt-2 min-w-[200px] overflow-hidden rounded-[4px] border border-[#333333] bg-[#141414] py-1 shadow-2xl"
-                            >
-                              {streamData.playerUrl && !adminConfig?.disabledServers?.["server1"] && (
-                                <button
-                                  onClick={() =>
-                                    playThirdPartyServer("server1")
-                                  }
-                                  className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-sans text-sm font-bold text-[#a8a8a8] transition hover:bg-[#e50914] hover:text-white"
-                                >
-                                  Server 1
-                                </button>
-                              )}
-                              {alternatePlayerUrl && !adminConfig?.disabledServers?.["server2"] && (
-                                <button
-                                  onClick={() =>
-                                    playThirdPartyServer("server2")
-                                  }
-                                  className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-sans text-sm font-bold text-[#a8a8a8] transition hover:bg-[#e50914] hover:text-white"
-                                >
-                                  Server 2
-                                </button>
-                              )}
-                              {tmdbId && !adminConfig?.disabledServers?.["server3"] && (
-                                <button
-                                  onClick={() =>
-                                    playThirdPartyServer("server3")
-                                  }
-                                  className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-sans text-sm font-bold text-[#a8a8a8] transition hover:bg-[#e50914] hover:text-white"
-                                >
-                                  Server 3
-                                </button>
-                              )}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
+                      {HIDE_NATIVE_SERVERS && alternatePlayerUrl && !adminConfig?.disabledServers?.["server2"] && (
+                        <button
+                          onClick={() => playThirdPartyServer("server2")}
+                          className={`px-4 py-2 rounded-[4px] font-sans text-sm font-bold transition-all ${selectedServerId === "server2" ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
+                        >
+                          Server 2 {selectedServerId === "server2" && "• Active"}
+                        </button>
+                      )}
+
+                      {HIDE_NATIVE_SERVERS && tmdbId && !adminConfig?.disabledServers?.["server3"] && (
+                        <button
+                          onClick={() => playThirdPartyServer("server3")}
+                          className={`px-4 py-2 rounded-[4px] font-sans text-sm font-bold transition-all ${selectedServerId === "server3" ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
+                        >
+                          Server 3 {selectedServerId === "server3" && "• Active"}
+                        </button>
+                      )}
+
+                      {!HIDE_NATIVE_SERVERS && (
+                        <div className="relative z-[100]">
+                          <button
+                            type="button"
+                            onClick={() => setThirdPartyOpen((open) => !open)}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-[4px] font-sans text-xs sm:text-sm font-bold transition-all outline-none ${["server1", "server2", "server3"].includes(selectedServerId) ? "bg-[#e50914] text-white" : "bg-[#2f2f2f] text-[#ffffff] hover:bg-[#404040]"}`}
+                            title="Third party server contain ads"
+                          >
+                            <span>{thirdPartyServerLabel}</span>
+                            <ChevronDown
+                              className={`h-3.5 w-3.5 opacity-70 transition-transform ${thirdPartyOpen ? "rotate-180" : "rotate-0"}`}
+                            />
+                          </button>
+
+                          <AnimatePresence>
+                            {thirdPartyOpen && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                                transition={{ duration: 0.14 }}
+                                className="absolute left-0 top-full z-[200] mt-2 min-w-[200px] overflow-hidden rounded-[4px] border border-[#333333] bg-[#141414] py-1 shadow-2xl"
+                              >
+                                {streamData.playerUrl && !adminConfig?.disabledServers?.["server1"] && (
+                                  <button
+                                    onClick={() =>
+                                      playThirdPartyServer("server1")
+                                    }
+                                    className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-sans text-sm font-bold text-[#a8a8a8] transition hover:bg-[#e50914] hover:text-white"
+                                  >
+                                    Server 1
+                                  </button>
+                                )}
+                                {alternatePlayerUrl && !adminConfig?.disabledServers?.["server2"] && (
+                                  <button
+                                    onClick={() =>
+                                      playThirdPartyServer("server2")
+                                    }
+                                    className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-sans text-sm font-bold text-[#a8a8a8] transition hover:bg-[#e50914] hover:text-white"
+                                  >
+                                    Server 2
+                                  </button>
+                                )}
+                                {tmdbId && !adminConfig?.disabledServers?.["server3"] && (
+                                  <button
+                                    onClick={() =>
+                                      playThirdPartyServer("server3")
+                                    }
+                                    className="block w-full whitespace-nowrap px-4 py-2.5 text-left font-sans text-sm font-bold text-[#a8a8a8] transition hover:bg-[#e50914] hover:text-white"
+                                  >
+                                    Server 3
+                                  </button>
+                                )}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -2341,7 +2381,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
           </motion.div>
         )}
       </AnimatePresence>
-      {streamData?.movie && (
+      {streamData && streamData.movie && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
