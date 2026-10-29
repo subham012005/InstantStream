@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateSafeUrl } from '@/lib/security';
 
 export const runtime = 'nodejs';
 
@@ -11,7 +12,7 @@ const CORS_HEADERS = {
 
 const UPSTREAM_HEADERS = {
   'User-Agent':
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
   Accept: 'video/*,*/*;q=0.8',
 };
 
@@ -39,8 +40,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
     }
 
-    if (!videoUrl.startsWith('http')) {
-      return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+    // SSRF Validation
+    const safetyCheck = await validateSafeUrl(videoUrl);
+    if (!safetyCheck.safe || !safetyCheck.url) {
+      return NextResponse.json(
+        { error: safetyCheck.error || 'Invalid or forbidden destination URL' },
+        { status: 403 }
+      );
     }
 
     const rangeHeader = req.headers.get('range');
@@ -51,7 +57,7 @@ export async function GET(req: NextRequest) {
       method: 'GET',
       headers: {
         ...UPSTREAM_HEADERS,
-        Referer: new URL(videoUrl).origin,
+        Referer: safetyCheck.url.origin,
         ...(rangeHeader ? { Range: rangeHeader } : {}),
       },
       signal: controller.signal,
@@ -62,7 +68,7 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok && response.status !== 206) {
       return NextResponse.json(
-        { error: `Failed to fetch video: ${response.status}` },
+        { error: `Failed to fetch video: upstream returned HTTP ${response.status}` },
         { status: response.status }
       );
     }
@@ -85,6 +91,14 @@ export async function HEAD(req: NextRequest) {
       return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
     }
 
+    const safetyCheck = await validateSafeUrl(videoUrl);
+    if (!safetyCheck.safe || !safetyCheck.url) {
+      return NextResponse.json(
+        { error: safetyCheck.error || 'Invalid or forbidden destination URL' },
+        { status: 403 }
+      );
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -92,7 +106,7 @@ export async function HEAD(req: NextRequest) {
       method: 'HEAD',
       headers: {
         ...UPSTREAM_HEADERS,
-        Referer: new URL(videoUrl).origin,
+        Referer: safetyCheck.url.origin,
       },
       signal: controller.signal,
       redirect: 'follow',

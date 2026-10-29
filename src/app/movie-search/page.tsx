@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Loader2, Play, ArrowLeft, Star, Clock, Calendar, Globe, Film } from "lucide-react";
+import { Search, Loader2, Play, ArrowLeft, Star, Clock, Calendar, Globe, Film, Bookmark, X } from "lucide-react";
+import { isFavorite, toggleFavorite } from '@/lib/player/favorites';
 
 interface OMDBSearchResult {
   Title: string;
@@ -121,6 +122,27 @@ const DEFAULT_IMDB_IDS = [
 ];
 
 function MovieCard({ item, onClick, index = 0 }: { item: OMDBSearchResult; onClick: () => void; index?: number }) {
+  const [fav, setFav] = useState(false);
+
+  useEffect(() => {
+    setFav(isFavorite(item.imdbID));
+    const handleUpdate = () => setFav(isFavorite(item.imdbID));
+    window.addEventListener("instantstream_favorites_updated", handleUpdate);
+    return () => window.removeEventListener("instantstream_favorites_updated", handleUpdate);
+  }, [item.imdbID]);
+
+  const handleToggleFav = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = toggleFavorite({
+      id: item.imdbID,
+      title: item.Title,
+      year: item.Year,
+      type: item.Type === "series" ? "series" : "movie",
+      poster: item.Poster && item.Poster !== "N/A" ? item.Poster : undefined,
+    });
+    setFav(updated);
+  };
+
   return (
     <motion.button 
       initial={{ opacity: 0, y: 20 }}
@@ -144,6 +166,19 @@ function MovieCard({ item, onClick, index = 0 }: { item: OMDBSearchResult; onCli
             <Film className="w-8 h-8 text-white/20" />
           </div>
         )}
+
+        {/* Favorite Bookmark Button */}
+        <button
+          onClick={handleToggleFav}
+          aria-label={fav ? "Remove from favorites" : "Add to favorites"}
+          className={`absolute top-2.5 right-2.5 z-20 p-2 rounded-full backdrop-blur-md transition-all duration-200 cursor-pointer ${
+            fav
+              ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/40 scale-100 opacity-100"
+              : "bg-black/60 text-white/80 hover:text-white hover:bg-black/90 opacity-0 group-hover:opacity-100"
+          }`}
+        >
+          <Bookmark className={`w-3.5 h-3.5 ${fav ? "fill-white" : ""}`} />
+        </button>
         
         {/* Glassmorphic Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4">
@@ -193,10 +228,29 @@ function MovieSearchContent() {
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [backdropUrl, setBackdropUrl] = useState<string | null>(null);
   const [tmdbDetails, setTmdbDetails] = useState<any>(null);
+  const [isDetailFav, setIsDetailFav] = useState(false);
 
   const [activeGenre, setActiveGenre] = useState("Trending");
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    if (selectedMovie?.imdbID) {
+      setIsDetailFav(isFavorite(selectedMovie.imdbID));
+    }
+  }, [selectedMovie]);
+
+  const handleToggleDetailFav = () => {
+    if (!selectedMovie?.imdbID) return;
+    const updated = toggleFavorite({
+      id: selectedMovie.imdbID,
+      title: selectedMovie.Title,
+      year: selectedMovie.Year,
+      type: selectedMovie.Type === "series" ? "series" : "movie",
+      poster: selectedMovie.Poster && selectedMovie.Poster !== "N/A" ? selectedMovie.Poster : undefined,
+    });
+    setIsDetailFav(updated);
+  };
 
   // Auto-search whenever the URL 'q' or 'genre' parameter changes
   useEffect(() => {
@@ -230,7 +284,12 @@ function MovieSearchContent() {
             });
 
           const data = await Promise.any([fetchTMDB, fetchOMDB]);
-          setResults(data.Search);
+          // Deduplicate results by imdbID
+          const unique = (data.Search || []).filter(
+            (item: OMDBSearchResult, idx: number, arr: OMDBSearchResult[]) =>
+              idx === arr.findIndex((x) => x.imdbID === item.imdbID)
+          );
+          setResults(unique);
           if (data.CorrectedQuery) setCorrectedQuery(data.CorrectedQuery);
         } catch {
           setErrorSearch('No movies found');
@@ -272,7 +331,9 @@ function MovieSearchContent() {
               }
             })
           );
-          setResults(fetched.filter(Boolean) as OMDBSearchResult[]);
+          const valid = fetched.filter(Boolean) as OMDBSearchResult[];
+          const unique = valid.filter((item, idx, arr) => idx === arr.findIndex((x) => x.imdbID === item.imdbID));
+          setResults(unique);
         } catch {
           setErrorSearch('An error occurred loading genre movies.');
         } finally {
@@ -312,7 +373,9 @@ function MovieSearchContent() {
             }
           })
         );
-        setDefaultMovies(fetched.filter(Boolean) as OMDBSearchResult[]);
+        const valid = fetched.filter(Boolean) as OMDBSearchResult[];
+        const unique = valid.filter((item, idx, arr) => idx === arr.findIndex((x) => x.imdbID === item.imdbID));
+        setDefaultMovies(unique);
       } catch {
         // silently fail — page still usable
       } finally {
@@ -486,6 +549,18 @@ function MovieSearchContent() {
                 <Play className="relative z-10 w-7 h-7 fill-black" />
                 <span className="relative z-10">Play</span>
               </Link>
+
+              <button
+                onClick={handleToggleDetailFav}
+                className={`flex items-center gap-2.5 px-6 py-3.5 rounded-[4px] font-bold text-base border transition-all cursor-pointer ${
+                  isDetailFav
+                    ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-[0_0_20px_rgba(230,59,46,0.3)] hover:bg-[var(--accent-hover)]"
+                    : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+                }`}
+              >
+                <Bookmark className={`w-5 h-5 ${isDetailFav ? "fill-white" : ""}`} />
+                <span>{isDetailFav ? "In Favorites" : "Add to Favorites"}</span>
+              </button>
             </div>
 
             {/* Mini Cast Row */}
@@ -543,12 +618,22 @@ function MovieSearchContent() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search movies, TV shows, or paste IMDb ID..."
-              className="w-full bg-[var(--bg-elevated)]/50 backdrop-blur-2xl border border-white/10 rounded-full h-[64px] pl-[60px] pr-[130px] font-[family-name:var(--font-dm-sans)] text-[16px] text-[var(--text-primary)] focus:border-[var(--accent)]/50 focus:bg-white/10 outline-none transition-all shadow-2xl z-0"
+              className="w-full bg-[var(--bg-elevated)]/50 backdrop-blur-2xl border border-white/10 rounded-full h-[64px] pl-[60px] pr-[150px] font-[family-name:var(--font-dm-sans)] text-[16px] text-[var(--text-primary)] focus:border-[var(--accent)]/50 focus:bg-white/10 outline-none transition-all shadow-2xl z-0"
             />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="absolute right-[114px] top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10 cursor-pointer"
+                aria-label="Clear search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
             <button
               type="submit"
               disabled={loadingSearch || !query.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--accent)] text-white px-6 h-[48px] rounded-full text-[14px] font-bold hover:bg-[var(--accent-hover)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center min-w-[100px] z-10 shadow-[0_0_20px_rgba(229,9,20,0.4)]"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--accent)] text-white px-6 h-[48px] rounded-full text-[14px] font-bold hover:bg-[var(--accent-hover)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center min-w-[100px] z-10 shadow-[0_0_20px_rgba(229,9,20,0.4)] cursor-pointer"
             >
               {loadingSearch ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
             </button>

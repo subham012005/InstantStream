@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateSafeUrl } from "@/lib/security";
 
 export const runtime = "nodejs";
 
@@ -46,6 +47,11 @@ async function fetchUpstream(req: NextRequest) {
 
   if (!/^https?:\/\//i.test(url) || !/^tt\d{7,8}$/.test(imdbId)) {
     return { error: NextResponse.json({ error: "Invalid proxy request" }, { status: 400 }) };
+  }
+
+  const safetyCheck = await validateSafeUrl(url);
+  if (!safetyCheck.safe || !safetyCheck.url) {
+    return { error: NextResponse.json({ error: safetyCheck.error || "Forbidden destination" }, { status: 403 }) };
   }
 
   const range = req.headers.get("range");

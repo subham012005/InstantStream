@@ -23,9 +23,13 @@ import {
   Maximize,
   RotateCcw,
   RotateCw,
+  Bookmark,
+  BookmarkCheck,
 } from "lucide-react";
 import type { LandingPageData } from "@/app/landingPagesData";
 import { useSearchParams } from "next/navigation";
+import { saveWatchProgress } from "@/lib/player/history";
+import { isFavorite, toggleFavorite } from "@/lib/player/favorites";
 
 const HIDE_NATIVE_SERVERS = true; // Temporary flag to hide our native servers and show third-party servers as main
 
@@ -241,6 +245,13 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   const [selectedSeason, setSelectedSeason] = useState<number>(1);
   const [selectedEpisode, setSelectedEpisode] = useState<number>(1);
   const [episodeCount, setEpisodeCount] = useState<number>(0);
+  const [isFav, setIsFav] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (streamData?.imdbId) {
+      setIsFav(isFavorite(streamData.imdbId));
+    }
+  }, [streamData?.imdbId]);
 
   useEffect(() => {
     fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" })
@@ -435,7 +446,7 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
           type: omdbData?.Type,
           totalSeasons: omdbData?.totalSeasons,
         },
-        playerUrl: `https://gemma416okl.com/play/${id}`,
+        playerUrl: `https://slast430did.com/play/${resolvedImdbId}`,
         playerSource: "Gemma",
       };
 
@@ -504,10 +515,8 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
     if (streamData?.playerUrl) setSelectedPlayerUrl("");
   }, [streamData?.playerUrl]);
 
-  const alternatePlayerUrl = streamData
-    ? streamData.playerSource === "Gemma"
-      ? `https://vixsrc.to/movie/${streamData.imdbId}`
-      : `https://gemma416okl.com/play/${encodeURIComponent(streamData.imdbId)}`
+  const alternatePlayerUrl = streamData?.imdbId
+    ? `https://vixsrc.to/movie/${streamData.imdbId}`
     : "";
 
   const withThirdPartyAutoplay = (url: string) => {
@@ -524,15 +533,22 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
 
   const playThirdPartyServer = (serverId: string) => {
     let nextUrl = "";
+    const isSeries = streamData?.movie?.type === "series" || streamData?.movie?.type === "episode";
 
-    if (serverId === "server1" && streamData?.playerUrl) {
-      nextUrl = streamData.playerUrl;
+    if (serverId === "server1" && streamData?.imdbId) {
+      nextUrl = isSeries && selectedSeason && selectedEpisode
+        ? `https://slast430did.com/play/${streamData.imdbId}?s=${selectedSeason}&e=${selectedEpisode}`
+        : `https://slast430did.com/play/${streamData.imdbId}`;
     }
-    if (serverId === "server2" && alternatePlayerUrl) {
-      nextUrl = alternatePlayerUrl;
+    if (serverId === "server2" && streamData?.imdbId) {
+      nextUrl = isSeries && selectedSeason && selectedEpisode
+        ? `https://vixsrc.to/tv/${streamData.imdbId}/${selectedSeason}/${selectedEpisode}`
+        : `https://vixsrc.to/movie/${streamData.imdbId}`;
     }
     if (serverId === "server3" && tmdbId) {
-      nextUrl = `https://player.videasy.net/movie/${tmdbId}`;
+      nextUrl = isSeries && selectedSeason && selectedEpisode
+        ? `https://player.videasy.net/tv/${tmdbId}/${selectedSeason}/${selectedEpisode}`
+        : `https://player.videasy.net/movie/${tmdbId}`;
     }
 
     if (!nextUrl) return;
@@ -863,10 +879,25 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
   ]);
 
   useEffect(() => {
-    if (HIDE_NATIVE_SERVERS && isPlaying && streamData && ["server1", "server2", "server3"].includes(selectedServerId) && !selectedPlayerUrl) {
+    if (isPlaying && streamData?.imdbId) {
+      saveWatchProgress({
+        id: streamData.imdbId,
+        title: streamData.movie?.title || streamData.imdbId,
+        poster: streamData.movie?.poster,
+        type: streamData.movie?.type || "movie",
+        season: streamData.movie?.type === "series" ? selectedSeason : undefined,
+        episode: streamData.movie?.type === "series" ? selectedEpisode : undefined,
+        progress: 0,
+        duration: 0,
+      });
+    }
+  }, [isPlaying, streamData?.imdbId, selectedSeason, selectedEpisode]);
+
+  useEffect(() => {
+    if (isPlaying && streamData && ["server1", "server2", "server3"].includes(selectedServerId)) {
       playThirdPartyServer(selectedServerId);
     }
-  }, [isPlaying, streamData, selectedServerId]);
+  }, [isPlaying, streamData, selectedServerId, selectedSeason, selectedEpisode]);
 
   const normalizeSubtitleTracks = (tracks: any[]): NativeSubtitleTrack[] => {
     return tracks
@@ -1437,6 +1468,25 @@ export default function ImdbPlayerClient({ data }: { data: LandingPageData }) {
                   >
                     <Play className="w-5 h-5 fill-current" />
                     Stream Now
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (streamData?.imdbId) {
+                        const added = toggleFavorite({
+                          id: streamData.imdbId,
+                          title: streamData.movie?.title || streamData.imdbId,
+                          poster: streamData.movie?.poster,
+                          type: streamData.movie?.type || "movie",
+                          year: streamData.movie?.year,
+                          rating: streamData.movie?.rating,
+                        });
+                        setIsFav(added);
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 border border-white/20 bg-white/5 hover:bg-white/10 text-white px-8 py-3.5 rounded-2xl font-bold text-sm transition-all"
+                  >
+                    {isFav ? <BookmarkCheck className="w-4 h-4 text-[#F5C518]" /> : <Bookmark className="w-4 h-4 text-white/80" />}
+                    <span>{isFav ? "Saved to Favorites" : "Add to Favorites"}</span>
                   </button>
                 </div>
 

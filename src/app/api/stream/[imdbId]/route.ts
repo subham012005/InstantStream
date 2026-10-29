@@ -173,10 +173,8 @@ export async function GET(
   const stream = await resolveStream(imdbId);
   
   const countryCode = await getCountryFromRequest(_req);
-  const playerSource = "Gemma";
-  const playerUrl = playerSource === "Gemma"
-    ? `https://gemma416okl.com/play/${imdbId}`
-    : `https://vixsrc.to/movie/${imdbId}`;
+  const playerSource = "Server1";
+  const playerUrl = `https://slast430did.com/play/${imdbId}`;
 
   if (!stream) {
     return NextResponse.json(

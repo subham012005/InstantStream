@@ -8,6 +8,7 @@ import Link from "next/link";
 import { LandingPageStats } from "@/components/LandingPageStats";
 import QuickAccessButtons from "@/components/QuickAccessButtons";
 import AndroidAppBanner from "@/components/AndroidAppBanner";
+import ContinueWatching from "@/components/ContinueWatching";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -91,6 +92,11 @@ export default function Home() {
             <span className="text-[var(--text-muted)]">▼</span>
           </div>
         </section>
+
+        {/* SECTION: CONTINUE WATCHING (Renders when user has active playback history) */}
+        <div className="max-w-[1200px] mx-auto px-4 md:px-8 pt-4">
+          <ContinueWatching />
+        </div>
 
         {/* MOBILE APP RELEASE BANNER */}
         <AndroidAppBanner />

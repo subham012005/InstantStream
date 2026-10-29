@@ -4,12 +4,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlaySquare, Film, RefreshCw, Search, MonitorPlay, Cloud, Send, Type, Menu, X } from 'lucide-react';
+import { PlaySquare, Film, RefreshCw, Search, MonitorPlay, Cloud, Send, Type, Menu, X, Bookmark } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import dynamic from 'next/dynamic';
 
 const FeedbackModal = dynamic(
   () => import("@/components/FeedbackModal").then((m) => ({ default: m.FeedbackModal })),
+  { ssr: false }
+);
+
+const FavoritesModal = dynamic(
+  () => import("@/components/FavoritesModal"),
   { ssr: false }
 );
 
@@ -39,6 +44,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const pathname = usePathname();
   const lastScrollY = useRef(0);
 
@@ -179,7 +185,15 @@ export function Navbar() {
           </nav>
 
           {/* Right Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={() => setIsFavoritesOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]/60 hover:border-[#f5c518]/60 text-xs font-semibold text-[var(--text-secondary)] hover:text-white transition-all cursor-pointer"
+              title="My Favorites"
+            >
+              <Bookmark className="w-3.5 h-3.5 text-[#f5c518]" />
+              <span>Favorites</span>
+            </button>
             <ThemeToggle />
             <Link 
               href="/movie-search" 
@@ -190,7 +204,14 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Toggle & Theme */}
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={() => setIsFavoritesOpen(true)}
+              className="p-2 rounded-lg text-[#f5c518] hover:bg-white/5 transition-colors"
+              title="My Favorites"
+            >
+              <Bookmark className="w-5 h-5 fill-current" />
+            </button>
             <ThemeToggle />
             <button 
               className="text-[var(--text-primary)] p-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
@@ -233,7 +254,17 @@ export function Navbar() {
                   ))}
                 </div>
               </div>
-              <div className="pt-4 pb-6">
+              <div className="pt-4 pb-6 flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsFavoritesOpen(true);
+                  }}
+                  className="flex items-center justify-center gap-2 w-full bg-[var(--bg-elevated)] border border-[var(--border)] text-white rounded-lg h-12 text-[15px] font-semibold"
+                >
+                  <Bookmark className="w-4 h-4 text-[#f5c518]" />
+                  <span>View Favorites</span>
+                </button>
                 <Link 
                   href="/movie-search" 
                   className="flex items-center justify-center w-full bg-[var(--accent)] text-white rounded-lg h-12 text-[15px] font-semibold"
@@ -249,6 +280,7 @@ export function Navbar() {
       {isFeedbackOpen && (
         <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
       )}
+      <FavoritesModal isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
     </>
   );
 }
