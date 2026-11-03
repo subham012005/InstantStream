@@ -52,6 +52,8 @@ export interface SmartPlayerProps {
   onFatalError?: (type: string, details: string) => void;
   onEnded?: () => void;
   autoPlay?: boolean;
+  aspectRatio?: string;
+  className?: string;
 }
 
 // Module-level Hls cache to prevent multiple loads
@@ -91,6 +93,8 @@ export default function SmartPlayer({
   onFatalError,
   onEnded,
   autoPlay = true,
+  aspectRatio,
+  className = '',
 }: SmartPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -653,7 +657,8 @@ export default function SmartPlayer({
       ref={containerRef}
       onMouseMove={triggerShowControls}
       onTouchStart={handleTouchScreen}
-      className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl group select-none"
+      style={aspectRatio ? { aspectRatio } : undefined}
+      className={`relative w-full ${aspectRatio ? '' : 'aspect-video'} bg-black rounded-2xl overflow-hidden border border-[var(--border)] shadow-2xl group select-none ${className}`}
     >
       {/* Video HTML5 Element */}
       <video

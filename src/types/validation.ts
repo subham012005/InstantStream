@@ -26,6 +26,7 @@ export interface ValidationResponse {
   supportsStreaming?: boolean;
   acceptRanges?: boolean;
   contentLength?: number;
+  isEmbed?: boolean;
 }
 
 export interface StreamMetadata {

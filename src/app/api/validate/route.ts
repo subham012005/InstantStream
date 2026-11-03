@@ -24,6 +24,69 @@ function getGoogleDriveStreamUrl(url: string): string | null {
   }
 }
 
+function isTelegramCdnUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    // Telegram CDN domains that serve actual video files
+    return (
+      host.endsWith('.cdn-telegram.org') ||
+      host.endsWith('.telegram.org') && (host.startsWith('cdn') || host.startsWith('files') || host.startsWith('dc')) ||
+      host === 'cdn.telegram.org' ||
+      /^cdn\d+\.telegram\.org$/.test(host) ||
+      /^cdn\d+\.cdn-telegram\.org$/.test(host) ||
+      /^files\d+\.telegram\.org$/.test(host) ||
+      /^dc\d+-\d+\.tgcnt\.com$/.test(host) ||
+      host.endsWith('.tgcnt.com')
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isTelegramShareLink(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === 't.me' || host === 'telegram.me' || host === 'telegram.dog';
+  } catch {
+    return false;
+  }
+}
+
+// Detect public channel post: t.me/channelname/123 or telegram.me/channelname/123
+function getTelegramPublicPostEmbed(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
+    if (host !== 't.me' && host !== 'telegram.me' && host !== 'telegram.dog') return null;
+    // path must be /channelname/12345  (public channel post)
+    const parts = u.pathname.replace(/^\//, '').split('/');
+    if (parts.length >= 2 && parts[0] && /^\d+$/.test(parts[1])) {
+      // Valid: /channel/msgid
+      // NOT valid: /joinchat/... , /+hash, /s/channel
+      const channel = parts[0];
+      if (channel === 'joinchat' || channel === 's' || channel.startsWith('+')) return null;
+      const msgId = parts[1];
+      return `https://t.me/${channel}/${msgId}?embed=1&mode=tme`;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function getTelegramPostTitle(url: string): string {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.replace(/^\//, '').split('/');
+    if (parts.length >= 2) {
+      return `@${parts[0]} — Post #${parts[1]}`;
+    }
+    return 'Telegram Video';
+  } catch {
+    return 'Telegram Video';
+  }
+}
+
 function isDirectPlayUrl(url: string): boolean {
   try {
     const host = new URL(url).hostname.toLowerCase();
@@ -34,7 +97,8 @@ function isDirectPlayUrl(url: string): boolean {
       host.endsWith('.cdninstagram.com') ||
       host.endsWith('.twimg.com') ||
       host.endsWith('.dropboxusercontent.com') ||
-      host.endsWith('.1drv.ms')
+      host.endsWith('.1drv.ms') ||
+      isTelegramCdnUrl(url)
     );
   } catch {
     return false;
@@ -45,7 +109,7 @@ function detectLinkType(url: string): string {
   try {
     const u = new URL(url);
     if (u.hostname.includes("drive.google.com")) return "Google Drive";
-    if (u.hostname.includes("t.me") || u.hostname.includes("telegram.org")) return "Telegram";
+    if (isTelegramCdnUrl(url) || isTelegramShareLink(url)) return "Telegram";
     const ext = u.pathname.split(".").pop()?.toUpperCase();
     const videoExts = ["MP4", "MKV", "WEBM", "AVI", "MOV", "M3U8", "OGG", "TS", "FLV"];
     if (ext && videoExts.includes(ext)) return ext;
@@ -115,6 +179,39 @@ export async function POST(req: NextRequest) {
 
     const type = detectLinkType(url);
     const title = getFileName(url);
+
+    // Handle t.me public channel post links — embed via Telegram's official embed player
+    if (isTelegramShareLink(url)) {
+      const embedUrl = getTelegramPublicPostEmbed(url);
+      if (embedUrl) {
+        // Valid public post: return as embed type so the player uses an iframe
+        steps[0].status = "success";
+        steps.push({ step: "connection", status: "success", label: "Connecting to Telegram" });
+        steps.push({ step: "filetype", status: "success", label: "Detecting media" });
+        steps.push({ step: "streaming", status: "success", label: "Preparing embed" });
+        steps.push({ step: "preparing", status: "success", label: "Launching player" });
+        return NextResponse.json({
+          streamUrl: embedUrl,
+          title: getTelegramPostTitle(url),
+          type: "Telegram",
+          valid: true,
+          steps,
+          supportsStreaming: true,
+          isEmbed: true,
+        } as ValidationResponse);
+      }
+      // Non-embeddable t.me link (joinchat, invite, etc.)
+      steps[0].status = "error";
+      steps[0].message = "Cannot play this link";
+      return NextResponse.json(
+        {
+          error: "This Telegram link can't be played directly. Only public channel/group post links (t.me/channel/123) and direct Telegram CDN video URLs work here.",
+          valid: false,
+          steps,
+        } as ValidationResponse,
+        { status: 400 }
+      );
+    }
 
     // Reject Google Drive ephemeral download links
     if (parsedUrl.hostname === "video-downloads.googleusercontent.com") {

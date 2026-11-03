@@ -13,6 +13,8 @@ export interface CustomPlayerProps {
   season?: number;
   episode?: number;
   isSeries?: boolean;
+  aspectRatio?: string;
+  className?: string;
 }
 
 export default function CustomPlayer({
@@ -25,6 +27,8 @@ export default function CustomPlayer({
   season,
   episode,
   isSeries,
+  aspectRatio,
+  className,
 }: CustomPlayerProps) {
   return (
     <SmartPlayer
@@ -37,6 +41,8 @@ export default function CustomPlayer({
       season={season}
       episode={episode}
       isSeries={isSeries}
+      aspectRatio={aspectRatio}
+      className={className}
     />
   );
 }

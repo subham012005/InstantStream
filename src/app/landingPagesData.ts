@@ -232,38 +232,97 @@ export const landingPages: Record<string, LandingPageData> = {
   "telegram-video-player": {
     slug: "telegram-video-player",
     canonicalUrl: `${BASE}/telegram-video-player`,
-    badge: "Telegram CDN Player",
-    headlinePart1: "Play Telegram Videos",
-    headlinePart2: "in Your Browser",
+    badge: "Telegram Video Viewer & Player Online",
+    headlinePart1: "Telegram Video Viewer &",
+    headlinePart2: "Player Online",
     subheadline:
-      "Copy any public Telegram CDN video link and stream it instantly. No need to open Telegram Desktop or download the file. Just paste and watch.",
-    ctaText: "Play Telegram Video →",
+      "Play and watch Telegram video links online directly in your browser without downloading or using the Telegram app. Fast, free, and fully compatible with all public Telegram links and CDN streams.",
+    ctaText: "Play Telegram Video Online →",
     accentColor: "#0088cc",
     secondaryColor: "#00b4d8",
     features: [
-      { icon: "📨", title: "Telegram CDN Support", description: "Streams videos hosted on Telegram's CDN servers (telegram-cdn.org) directly in any modern browser." },
-      { icon: "📲", title: "No App Required", description: "Watch Telegram videos from any browser — even if you don't have Telegram installed on your device." },
-      { icon: "🚀", title: "Fast CDN Delivery", description: "Telegram's globally distributed CDN is blazing fast. FluxPlays leverages it for instant video startup." },
-      { icon: "🎞️", title: "Full Video Controls", description: "Seek to any position, change playback speed, go fullscreen — all the controls Telegram's web player lacks." },
-      { icon: "🔁", title: "Clip Looping", description: "Set loop points to replay specific sections of Telegram videos. Perfect for short clips and reactions." },
-      { icon: "🎵", title: "Audio-Only Mode", description: "Minimize the video and stream only audio — great for Telegram voice messages or podcast clips." },
+      {
+        icon: "⚡",
+        title: "Telegram Link Video Player",
+        description:
+          "Paste any public Telegram post link (t.me/channel/123) or CDN URL. FluxPlays extracts and streams the video directly in your web browser.",
+      },
+      {
+        icon: "🌐",
+        title: "Play Without Downloading",
+        description:
+          "Stream Telegram videos online without filling your phone or PC storage. Watch instantly with responsive video controls and fullscreen mode.",
+      },
+      {
+        icon: "🎬",
+        title: "VLC-Grade Browser Compatibility",
+        description:
+          "Handles tricky Telegram MP4 files, HEVC/H.265 encodings, and container restrictions via automated server remuxing and transcoding.",
+      },
+      {
+        icon: "📝",
+        title: "Original Post Captions",
+        description:
+          "Extracts and preserves the full original caption text, emojis, and links from the Telegram post directly beneath the video player.",
+      },
+      {
+        icon: "📥",
+        title: "High-Speed Original Quality Download",
+        description:
+          "Need an offline copy? Download the full original quality Telegram MP4 file with one click at maximum CDN speeds.",
+      },
+      {
+        icon: "🔒",
+        title: "No App or Login Required",
+        description:
+          "Works completely standalone. No need to install Telegram Desktop, log into an account, or share personal credentials.",
+      },
     ],
     steps: [
-      { step: 1, title: "Open the Telegram Video", body: "In Telegram Web or Desktop: right-click (or long-press) the video → 'Copy video link' or open in browser and copy the URL." },
-      { step: 2, title: "Paste Into FluxPlays", body: "Go to FluxPlays and paste the Telegram CDN URL. The player loads it instantly without any re-encoding." },
-      { step: 3, title: "Stream Without Syncing", body: "Watch, seek, loop, or slow down the Telegram video — all within FluxPlays, without touching the Telegram app." },
+      {
+        step: 1,
+        title: "Copy Public Telegram Video Link",
+        body: "In Telegram app, web, or desktop: right-click or tap the video post and select 'Copy Link' or copy the direct CDN URL.",
+      },
+      {
+        step: 2,
+        title: "Paste URL in Online Player",
+        body: "Paste the link into the Telegram Video Viewer input box above and click 'Play Video'. FluxPlays extracts the video and caption in seconds.",
+      },
+      {
+        step: 3,
+        title: "Watch Online or Download",
+        body: "Enjoy smooth in-browser playback with seeking and volume controls, read the post caption, or download the original file.",
+      },
     ],
     faqs: [
-      { q: "Can I play any Telegram video in FluxPlays?", a: "FluxPlays works with Telegram videos that have a publicly accessible CDN URL. Private file links from end-to-end encrypted chats may not be accessible externally." },
-      { q: "How do I get the direct link to a Telegram video?", a: "In Telegram Web: right-click the video → 'Copy video URL'. In Desktop: right-click → Open in browser, then copy the URL from the browser address bar." },
-      { q: "Why does the Telegram video show as an access error?", a: "Telegram video links can expire or be set to private. Try forwarding the original message to a public channel to get a fresh, accessible video link." },
-      { q: "Does FluxPlays support Telegram voice messages?", a: "Yes, Telegram voice messages hosted on the CDN can be streamed in FluxPlays as audio with standard playback controls." },
+      {
+        q: "How to play video in Telegram without downloading?",
+        a: "Copy the public post link (e.g. t.me/channel/123) and paste it into our Telegram Video Player online. The video streams directly in your browser without saving any file to your device.",
+      },
+      {
+        q: "What types of Telegram links work with this video player?",
+        a: "FluxPlays supports all public Telegram channel posts, forum/topic posts (t.me/channel/topic/id), and direct Telegram CDN video URLs (such as cdn*.telesco.pe or cdn*.telegram.org). Private channels and invite-only links are restricted by Telegram and cannot be streamed externally.",
+      },
+      {
+        q: "Can I watch Telegram videos on PC without the Telegram app?",
+        a: "Yes! FluxPlays works in any modern web browser on PC, Mac, Android, and iOS. You do not need to install Telegram Desktop or log into your account.",
+      },
+      {
+        q: "Why do some Telegram videos fail in browser but work in VLC?",
+        a: "Some Telegram videos use video codecs (like HEVC/H.265 or high-profile AVC) or MP4 container layouts that standard browser video elements cannot decode. FluxPlays automatically detects these incompatible files and transcodes them on the fly for smooth web playback.",
+      },
+      {
+        q: "Is this Telegram video player online free to use?",
+        a: "Yes, FluxPlays Telegram video player is 100% free with unlimited video playback, caption viewing, and original file downloads.",
+      },
     ],
     relatedLinks: [
+      { label: "Direct Video Link Player", href: "/play-direct-video-links" },
+      { label: "Stream Videos Without Downloading", href: "/stream-videos-without-downloading" },
       { label: "Google Drive Player", href: "/google-drive-video-player" },
       { label: "Watch MP4 Online", href: "/watch-mp4-online-player" },
-      { label: "No-Download Streaming", href: "/stream-videos-without-downloading" },
-      { label: "Browser Video Player", href: "/browser-video-player-online" },
+      { label: "M3U8 Stream Player", href: "/m3u8-player-online" },
     ],
   },
 
