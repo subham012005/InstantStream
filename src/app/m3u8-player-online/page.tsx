@@ -44,12 +44,17 @@ export const metadata: Metadata = {
 export default function M3u8PlayerOnlinePage() {
   const videoSchema = {
     "@context": "https://schema.org",
-    "@type": "VideoObject",
+    "@type": "WebApplication",
     name: "M3U8 Player Online",
-    description: "Stream M3U8 and HLS playlists directly in your browser.",
-    thumbnailUrl: "https://fluxplays.live/og-image.png",
-    uploadDate: "2026-01-15",
+    description: "Stream M3U8 and HLS playlists directly in your browser without downloads.",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "All (Browser, Windows, Mac, Android, iOS)",
     url: data.canonicalUrl,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   const toolSchema = {

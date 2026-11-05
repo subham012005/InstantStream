@@ -42,12 +42,17 @@ export const metadata: Metadata = {
 export default function NoDownloadVideoStreamingPage() {
   const videoSchema = {
     "@context": "https://schema.org",
-    "@type": "VideoObject",
+    "@type": "WebApplication",
     name: "No Download Video Streaming",
     description: "Stream videos online without saving them to your device.",
-    thumbnailUrl: "https://fluxplays.live/og-image.png",
-    uploadDate: "2026-01-15",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "All (Browser, Windows, Mac, Android, iOS)",
     url: data.canonicalUrl,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   const toolSchema = {

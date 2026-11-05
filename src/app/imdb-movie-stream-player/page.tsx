@@ -44,12 +44,17 @@ export const metadata: Metadata = {
 export default function ImdbMovieStreamPlayerPage() {
   const movieSchema = {
     "@context": "https://schema.org",
-    "@type": "VideoObject",
+    "@type": "WebApplication",
     name: "IMDb Movie Stream Player",
     description: "Stream movies using their IMDb IDs directly in your browser.",
-    thumbnailUrl: "https://fluxplays.live/og-image.png",
-    uploadDate: "2026-01-15",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "All (Browser, Windows, Mac, Android, iOS)",
     url: data.canonicalUrl,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   const toolSchema = {

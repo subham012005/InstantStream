@@ -12,6 +12,7 @@ export interface Article {
   conclusion: string;
   relatedSlugs: string[];
   keyTakeaways?: string[];
+  featuredTool?: { name: string; href: string; label: string };
 }
 
 export const articles: Article[] = [
@@ -36,7 +37,12 @@ export const articles: Article[] = [
       { heading: "Supported Formats in the Browser", body: "The browser's built-in decoder supports MP4 (H.264/AAC) natively across all major browsers. WEBM (VP8/VP9) works in Chrome and Firefox. HLS (.m3u8) streams are supported natively in Safari, and FluxPlays loads hls.js automatically for Chrome and Firefox users. If your link ends in .mp4, .webm, or .m3u8, you're ready to paste and play." }
     ],
     conclusion: "Streaming without downloading is made possible by the HTTP Range Request standard combined with the browser's built-in media decoders. FluxPlays is built around this model — paste any direct video URL and playback begins immediately, no account or install required.",
-    relatedSlugs: ["mp4-vs-webm-streaming", "how-browser-video-streaming-works", "best-free-video-streaming-apps-2026"]
+    relatedSlugs: ["mp4-vs-webm-streaming", "how-browser-video-streaming-works", "best-free-video-streaming-apps-2026"],
+    featuredTool: {
+      name: "Paste & Play Direct Link Player",
+      href: "/play-direct-video-links",
+      label: "Stream MP4, WEBM, and raw video links directly in your browser without saving files."
+    }
   },
   {
     slug: "mp4-vs-webm-streaming",
@@ -54,7 +60,12 @@ export const articles: Article[] = [
       { heading: "Which Should You Use with FluxPlays?", body: "Both formats work in FluxPlays. If you're pasting a link from an existing source, the format is determined for you. If you're encoding your own content, use MP4 for the widest compatibility. Use WEBM/VP9 if you know your audience uses Chrome and you want to save bandwidth. FluxPlays detects the format automatically and uses the appropriate decoder path." }
     ],
     conclusion: "There's no single right answer — MP4 wins on compatibility, WEBM wins on file size. For most streaming use cases where you want your video to play for everyone without issues, MP4 remains the safer pick. When bandwidth efficiency matters more, WEBM delivers real gains on Chrome and Firefox.",
-    relatedSlugs: ["how-browser-video-streaming-works", "best-free-video-streaming-apps-2026", "how-to-build-a-netflix-clone-with-nextjs"]
+    relatedSlugs: ["how-browser-video-streaming-works", "best-free-video-streaming-apps-2026", "how-to-build-a-netflix-clone-with-nextjs"],
+    featuredTool: {
+      name: "Watch MP4 Online Player",
+      href: "/watch-mp4-online-player",
+      label: "Zero-install web player to stream direct MP4 links with full browser controls."
+    }
   },
   {
     slug: "how-browser-video-streaming-works",
@@ -126,7 +137,12 @@ export const articles: Article[] = [
       { heading: "What Actually Works with FluxPlays", body: "FluxPlays supports direct Drive export URLs. If you construct a `uc?export=download` link for a file under 100MB that you own, it will stream in FluxPlays's player. For larger files, use a service like Dropbox (direct links end in `?raw=1`), Cloudflare R2, or any web server that serves proper `Content-Type: video/mp4` headers and supports Range Requests. These are significantly more reliable for streaming than Drive." }
     ],
     conclusion: "Google Drive works for small, private video files when you use the correct export URL format. For anything beyond personal use — larger files, public sharing, or reliable seeking — a dedicated file host is the right choice. FluxPlays works with any host that supports direct URL playback.",
-    relatedSlugs: ["react-video-player-customization", "hls-vs-dash-streaming-protocols", "how-to-stream-telegram-videos-online"]
+    relatedSlugs: ["react-video-player-customization", "hls-vs-dash-streaming-protocols", "how-to-stream-telegram-videos-online"],
+    featuredTool: {
+      name: "Google Drive Video Player",
+      href: "/google-drive-video-player",
+      label: "Paste shared Google Drive links to stream videos online without waiting for full downloads."
+    }
   },
   {
     slug: "react-video-player-customization",
@@ -180,7 +196,12 @@ export const articles: Article[] = [
       { heading: "Alternative Approaches for Telegram Video", body: "If direct link playback isn't working, the most reliable alternative is downloading the file via Telegram's official app or web interface, then either hosting it yourself on a cloud storage service (like Cloudflare R2 or Supabase Storage) or streaming it locally with a tool like VLC. Self-hosted video gives you a stable, reliable URL you control completely." }
     ],
     conclusion: "Telegram video streaming in a browser is possible when the URL is a direct, publicly accessible media file. FluxPlays will play it if the link is compatible. For authenticated or app-only content, downloading and re-hosting on a proper media storage service is the most reliable path.",
-    relatedSlugs: ["understanding-webrtc-vs-hls", "top-10-movie-discovery-apps", "why-fluxplays-is-the-best-streaming-platform"]
+    relatedSlugs: ["understanding-webrtc-vs-hls", "top-10-movie-discovery-apps", "why-fluxplays-is-the-best-streaming-platform"],
+    featuredTool: {
+      name: "Telegram Video Viewer & Player Online",
+      href: "/telegram-video-player",
+      label: "Paste any public Telegram link or CDN video URL and watch instantly in your browser without the app."
+    }
   },
   {
     slug: "understanding-webrtc-vs-hls",
@@ -216,7 +237,12 @@ export const articles: Article[] = [
       { heading: "Simple, Decisive Tools", body: "Sometimes you don't want to curate — you want someone to just tell you what to watch. Spin the Wheel (various implementations) and platforms like Movieo allow you to filter by genre, decade, and rating and get a random pick. The TMDB mobile app's Discover feature works similarly. For couples' decisions, Rave's watch party voting feature lets two people swipe yes/no on options and matches on mutual selections." }
     ],
     conclusion: "Movie discovery in 2026 is split between social curation (Letterboxd), availability aggregation (JustWatch), and algorithmic personalization (Taste.io). Using one from each category covers the full decision-making process — what exists, what's available, and what you'll actually enjoy.",
-    relatedSlugs: ["why-fluxplays-is-the-best-streaming-platform", "reducing-video-buffering-tips", "self-hosted-video-streaming"]
+    relatedSlugs: ["why-fluxplays-is-the-best-streaming-platform", "reducing-video-buffering-tips", "self-hosted-video-streaming"],
+    featuredTool: {
+      name: "Movie Search & Discovery Engine",
+      href: "/movie-search",
+      label: "Browse over 500K+ movies and stream titles with zero account signup."
+    }
   },
   {
     slug: "why-fluxplays-is-the-best-streaming-platform",
@@ -234,7 +260,12 @@ export const articles: Article[] = [
       { heading: "What FluxPlays Is Not", body: "FluxPlays doesn't host any video content. It doesn't rip or download from streaming services (those have DRM protection that operates at a completely different layer). It's a tool for playing video URLs you already have legitimate access to — from your own cloud storage, your media server, public educational resources, or any direct file link. It works within the same boundaries as your browser's built-in video player, just with a significantly better interface." }
     ],
     conclusion: "FluxPlays is built for a specific use case: playing a video URL immediately, without friction. If you have the link, you have the player. No install, no account, no limitations beyond what the video URL itself supports.",
-    relatedSlugs: ["reducing-video-buffering-tips", "self-hosted-video-streaming", "impact-of-cdn-on-video-streaming"]
+    relatedSlugs: ["reducing-video-buffering-tips", "self-hosted-video-streaming", "impact-of-cdn-on-video-streaming"],
+    featuredTool: {
+      name: "IMDb Movie Stream Player",
+      href: "/imdb-movie-stream-player",
+      label: "Watch movies using any IMDb ID in Cinema Mode without signup or ads."
+    }
   },
   {
     slug: "reducing-video-buffering-tips",
@@ -324,7 +355,12 @@ export const articles: Article[] = [
       { heading: "Troubleshooting M3U8 Playback", body: "If an M3U8 stream doesn't play, there are three common causes: **CORS headers** — the video segments must be served with `Access-Control-Allow-Origin: *` or include your domain. If they don't, the browser blocks the segment requests (this is a server-side restriction). **Authentication** — some M3U8 streams require tokens in the segment URLs that expire. Expired token URLs will play briefly then fail. **Broken segments** — if the origin server is down or the CDN returns 404 for segments, the player will stall. Check the browser's Network tab to confirm which URLs are failing." }
     ],
     conclusion: "M3U8 streams play seamlessly in FluxPlays without any setup. The player handles HLS natively in the browser using hls.js. If a stream isn't playing, check the browser's network inspector for CORS errors or failed segment requests — those indicate server-side restrictions rather than a player issue.",
-    relatedSlugs: ["the-future-of-p2p-video-streaming", "building-media-streaming-ui-react", "safari-vs-chrome-video-playback"]
+    relatedSlugs: ["the-future-of-p2p-video-streaming", "building-media-streaming-ui-react", "safari-vs-chrome-video-playback"],
+    featuredTool: {
+      name: "HLS / M3U8 Stream Player",
+      href: "/hls-m3u8-stream-player",
+      label: "Play, inspect, and test .m3u8 live playlists and adaptive bitrate HLS streams in browser."
+    }
   },
   {
     slug: "the-future-of-p2p-video-streaming",

@@ -6,6 +6,7 @@ import { Download, Layout, Palette, Share2, ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Branding & Assets | FluxPlays",
   description: "Official FluxPlays brand assets, logos, and guidelines for press and partners.",
+  alternates: { canonical: "https://fluxplays.live/branding" },
 };
 
 export default function BrandingPage() {

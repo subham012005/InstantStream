@@ -1,9 +1,19 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, PlaySquare, Film, RefreshCw, MonitorPlay, Cloud, Send, Type, List, Activity, FileText } from "lucide-react";
 
-export const metadata = {
-  title: "Free Tools | FluxPlays",
-  description: "A collection of free utility tools for video streaming and media conversion.",
+export const metadata: Metadata = {
+  title: "Free Video Tools & Media Converters — FluxPlays",
+  description: "Free online streaming utilities and developer tools: IMDb player, M3U8 HLS player, SRT to VTT subtitle converter, IPTV validator, and latency tester.",
+  alternates: {
+    canonical: "https://fluxplays.live/tools",
+  },
+  openGraph: {
+    title: "Free Video Tools & Media Converters — FluxPlays",
+    description: "Free online streaming utilities and developer tools: IMDb player, M3U8 HLS player, SRT to VTT subtitle converter, IPTV validator, and latency tester.",
+    url: "https://fluxplays.live/tools",
+    type: "website",
+  },
 };
 
 const toolsList = [

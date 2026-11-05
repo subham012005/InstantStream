@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Leaving FluxPlays? Confirm your destination",
   description: "See a quick ad before continuing to your selected community site.",
+  robots: { index: false, follow: false },
 };
 
 export default function GoPage() {

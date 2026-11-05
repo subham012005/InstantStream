@@ -117,9 +117,6 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
     creator: "@fluxplays",
   },
-  alternates: {
-    canonical: "https://fluxplays.live",
-  },
   verification: {
     google: "KqdYTJrHIT42Hgxlk50mHAaHCQODltsy-x2AzSsFbuI",
   },

@@ -15,7 +15,7 @@ export default function ContactPage() {
         <h1>Contact Us</h1>
         <p>If you have any business propositions, technical feedback, or want to contribute to the open-source architecture, you can contact the team behind FluxPlays.</p>
         <h2>Technical Support</h2>
-        <p>If you are experiencing issues with video links, please ensure you have read our <Link href="/faq">FAQ</Link> first. Note that we do not host any videos, so dead links are outside of our control.</p>
+        <p>If you are experiencing issues with video links, please ensure you have read our <Link href="/guides">Guides & Documentation</Link> first. Note that we do not host any videos, so dead links are outside of our control.</p>
         <h2>GitHub</h2>
         <p>The best way to contact the team or contribute is directly through the open-source repository on GitHub.</p>
       </main>

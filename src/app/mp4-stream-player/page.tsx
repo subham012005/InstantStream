@@ -44,12 +44,17 @@ export const metadata: Metadata = {
 export default function Mp4StreamPlayerPage() {
   const videoSchema = {
     "@context": "https://schema.org",
-    "@type": "VideoObject",
+    "@type": "WebApplication",
     name: "MP4 Stream Player",
     description: "Stream MP4 videos directly from any URL with progressive download.",
-    thumbnailUrl: "https://fluxplays.live/og-image.png",
-    uploadDate: "2026-01-15",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "All (Browser, Windows, Mac, Android, iOS)",
     url: data.canonicalUrl,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   const toolSchema = {

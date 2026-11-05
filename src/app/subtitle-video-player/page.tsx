@@ -44,12 +44,17 @@ export const metadata: Metadata = {
 export default function SubtitleVideoPlayerPage() {
   const videoSchema = {
     "@context": "https://schema.org",
-    "@type": "VideoObject",
+    "@type": "WebApplication",
     name: "Subtitle Video Player",
-    description: "Watch videos with SRT and VTT subtitles in your browser.",
-    thumbnailUrl: "https://fluxplays.live/og-image.png",
-    uploadDate: "2026-01-15",
+    description: "Watch videos with SRT and VTT subtitles directly in your browser.",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "All (Browser, Windows, Mac, Android, iOS)",
     url: data.canonicalUrl,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   const toolSchema = {

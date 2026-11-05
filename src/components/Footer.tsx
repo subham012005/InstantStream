@@ -42,6 +42,7 @@ export function Footer() {
               <Link href="/hls-m3u8-stream-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">HLS Player</Link>
               <Link href="/google-drive-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Drive Player</Link>
               <Link href="/telegram-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Telegram Player</Link>
+              <Link href="/subtitle-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Subtitle Player</Link>
             </div>
           </div>
 
@@ -49,11 +50,12 @@ export function Footer() {
           <div className="flex flex-col">
             <h3 className="text-[11px] font-[family-name:var(--font-jetbrains-mono)] text-[var(--text-muted)] tracking-[0.08em] uppercase mb-4">Tools</h3>
             <div className="flex flex-col space-y-3">
-              <Link href="/play-direct-video-links" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Paste & Play</Link>
               <Link href="/imdb-movie-stream-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">IMDb Player</Link>
+              <Link href="/play-direct-video-links" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Paste & Play</Link>
               <Link href="/tools/imdb-tmdb-converter" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">TMDB Converter</Link>
-              <Link href="/hls-m3u8-stream-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">HLS Player</Link>
-              <Link href="/tools" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">More tools...</Link>
+              <Link href="/tools/srt-to-vtt-converter" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">SRT ↔ VTT</Link>
+              <Link href="/tools/iptv-playlist-validator" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">IPTV Validator</Link>
+              <Link href="/tools" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">All Tools →</Link>
             </div>
           </div>
 

@@ -37,13 +37,17 @@ export const metadata: Metadata = {
 export default function HlsM3u8StreamPlayerPage() {
   const videoSchema = {
     "@context": "https://schema.org",
-    "@type": "VideoObject",
+    "@type": "WebApplication",
     name: "HLS M3U8 Stream Player",
     description: "Stream HLS and M3U8 video playlists directly in your browser with adaptive bitrate streaming.",
-    thumbnailUrl: "https://fluxplays.live/og-image.png",
-    uploadDate: "2026-01-15",
-    duration: "PT5M",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "All (Browser, Windows, Mac, Android, iOS)",
     url: data.canonicalUrl,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   const toolSchema = {

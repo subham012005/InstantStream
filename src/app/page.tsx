@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   keywords: [
     "fluxplays", "fluxplays.live", "flux plays", "imdb player", "imdbplayer", "imdb player free", "watch movies using imdb id", "imdb movie viewer", "pantyflix", "pantyflix alternative", "flyflix", "flyflix alternative", "redflix", "progressive video streaming", "stream movies free online"
   ],
+  alternates: {
+    canonical: "https://fluxplays.live",
+  },
 };
 
 export default function Home() {
@@ -319,13 +322,17 @@ export default function Home() {
           <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar md:grid md:grid-cols-4 md:overflow-visible">
             {[
               { name: '⭐ IMDb Player', href: '/imdb-movie-stream-player', desc: 'Stream by IMDb ID' },
+              { name: '⭐ Telegram Player', href: '/telegram-video-player', desc: 'Stream Telegram videos online' },
               { name: '⭐ Movie Search', href: '/movie-search', desc: 'Find & stream movies' },
               { name: 'HLS Player', href: '/hls-m3u8-stream-player', desc: '.m3u8 file support' },
               { name: 'Google Drive', href: '/google-drive-video-player', desc: 'Play Drive links' },
               { name: 'Paste & Play', href: '/play-direct-video-links', desc: 'Direct URL streaming' },
-              { name: 'Telegram', href: '/telegram-video-player', desc: 'Watch TG files' },
-              { name: 'Subtitle Player', href: '/subtitle-video-player', desc: 'Add SRT/VTT' },
-              { name: '⭐ IMDb↔TMDB', href: '/tools/imdb-tmdb-converter', desc: 'Convert media IDs' },
+              { name: 'Subtitle Player', href: '/subtitle-video-player', desc: 'Add SRT/VTT captions' },
+              { name: 'SRT ↔ VTT', href: '/tools/srt-to-vtt-converter', desc: 'Convert subtitle files' },
+              { name: 'IPTV Validator', href: '/tools/iptv-playlist-validator', desc: 'Parse & verify M3U' },
+              { name: 'HLS Latency', href: '/tools/hls-latency-tester', desc: 'Measure stream latency' },
+              { name: 'MP4 Player', href: '/watch-mp4-online-player', desc: 'Progressive MP4 stream' },
+              { name: 'IMDb↔TMDB', href: '/tools/imdb-tmdb-converter', desc: 'Convert media IDs' },
             ].map(tool => (
               <Link
                 key={tool.name}

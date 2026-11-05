@@ -4,6 +4,7 @@ import { CheckCircle, Activity, Globe, Shield, Zap } from "lucide-react";
 export const metadata: Metadata = {
   title: "System Status | FluxPlays",
   description: "Real-time performance and uptime status for FluxPlays streaming services.",
+  alternates: { canonical: "https://fluxplays.live/status" },
 };
 
 export default function StatusPage() {

@@ -39,14 +39,18 @@ export default async function ArticlePage({ params }: Props) {
     .map((s) => articles.find((a) => a.slug === s))
     .filter(Boolean);
 
+  const parsedDate = article.date ? new Date(article.date) : new Date("2026-05-18");
+  const isoPublishDate = !isNaN(parsedDate.getTime()) ? parsedDate.toISOString().split("T")[0] : "2026-05-18";
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.metaDescription,
+    image: ["https://fluxplays.live/og-image.png"],
     author: { "@type": "Person", name: article.author.name, url: article.author.url },
     publisher: { "@type": "Organization", name: "FluxPlays", url: "https://fluxplays.live" },
-    datePublished: "2026-05-18",
+    datePublished: isoPublishDate,
     url: `https://fluxplays.live/blog/${slug}`,
   };
 
@@ -115,6 +119,30 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
 
+        {/* Featured Contextual Tool */}
+        {article.featuredTool && (
+          <div className="mb-10 p-5 rounded-2xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-primary mb-1">
+                ✦ Recommended Free Tool
+              </div>
+              <div className="font-bold text-on-surface text-[16px]">
+                {article.featuredTool.name}
+              </div>
+              <div className="text-on-surface-variant text-[13px] mt-0.5">
+                {article.featuredTool.label}
+              </div>
+            </div>
+            <Link
+              href={article.featuredTool.href}
+              className="inline-flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-xl font-semibold hover:opacity-90 transition-all text-xs shrink-0"
+            >
+              <span>Try Online</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+
         {/* Sections */}
         <article className="space-y-10">
           {article.sections.map((section, i) => (
@@ -133,14 +161,20 @@ export default async function ArticlePage({ params }: Props) {
 
         {/* CTA */}
         <div className="mt-12 glass-panel rounded-2xl p-8 text-center border border-black/5">
-          <p className="text-on-surface font-semibold mb-2">Try instant streaming now</p>
-          <p className="text-on-surface-variant text-sm mb-5">Paste a video link and watch without downloading — free, no account needed.</p>
+          <p className="text-on-surface font-semibold mb-2">
+            {article.featuredTool ? `Try ${article.featuredTool.name} Now` : "Try instant streaming now"}
+          </p>
+          <p className="text-on-surface-variant text-sm mb-5">
+            {article.featuredTool
+              ? article.featuredTool.label
+              : "Paste a video link and watch without downloading — free, no account needed."}
+          </p>
           <Link
-            href="/"
+            href={article.featuredTool ? article.featuredTool.href : "/"}
             className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-all text-sm"
           >
             <Play className="w-4 h-4 fill-current" />
-            Stream a Video Free
+            {article.featuredTool ? `Launch ${article.featuredTool.name}` : "Stream a Video Free"}
           </Link>
         </div>
 
