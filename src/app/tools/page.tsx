@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, PlaySquare, Film, RefreshCw, MonitorPlay, Cloud, Send, Type, List, Activity, FileText } from "lucide-react";
+import { ArrowRight, PlaySquare, Film, RefreshCw, MonitorPlay, Cloud, Send, Type, List, Activity, FileText, HardDrive } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Free Video Tools & Media Converters — FluxPlays",
@@ -79,6 +79,13 @@ const toolsList = [
     href: "/telegram-video-player",
     icon: Send,
     tags: ["Free", "Telegram", "Secure"]
+  },
+  {
+    name: "TeraBox Player",
+    desc: "Stream and watch TeraBox video share links online without login.",
+    href: "/terabox-video-player",
+    icon: HardDrive,
+    tags: ["Free", "TeraBox", "No Login"]
   },
   {
     name: "Subtitle Player",

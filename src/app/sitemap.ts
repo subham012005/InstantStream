@@ -8,6 +8,7 @@ import { landingPages } from "./landingPagesData";
 // Genuine last-modified dates verified against codebase commit logs
 const LANDING_PAGE_DATES: Record<string, Date> = {
   "telegram-video-player": new Date("2026-11-04"),
+  "terabox-video-player": new Date("2026-11-06"),
   "imdb-movie-stream-player": new Date("2026-07-13"),
   "hls-m3u8-stream-player": new Date("2026-05-31"),
 };

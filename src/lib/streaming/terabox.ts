@@ -7,18 +7,23 @@ export interface TeraBoxInfo {
   isValid: boolean;
   rawUrl: string;
   shareId?: string;
+  surl?: string;
   embedUrl?: string;
   directUrl?: string;
   error?: string;
 }
 
-const TERABOX_DOMAINS = [
+export const TERABOX_DOMAINS = [
   'terabox.com',
   'www.terabox.com',
+  'terabox.app',
+  'www.terabox.app',
   'teraboxapp.com',
   'www.teraboxapp.com',
   '1024tera.com',
   'www.1024tera.com',
+  '1024terabox.com',
+  'www.1024terabox.com',
   'teraboxshare.com',
   'www.teraboxshare.com',
   'freeterabox.com',
@@ -28,7 +33,13 @@ const TERABOX_DOMAINS = [
   'mirrobox.com',
   'www.mirrobox.com',
   'nephobox.com',
-  'www.nephobox.com'
+  'www.nephobox.com',
+  'teraboxlink.com',
+  'www.teraboxlink.com',
+  'terasharelink.com',
+  'www.terasharelink.com',
+  'tibibox.com',
+  'www.tibibox.com',
 ];
 
 /**
@@ -51,6 +62,7 @@ export function isTeraBoxUrl(url: string): boolean {
  * - https://1024tera.com/s/1xxxxxx
  * - https://teraboxapp.com/sharing/link?surl=xxxxxx
  * - https://www.terabox.com/web/share.html?surl=xxxxxx
+ * - https://teraboxapp.com/wap/share/filelist?surl=xxxxxx
  */
 export function parseTeraBoxUrl(url: string): TeraBoxInfo {
   const cleanUrl = url.trim();
@@ -70,7 +82,7 @@ export function parseTeraBoxUrl(url: string): TeraBoxInfo {
     let shareId: string | null = null;
 
     // Check pathname for /s/{id}
-    const pathMatch = parsed.pathname.match(/\/s\/([a-zA-Z0-9_-]+)/);
+    const pathMatch = parsed.pathname.match(/\/s\/([a-zA-Z0-9_-]+)/i);
     if (pathMatch) {
       shareId = pathMatch[1];
     }
@@ -85,24 +97,30 @@ export function parseTeraBoxUrl(url: string): TeraBoxInfo {
       shareId = parsed.searchParams.get('share_id');
     }
 
+    // Check search param ?shorturl=
+    if (!shareId && parsed.searchParams.has('shorturl')) {
+      shareId = parsed.searchParams.get('shorturl');
+    }
+
     if (!shareId) {
       return {
         isValid: false,
         rawUrl: cleanUrl,
-        error: 'Could not extract TeraBox share ID. Ensure you copied the full public share link.'
+        error: 'Could not extract TeraBox share ID. Ensure you copied the full public share link (e.g. terabox.com/s/1... or with ?surl=...).'
       };
     }
 
-    // Strip leading '1' if present for standard surl embed parameter
-    const normalizedKey = shareId.startsWith('1') ? shareId.slice(1) : shareId;
+    // Standard surl key for official embed player (standard format has '1' prefix or clean key)
+    const surlKey = shareId.startsWith('1') ? shareId.slice(1) : shareId;
 
-    // Official embed URL format for public web viewing
-    const embedUrl = `https://www.terabox.com/sharing/embed?surl=${encodeURIComponent(normalizedKey)}`;
+    // Use 1024tera.com for resilient global embed (prevents regional ISP blocking of terabox.com)
+    const embedUrl = `https://www.1024tera.com/sharing/embed?surl=${encodeURIComponent(surlKey)}`;
 
     return {
       isValid: true,
       rawUrl: cleanUrl,
       shareId,
+      surl: surlKey,
       embedUrl
     };
   } catch (err: any) {

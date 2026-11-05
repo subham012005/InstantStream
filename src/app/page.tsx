@@ -323,6 +323,7 @@ export default function Home() {
             {[
               { name: '⭐ IMDb Player', href: '/imdb-movie-stream-player', desc: 'Stream by IMDb ID' },
               { name: '⭐ Telegram Player', href: '/telegram-video-player', desc: 'Stream Telegram videos online' },
+              { name: '⭐ TeraBox Player', href: '/terabox-video-player', desc: 'Stream TeraBox videos online' },
               { name: '⭐ Movie Search', href: '/movie-search', desc: 'Find & stream movies' },
               { name: 'HLS Player', href: '/hls-m3u8-stream-player', desc: '.m3u8 file support' },
               { name: 'Google Drive', href: '/google-drive-video-player', desc: 'Play Drive links' },

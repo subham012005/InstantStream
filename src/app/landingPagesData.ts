@@ -619,6 +619,44 @@ export const landingPages: Record<string, LandingPageData> = {
       { label: "Browser Video Player", href: "/browser-video-player-online" },
       { label: "Watch MP4 Online", href: "/watch-mp4-online-player" }
     ]
+  },
+  "terabox-video-player": {
+    slug: "terabox-video-player",
+    canonicalUrl: `${BASE}/terabox-video-player`,
+    badge: "TeraBox Video Player",
+    headlinePart1: "Watch TeraBox Videos Online",
+    headlinePart2: "Without Login",
+    subheadline:
+      "Stream and play public TeraBox video links directly in your browser. No TeraBox account, app installation, or gigabyte downloading required. Instant playback with full seek, volume, and fullscreen controls.",
+    ctaText: "Play TeraBox Video Now →",
+    accentColor: "#0086f8",
+    secondaryColor: "#06b6d4",
+    features: [
+      { icon: "▶️", title: "Direct Online Playback", description: "Stream public videos instantly in your browser without waiting for slow downloads or cluttering your local storage." },
+      { icon: "🔓", title: "No Account Required", description: "Watch public TeraBox shared links without logging into or registering an account on TeraBox or FluxPlays." },
+      { icon: "🎛️", title: "Full Player Controls", description: "Enjoy seamless video playback with timeline scrubbing, volume adjustment, speed controls, and immersive fullscreen." },
+      { icon: "🌐", title: "Wide Domain Support", description: "Compatible with terabox.com, 1024tera.com, teraboxapp.com, freeterabox.com, 4funbox, and short redirect links." },
+      { icon: "⚡", title: "Fast Stream Resolution", description: "Our backend safely inspects metadata and provisions adaptive web streams in milliseconds." },
+      { icon: "📱", title: "Mobile and Desktop Ready", description: "Responsive HTML5 player engineered for optimal touch controls on iPhone, Android, tablets, and desktop browsers." }
+    ],
+    steps: [
+      { step: 1, title: "Copy TeraBox Link", body: "Copy the public video share link from TeraBox (such as terabox.com/s/1... or 1024tera.com/s/...)." },
+      { step: 2, title: "Paste into FluxPlays", body: "Paste the URL into the player above and click 'Play TeraBox Video' to resolve the stream." },
+      { step: 3, title: "Stream Instantly", body: "Enjoy high-quality video playback immediately in your browser with full seeking and fullscreen." }
+    ],
+    faqs: [
+      { q: "Can I watch TeraBox videos without logging in?", a: "Yes. FluxPlays allows you to play publicly accessible TeraBox video share links directly in your browser without logging in or creating an account." },
+      { q: "Does this require installing the TeraBox app?", a: "No. You do not need to install the TeraBox desktop software or mobile app. Videos stream directly in your modern web browser (Chrome, Safari, Firefox, Edge)." },
+      { q: "What should I do if a link is password protected?", a: "Password-protected links require the password set by the original owner. We respect file security and do not bypass passwords. If a file is locked or deleted, an option to open the original TeraBox page is provided." },
+      { q: "Which TeraBox domains are supported?", a: "We support terabox.com, 1024tera.com, teraboxapp.com, freeterabox.com, 4funbox.com, mirrobox.com, and standard short redirect formats." },
+      { q: "Is FluxPlays TeraBox player free?", a: "Yes, 100% free with no subscriptions, paid API keys, or credit card requirements." }
+    ],
+    relatedLinks: [
+      { label: "Telegram Video Player", href: "/telegram-video-player" },
+      { label: "Google Drive Player", href: "/google-drive-video-player" },
+      { label: "Stream Without Downloading", href: "/stream-videos-without-downloading" },
+      { label: "Browser Video Player", href: "/browser-video-player-online" },
+      { label: "Watch MP4 Online", href: "/watch-mp4-online-player" }
+    ]
   }
 };
-

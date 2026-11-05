@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlaySquare, Film, RefreshCw, Search, MonitorPlay, Cloud, Send, Type, Menu, X, Bookmark } from 'lucide-react';
+import { PlaySquare, Film, RefreshCw, Search, MonitorPlay, Cloud, Send, Type, Menu, X, Bookmark, HardDrive } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import dynamic from 'next/dynamic';
 
@@ -35,6 +35,7 @@ const toolsRight = [
   { name: 'HLS Player', href: '/hls-m3u8-stream-player', icon: MonitorPlay, desc: 'Play .m3u8 streams' },
   { name: 'Google Drive', href: '/google-drive-video-player', icon: Cloud, desc: 'Stream Drive links' },
   { name: 'Telegram Player', href: '/telegram-video-player', icon: Send, desc: 'Play Telegram videos' },
+  { name: 'TeraBox Player', href: '/terabox-video-player', icon: HardDrive, desc: 'Play TeraBox videos' },
   { name: 'Subtitle Player', href: '/subtitle-video-player', icon: Type, desc: 'Play videos with subs' },
 ];
 

@@ -42,6 +42,7 @@ export function Footer() {
               <Link href="/hls-m3u8-stream-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">HLS Player</Link>
               <Link href="/google-drive-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Drive Player</Link>
               <Link href="/telegram-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Telegram Player</Link>
+              <Link href="/terabox-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">TeraBox Player</Link>
               <Link href="/subtitle-video-player" className="text-[14px] font-[family-name:var(--font-dm-sans)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors leading-[2.2]">Subtitle Player</Link>
             </div>
           </div>
